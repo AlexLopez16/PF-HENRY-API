@@ -1,0 +1,63 @@
+import { RequestHandler } from "express";
+const User = require('../models/alumno')
+
+export const getUsers: RequestHandler = async (req, res) => {
+    const { limit = 5, init = 0 } = req.query;
+    const query = { state: true }
+
+    const [total, users] = await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+            .skip(init)
+            .limit(limit)
+    ])
+
+    res.status(200).json({
+        total,
+        users
+    })
+}
+
+export const getUser: RequestHandler = async (req, res) => {
+    const { id } = req.params
+    const { name, _id, email } = await User.findById(id)
+
+    res.status(200).json({
+        id: _id,
+        name,
+        email
+    })
+}
+
+export const createUser: RequestHandler = async (req, res) => {
+
+    const { name, lastName, age, email, password } = req.body;
+    const user = new User({ name, lastName, age, email, password })
+    await user.save()
+
+    res.status(201).json({
+        user
+    })
+}
+
+export const updateUser: RequestHandler = async (req, res) => {
+    const { id } = req.params;
+    const { email, state, gmail, github, slack, premium, password, age, ...user } = req.body;
+
+    if (password) {
+        user.password = password
+    }
+
+    const userUpdated = await User.findByIdAndUpdate(id, user, { new: true })
+
+    res.status(200).json(userUpdated)
+}
+
+export const deleteUser: RequestHandler = async (req, res) => {
+
+    const { id } = req.params;
+
+    const user = await User.findByIdAndUpdate(id, { state: false }, { new: true })
+
+    res.status(200).json(user)
+}
