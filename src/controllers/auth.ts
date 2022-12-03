@@ -17,8 +17,6 @@ export const loginUser: RequestHandler = async (req, res) => {
     if (!validPassword)
       return res.status(400).json({ error: "invalid password" });
 
-      console.log
-
     const token = jwt.sign(
       {
         name: user.name,
@@ -27,8 +25,7 @@ export const loginUser: RequestHandler = async (req, res) => {
       process.env.TOKEN_SECRET as string
     );
 
-    res
-      .json({ data: "sucessful login", token: { token } });
+    res.json({ data: "sucessful login", token: { token } });
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({ error: error.message });
