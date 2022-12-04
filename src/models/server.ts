@@ -16,6 +16,7 @@ const paths = {
 
 //Routes
 server.use(paths.user, require('../routes/alumno'))
+server.use(paths.user, require('../routes/company'))
 // server.use(paths.form, require('.....form'))
 // server.use(paths.auth, require('../controllers/auth'))
 
