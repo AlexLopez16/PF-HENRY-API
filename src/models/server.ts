@@ -24,6 +24,7 @@ const paths = {
 
 //Routes
 server.use(paths.user, require('../routes/alumno'))
+server.use(paths.user, require('../routes/company'))
 server.use(paths.auth,require('../routes/auth'))
 server.use(paths.projects,verifyToken,require('../routes/projects'))
 //DB Connection
