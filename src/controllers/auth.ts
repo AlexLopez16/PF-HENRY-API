@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-const User = require("../models/alumno");
+const User = require("../models/students");
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 require("dotenv").config();

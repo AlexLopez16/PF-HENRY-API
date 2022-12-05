@@ -14,6 +14,10 @@ const UserSchema = new Schema({
         required: [true, 'Email is required'],
         unique: true
     },
+    birth: {
+        type: Date,
+        required: [true, 'Birth is required'],
+    }, 
     password: {
         type: String,
         required: [true, 'Password is required']

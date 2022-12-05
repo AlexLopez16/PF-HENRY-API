@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-const User = require("../models/alumno");
+const User = require("../models/students");
 import { hash } from "../util/hash";
 
 export const getUsers: RequestHandler = async (req, res) => {
