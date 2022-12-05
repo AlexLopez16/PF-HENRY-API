@@ -9,10 +9,6 @@ const UserSchema = new Schema({
         type: String,
         required: [true, 'Last name is required']
     },
-    age: {
-        type: Number,
-        required: [true, 'Age is required']
-    },
     email: {
         type: String,
         required: [true, 'Email is required'],
@@ -34,10 +30,6 @@ const UserSchema = new Schema({
         default: false
     },
     github: {
-        type: Boolean,
-        default: false
-    },
-    slack: {
         type: Boolean,
         default: false
     },

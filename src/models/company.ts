@@ -1,42 +1,44 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
-const UserCompany = new Schema({
-  name: {
-    type: String,
-    required: [true, 'Name is required'],
-  },
+const BusinessSchema = new Schema({
+    name: {
+        type: String,
+        require: [true, 'Name is requiered']
+    },
+    country: {
+        type: String,
+        require: [true, 'Country is requiered']
+    },
+    email: {
+        type: String,
+        require: [true, 'Email is required'],
+        unique: true
+    },
+    password: {
+        type: String,
+        required: [true, 'Password is required']
+    },
+    website: {
+        type: String
+    },
+    state: {
+        type: Boolean,
+        default: true
+    },
+    gmail: {
+        type: Boolean,
+        default: false,
+    },
+    premium: {
+        type: Boolean,
+        default: false,
+    }
+})
 
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-  },
+BusinessSchema.methods.toJSON = function () {
+    const { __v, _id, ...bussiness} = this.toObject()
+    bussiness.uid = _id
+    return bussiness
+}
 
-  password: {
-    type: String,
-    required: [true, 'Password is required'],
-  },
-
-  gmail: {
-    type: Boolean,
-    default: false,
-  },
-
-  country: {
-    type: String,
-    required: [true, 'Country is required'],
-  },
-
-  premium: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-UserCompany.methods.toJSON = function () {
-  const { __v, _id, ...UserCompany } = this.toObject();
-  UserCompany.uid = _id;
-  return UserCompany;
-};
-
-module.exports = model('UserCompany', UserCompany);
+module.exports = model('Bussiness', BusinessSchema)
