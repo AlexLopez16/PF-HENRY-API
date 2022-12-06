@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 const User = require('../models/company');
+import { hash } from "../util/hash";
 
 export const getUsersCompany: RequestHandler = async (req, res) => {
   const { limit = 10, init = 0 } = req.query;
@@ -30,7 +31,8 @@ export const getUserCompany: RequestHandler = async (req, res) => {
 
 export const createUserCompany: RequestHandler = async (req, res) => {
   const { name, email, country, password } = req.body;
-  const user = new User({ name, email, country, password });
+  let hashPassword = await hash(password);
+  const user = new User({ name, email, country, password: hashPassword });
   await user.save();
 
   res.status(201).json({
@@ -43,9 +45,10 @@ export const updateUserCompany: RequestHandler = async (req, res) => {
   const { email, country, premium, password, ...user } = req.body;
 
   if (password) {
-    user.password = password;
+    let hashPassword = await hash(password);
+    user.password = hashPassword;
   }
-
+  
   const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
 
   res.status(200).json(userUpdated);
