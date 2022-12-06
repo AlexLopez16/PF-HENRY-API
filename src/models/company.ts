@@ -33,6 +33,12 @@ const CompanySchema = new Schema({
         type: Boolean,
         default: false,
     },
+    projects: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Project',
+        },
+    ],
 });
 
 CompanySchema.methods.toJSON = function () {

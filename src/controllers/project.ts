@@ -17,9 +17,6 @@ export const createProject: RequestHandler = async (req, res) => {
 
 export const addStudentToProject: RequestHandler = async (req, res) => {
     const { userId, projectId } = req.body;
-    // const project = await Project.findByIdAndUpdate(projectId, {
-    //     students: [userId],
-    // });
     const project = await Project.findById(projectId);
     project.students = [...project.students, userId];
     await project.save();
