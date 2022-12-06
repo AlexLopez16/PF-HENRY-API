@@ -1,25 +1,22 @@
 import { Schema, model } from 'mongoose';
 
-const CompanySchema = new Schema({
+const StudentSchema = new Schema({
     name: {
         type: String,
-        require: [true, 'Name is requiered'],
+        required: [true, 'Name is required'],
     },
-    country: {
+    lastName: {
         type: String,
-        require: [true, 'Country is requiered'],
+        required: [true, 'Last name is required'],
     },
     email: {
         type: String,
-        require: [true, 'Email is required'],
+        required: [true, 'Email is required'],
         unique: true,
     },
     password: {
         type: String,
         required: [true, 'Password is required'],
-    },
-    website: {
-        type: String,
     },
     state: {
         type: Boolean,
@@ -29,16 +26,16 @@ const CompanySchema = new Schema({
         type: Boolean,
         default: false,
     },
-    premium: {
+    github: {
         type: Boolean,
         default: false,
     },
 });
 
-CompanySchema.methods.toJSON = function () {
-    const { __v, _id, ...company } = this.toObject();
-    company.uid = _id;
-    return company;
+StudentSchema.methods.toJSON = function () {
+    const { __v, _id, ...student } = this.toObject();
+    student.uid = _id;
+    return student;
 };
 
-module.exports = model('Company', CompanySchema);
+module.exports = model('Student', StudentSchema);

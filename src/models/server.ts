@@ -1,33 +1,30 @@
 import express from 'express';
 import morgan from 'morgan';
 import { connDB } from '../database/config';
-import {verifyToken} from '../middlewares/authValidator'
-
-
+import { verifyToken } from '../middlewares/authValidator';
 
 const server = express();
 
 //Body Parser
-server.use(express.json())
+server.use(express.json());
 
 //Morgan
-server.use(morgan('dev'))
-
-
+server.use(morgan('dev'));
 
 //Routes Paths
 const paths = {
-    user: '/api/user',
+    student: '/api/student',
+    company: '/api/company',
     auth: '/api/auth',
-    projects:'/api/projects'
-}
+    projects: '/api/project',
+};
 
 //Routes
-server.use(paths.user, require('../routes/alumno'))
-server.use(paths.user, require('../routes/company'))
-server.use(paths.auth,require('../routes/auth'))
-server.use(paths.projects,verifyToken,require('../routes/projects'))
+server.use(paths.student, require('../routes/student'));
+server.use(paths.company, require('../routes/company'));
+server.use(paths.auth, require('../routes/auth'));
+server.use(paths.projects, verifyToken, require('../routes/project'));
 //DB Connection
-connDB()
+connDB();
 
 module.exports = server;
