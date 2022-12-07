@@ -2,6 +2,21 @@ import { RequestHandler } from 'express';
 // const User = require("../models/alumno");
 const Project = require('../models/project');
 
+export const getProject: RequestHandler = async (req, res) => {
+    const { limit = 10, init = 0 } = req.query;
+    const query = { state: true };
+  
+    const [total, project] = await Promise.all([
+      Project.countDocuments(query),
+      Project.find(query).skip(init).limit(limit),
+    ]);
+  
+    res.status(200).json({
+      total,
+      project,
+    });
+  };
+
 export const createProject: RequestHandler = async (req, res) => {
     const { name, description, participants, requirements } = req.body;
     const project = new Project({
