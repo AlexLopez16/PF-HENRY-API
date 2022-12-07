@@ -24,9 +24,15 @@ const ProjectSchema = new Schema({
     students: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Student',
-        },
+            ref: 'Student'
+        }
     ],
+    reviews: [
+        {
+            type: Schema.Types.ObjectId ,
+            ref: 'Review'
+        }
+    ]
 });
 
 ProjectSchema.methods.toJSON = function () {

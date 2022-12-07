@@ -35,7 +35,6 @@ export const createUser: RequestHandler = async (req, res) => {
     const user = new User({
         name,
         lastName,
-        birth,
         email,
         password: hashPassword,
     });
@@ -53,10 +52,8 @@ export const updateUser: RequestHandler = async (req, res) => {
         state,
         gmail,
         github,
-        slack,
         premium,
         password,
-        age,
         ...user
     } = req.body;
 
