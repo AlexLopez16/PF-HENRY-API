@@ -17,6 +17,7 @@ const paths = {
     company: '/api/company',
     auth: '/api/auth',
     projects: '/api/project',
+    invoice: '/api/invoice',
 };
 
 //Routes
@@ -24,6 +25,7 @@ server.use(paths.student, require('../routes/student'));
 server.use(paths.company, require('../routes/company'));
 server.use(paths.auth, require('../routes/auth'));
 server.use(paths.projects, /*verifyToken,*/ require('../routes/project'));
+server.use(paths.invoice, require('../routes/invoice'));
 //DB Connection
 connDB();
 

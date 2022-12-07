@@ -33,10 +33,17 @@ const CompanySchema = new Schema({
         type: Boolean,
         default: false,
     },
-    projects: [
+    
+    project: [
         {
             type: Schema.Types.ObjectId,
             ref: 'Project',
+        },
+    ],
+    Invoice: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Invoice',
         },
     ],
 });
