@@ -21,6 +21,12 @@ const ProjectSchema = new Schema({
         type: Boolean,
         default: true,
     },
+    students: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Student',
+        },
+    ]
 });
 
 ProjectSchema.methods.toJSON = function () {
