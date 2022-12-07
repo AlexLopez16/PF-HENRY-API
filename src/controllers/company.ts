@@ -32,7 +32,7 @@ export const getUserCompany: RequestHandler = async (req, res) => {
 export const createUserCompany: RequestHandler = async (req, res) => {
   const { name, email, country, password } = req.body;
   let hashPassword = await hash(password);
-  const user = new User({ name, email, country, password:hashPassword });
+  const user = new User({ name, email, country, password: hashPassword });
   await user.save();
 
   res.status(201).json({

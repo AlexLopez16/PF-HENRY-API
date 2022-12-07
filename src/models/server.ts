@@ -18,14 +18,16 @@ const paths = {
     student: '/api/student',
     company: '/api/company',
     auth: '/api/auth',
-    projects: '/api/project',
+    project: '/api/project',
+    invoice: '/api/invoice',
 };
 
 //Routes
 server.use(paths.student, require('../routes/student'));
 server.use(paths.company, require('../routes/company'));
 server.use(paths.auth, require('../routes/auth'));
-server.use(paths.projects, require('../routes/project'));
+server.use(paths.invoice, require('../routes/invoice'));
+server.use(paths.project, require('../routes/project'));
 //DB Connection
 connDB();
 
