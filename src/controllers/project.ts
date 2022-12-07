@@ -18,13 +18,12 @@ export const getProject: RequestHandler = async (req, res) => {
 };
 
 export const createProject: RequestHandler = async (req, res) => {
-  const { name, description, participants, requirements } = req.body;
-  const project = new Project({
-    name,
-    description,
-    participants,
-    requirements,
-  });
+  const { ...body } = req.body;
+  const data = {
+    ...body,
+    students: req.user._id,
+  };
+  const project = new Project(data);
   await project.save();
 
   res.status(200).send(project);

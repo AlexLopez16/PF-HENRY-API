@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 const User = require('../models/student');
-import { hash } from '../util/hash';
+import { hash } from '../helper/hash';
 
 export const getUsers: RequestHandler = async (req, res) => {
   const { limit = 5, init = 0 } = req.query;

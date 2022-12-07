@@ -3,19 +3,19 @@ import { Schema, model } from 'mongoose';
 const ProjectSchema = new Schema({
     name: {
         type: String,
-        require: [true, 'Name is requiered'],
+        required: [true, 'Name is requiered'],
     },
     description: {
         type: String,
-        require: [true, 'Requires a description'],
+        required: [true, 'Requires a description'],
     },
     participants: {
         type: Number,
-        require: [true, 'Number of employees is required'],
+        required: [true, 'Number of employees is required'],
     },
     requirements: {
         type: Array,
-        require: [true, 'Language is required'],
+        required: [true, 'Language is required'],
     },
     state: {
         type: Boolean,
