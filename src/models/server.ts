@@ -11,6 +11,8 @@ server.use(express.json());
 //Morgan
 server.use(morgan('dev'));
 
+server.use(verifyToken);
+
 //Routes Paths
 const paths = {
     student: '/api/student',
@@ -23,7 +25,7 @@ const paths = {
 server.use(paths.student, require('../routes/student'));
 server.use(paths.company, require('../routes/company'));
 server.use(paths.auth, require('../routes/auth'));
-server.use(paths.projects, /*verifyToken,*/ require('../routes/project'));
+server.use(paths.projects, require('../routes/project'));
 //DB Connection
 connDB();
 
