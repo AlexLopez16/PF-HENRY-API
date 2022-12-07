@@ -63,7 +63,7 @@ export const loginUser: RequestHandler = async (req, res) => {
         id: user._id,
       },
       process.env.TOKEN_SECRET as string,
-      { expiresIn: "120s" }
+      { expiresIn: "2h" }
     );
     return res.json({ data: "Sucessful login", token });
   } catch (error: any) {

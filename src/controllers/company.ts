@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 const User = require('../models/company');
-import { hash } from '../util/hash';
+import { hash } from '../helper/hash';
 
 export const getUsersCompany: RequestHandler = async (req, res) => {
   const { limit = 10, init = 0 } = req.query;
