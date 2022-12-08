@@ -11,7 +11,15 @@ server.use(express.json());
 //Morgan
 server.use(morgan('dev'));
 
-server.use(verifyToken);
+//Validacion de tokens
+// server.use(verifyToken);
+
+/*
+  By Hugo.
+  Nota: los roles se verifican antes de continuar a la ruta con el siguiente middelware.  
+*/
+// import { verifyRol } from '../middlewares/rolValidator';
+// server.use(verifyRol);
 
 //Routes Paths
 const paths = {

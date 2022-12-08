@@ -3,21 +3,22 @@ import { check } from 'express-validator';
 import { verifyToken } from '../middlewares/authValidator';
 import { validate } from '../middlewares/validator';
 import {
-  rulesCreateUserCompany,
-  rulesUpdateUserCompany,
-  rulesDeleteUsersCompany,
+    rulesCreateUserCompany,
+    rulesUpdateUserCompany,
+    rulesDeleteUsersCompany,
+    rulesGetUserCompany,
 } from '../helper/rulesCompany';
 import {
-  createUserCompany,
-  deleteUserCompany,
-  getUserCompany,
-  getUsersCompany,
-  updateUserCompany,
+    createUserCompany,
+    deleteUserCompany,
+    getUserCompany,
+    getUsersCompany,
+    updateUserCompany,
 } from './../controllers/company';
 
 const router = Router();
 
-router.get('/', rulesGetUsersCompany, getUsersCompany);
+// router.get('/', rulesGetUsersCompany, getUsersCompany);
 
 router.get('/:id', rulesGetUserCompany, getUserCompany);
 
