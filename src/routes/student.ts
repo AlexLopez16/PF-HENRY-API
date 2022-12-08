@@ -1,30 +1,19 @@
 import { Router } from 'express';
-import { check } from 'express-validator';
-import { validate } from '../middlewares/validator';
+import { rulesCreateStudent, rulesGetStudent } from '../helpers/rulesStudent';
 import {
-    createUser,
-    deleteUser,
-    getUser,
-    getUsers,
-    updateUser,
+    createStudent,
+    getStudent,
+    updateStudent,
+    deleteStudent,
 } from '../controllers/student';
 const router = Router();
 
-router.get('/', getUsers);
+router.post('/', rulesCreateStudent, createStudent);
 
-router.get('/:id', getUser);
+router.get('/:id', rulesGetStudent, getStudent);
 
-router.post(
-    '/',
-    [
-        check('name', 'Name is Required').not().isEmpty(),
-        check('email', 'Invalid email').isEmail(),
-        validate,
-    ],
-    createUser
-);
+router.put('/:id', updateStudent);
 
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.delete('/:id', deleteStudent);
 
 module.exports = router;
