@@ -14,7 +14,17 @@ server.use(morgan('dev'));
 //conexion con front
 server.use(cors)
 //validacion del token
-server.use(verifyToken);
+//Validacion de tokens
+// server.use(verifyToken);
+
+/*
+  By Hugo.
+  Nota: los roles se verifican antes de continuar a la ruta con el siguiente middelware.  
+*/
+// import { verifyRol } from '../middlewares/rolValidator';
+// server.use(verifyRol);
+
+
 
 //Routes Paths
 const paths = {

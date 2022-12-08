@@ -1,15 +1,18 @@
-import { RequestHandler } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
-require("dotenv").config();
+import { RequestHandler } from 'express';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { searchUser } from '../helper/searchUser';
+require('dotenv').config();
 
-import { searchUser } from "../helper/searchuser";
+
+
+// Este declare nos permite crear nuestras porpias requests.
 
 declare global {
-  namespace Express {
-    interface Request {
-      user: any; //or can be anythin
+    namespace Express {
+        interface Request {
+            user: any; //or can be anythin
+        }
     }
-  }
 }
 
 const pathsWithoutAuth = new Map<string, Set<string>>();
