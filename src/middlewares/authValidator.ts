@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 require('dotenv').config();
 
-import { searchUser } from '../helpers/searchUser';
+import { searchUser } from '../helper/searchUser';
 
 // Este declare nos permite crear nuestras porpias requests.
 

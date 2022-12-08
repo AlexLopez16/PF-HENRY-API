@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 const User = require('../models/student');
-import { hash } from '../helpers/hash';
+import { hash } from '../helper/hash';
 import { formatError } from '../utils/formatErros';
 
 // Creamos el estudiante de la db y hasheamos el password.

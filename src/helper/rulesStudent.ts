@@ -23,7 +23,11 @@ export const rulesCreateStudent = [
 ];
 
 export const rulesGetStudent = [
-    // verifyToken,
+    verifyToken,
+    // Verificar este error despues.
+    /*
+    NOTA: esto debe verificar el estudiante.
+     */
     // validateExistStudent,
     check('rol').custom(validateStudentRol),
     validate,

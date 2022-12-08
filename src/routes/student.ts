@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { rulesCreateStudent, rulesGetStudent } from '../helpers/rulesStudent';
+import { rulesCreateStudent, rulesGetStudent } from '../helper/rulesStudent';
 import {
     createStudent,
     getStudent,
