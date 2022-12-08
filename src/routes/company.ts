@@ -1,11 +1,10 @@
 import { Router } from 'express';
-import { check } from 'express-validator';
-import { verifyToken } from '../middlewares/authValidator';
-import { validate } from '../middlewares/validator';
 import {
   rulesCreateUserCompany,
   rulesUpdateUserCompany,
   rulesDeleteUsersCompany,
+  rulesGetUsersCompany,
+  rulesGetUserCompany,
 } from '../helper/rulesCompany';
 import {
   createUserCompany,
