@@ -1,31 +1,31 @@
 import { RequestHandler } from 'express';
 const User = require('../models/student');
-import { hash } from '../util/hash';
+import { hash } from '../helper/hash';
 
 export const getUsers: RequestHandler = async (req, res) => {
-    const { limit = 5, init = 0 } = req.query;
-    const query = { state: true };
+  const { limit = 5, init = 0 } = req.query;
+  const query = { state: true };
 
-    const [total, users] = await Promise.all([
-        User.countDocuments(query),
-        User.find(query).skip(init).limit(limit),
-    ]);
+  const [total, users] = await Promise.all([
+    User.countDocuments(query),
+    User.find(query).skip(init).limit(limit),
+  ]);
 
-    res.status(200).json({
-        total,
-        users,
-    });
+  res.status(200).json({
+    total,
+    users,
+  });
 };
 
 export const getUser: RequestHandler = async (req, res) => {
-    const { id } = req.params;
-    const { name, _id, email } = await User.findById(id);
+  const { id } = req.params;
+  const { name, _id, email } = await User.findById(id);
 
-    res.status(200).json({
-        id: _id,
-        name,
-        email,
-    });
+  res.status(200).json({
+    id: _id,
+    name,
+    email,
+  });
 };
 
 export const createUser: RequestHandler = async (req, res) => {
@@ -40,9 +40,9 @@ export const createUser: RequestHandler = async (req, res) => {
     });
     await user.save();
 
-    res.status(201).json({
-        user,
-    });
+  res.status(201).json({
+    user,
+  });
 };
 
 export const updateUser: RequestHandler = async (req, res) => {
@@ -57,24 +57,24 @@ export const updateUser: RequestHandler = async (req, res) => {
         ...user
     } = req.body;
 
-    if (password) {
-        let hashPassword = await hash(password);
-        user.password = hashPassword;
-    }
+  if (password) {
+    let hashPassword = await hash(password);
+    user.password = hashPassword;
+  }
 
-    const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
+  const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
 
-    res.status(200).json(userUpdated);
+  res.status(200).json(userUpdated);
 };
 
 export const deleteUser: RequestHandler = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    const user = await User.findByIdAndUpdate(
-        id,
-        { state: false },
-        { new: true }
-    );
+  const user = await User.findByIdAndUpdate(
+    id,
+    { state: false },
+    { new: true },
+  );
 
-    res.status(200).json(user);
+  res.status(200).json(user);
 };

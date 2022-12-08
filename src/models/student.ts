@@ -18,6 +18,9 @@ const StudentSchema = new Schema({
         type: String,
         required: [true, 'Password is required'],
     },
+    image: {
+        type: String,
+    },
     state: {
         type: Boolean,
         default: true,

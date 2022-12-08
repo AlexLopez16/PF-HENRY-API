@@ -3,15 +3,15 @@ import { Schema, model } from 'mongoose';
 const CompanySchema = new Schema({
     name: {
         type: String,
-        require: [true, 'Name is requiered'],
+        required: [true, 'Name is requiered'],
     },
     country: {
         type: String,
-        require: [true, 'Country is requiered'],
+        required: [true, 'Country is requiered'],
     },
     email: {
         type: String,
-        require: [true, 'Email is required'],
+        required: [true, 'Email is required'],
         unique: true,
     },
     password: {
@@ -33,6 +33,21 @@ const CompanySchema = new Schema({
         type: Boolean,
         default: false,
     },
+    image: {
+        type: String,
+    },
+    project: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Project',
+        },
+    ],
+    Invoice: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Invoice',
+        },
+    ],
 });
 
 CompanySchema.methods.toJSON = function () {
