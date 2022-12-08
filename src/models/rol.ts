@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 const RolSchema = new Schema({
-    Rol: {
+    rol: {
         type: String,
         required: [true, 'Rol is required'],
         emun: ['STUDENT_ROL', 'COMPANY_ROL', 'ADMIN_ROL'],

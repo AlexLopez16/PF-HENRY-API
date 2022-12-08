@@ -7,11 +7,11 @@ import {
   rulesGetUserCompany,
 } from '../helper/rulesCompany';
 import {
-  createUserCompany,
-  deleteUserCompany,
-  getUserCompany,
-  getUsersCompany,
-  updateUserCompany,
+    createUserCompany,
+    deleteUserCompany,
+    getUserCompany,
+    getUsersCompany,
+    updateUserCompany,
 } from './../controllers/company';
 
 const router = Router();
