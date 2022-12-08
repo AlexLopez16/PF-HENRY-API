@@ -1,0 +1,7 @@
+Hola, prueba para mi!! NO APROBAR
+
+
+Jona: company, pulir rutas y traer toda la info. Traer todas las relaciones de projects.
+Nachito: invoices, pulir rutas y traer toda la info. Traer todas las relaciones de projects.
+Hugo: students
+sil: projects

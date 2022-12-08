@@ -9,6 +9,9 @@ const StudentSchema = new Schema({
         type: String,
         required: [true, 'Last name is required'],
     },
+    username: {
+        type: String,
+    },
     email: {
         type: String,
         required: [true, 'Email is required'],
@@ -29,6 +32,12 @@ const StudentSchema = new Schema({
     github: {
         type: Boolean,
         default: false,
+    },
+    rol: {
+        type: String,
+        required: [true, 'Role is required'],
+        default: 'STUDENT_ROL',
+        emun: ['STUDENT_ROL'],
     },
 });
 

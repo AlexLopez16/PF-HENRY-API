@@ -1,51 +1,66 @@
 import { RequestHandler } from 'express';
 const User = require('../models/student');
-import { hash } from '../util/hash';
+import { hash } from '../helper/hash';
+import { formatError } from '../utils/formatErros';
 
-export const getUsers: RequestHandler = async (req, res) => {
-    const { limit = 5, init = 0 } = req.query;
-    const query = { state: true };
-
-    const [total, users] = await Promise.all([
-        User.countDocuments(query),
-        User.find(query).skip(init).limit(limit),
-    ]);
-
-    res.status(200).json({
-        total,
-        users,
-    });
+// Creamos el estudiante de la db y hasheamos el password.
+export const createStudent: RequestHandler = async (req, res) => {
+    try {
+        let { name, lastName, email, password } = req.body;
+        let hashPassword = await hash(password);
+        const user = new User({
+            name,
+            lastName,
+            email,
+            password: hashPassword,
+        });
+        await user.save();
+        res.status(201).json({
+            user,
+        });
+    } catch (error) {
+        res.status(500).json(formatError('Internal Server Error'));
+    }
 };
 
-export const getUser: RequestHandler = async (req, res) => {
-    const { id } = req.params;
-    const { name, _id, email } = await User.findById(id);
+// Traemos un estudiante por el id.
+export const getStudent: RequestHandler = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, _id, email } = await User.findById(id);
 
-    res.status(200).json({
-        id: _id,
-        name,
-        email,
-    });
+        res.status(200).json({
+            id: _id,
+            name,
+            email,
+        });
+    } catch (error) {
+        res.status(500).json(formatError('Internal Server Error'));
+    }
 };
 
-export const createUser: RequestHandler = async (req, res) => {
-    let { name, lastName, birth, email, password } = req.body;
-    let hashPassword = await hash(password);
-    birth = new Date(birth);
-    const user = new User({
-        name,
-        lastName,
-        email,
-        password: hashPassword,
-    });
-    await user.save();
+// Traemos todos los estudiantes de la db.
+export const getStudents: RequestHandler = async (req, res) => {
+    try {
+        const { limit = 5, init = 0 } = req.query;
+        const query = { state: true };
 
-    res.status(201).json({
-        user,
-    });
+        const [total, users] = await Promise.all([
+            User.countDocuments(query),
+            User.find(query).skip(init).limit(limit),
+        ]);
+
+        res.status(200).json({
+            total,
+            users,
+        });
+    } catch (error) {
+        res.status(500).json(formatError('Internal Server Error'));
+    }
 };
 
-export const updateUser: RequestHandler = async (req, res) => {
+// Permitimos actualizar todos los atributos del estudiante.
+export const updateStudent: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const {
         email,
@@ -67,7 +82,8 @@ export const updateUser: RequestHandler = async (req, res) => {
     res.status(200).json(userUpdated);
 };
 
-export const deleteUser: RequestHandler = async (req, res) => {
+// Damos la opcion de borrar al estudiante.
+export const deleteStudent: RequestHandler = async (req, res) => {
     const { id } = req.params;
 
     const user = await User.findByIdAndUpdate(

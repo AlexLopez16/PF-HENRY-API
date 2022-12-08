@@ -7,11 +7,11 @@ const CompanySchema = new Schema({
     },
     country: {
         type: String,
-        require: [true, 'Country is requiered'],
+        required: [true, 'Country is requiered'],
     },
     email: {
         type: String,
-        require: [true, 'Email is required'],
+        required: [true, 'Email is required'],
         unique: true,
     },
     password: {
@@ -32,6 +32,25 @@ const CompanySchema = new Schema({
     premium: {
         type: Boolean,
         default: false,
+    },
+
+    project: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Project',
+        },
+    ],
+    Invoice: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Invoice',
+        },
+    ],
+    rol: {
+        type: String,
+        required: [true, 'Role is required'],
+        default: 'COMPANY_ROL',
+        emun: ['COMPANY_ROL'],
     },
 });
 

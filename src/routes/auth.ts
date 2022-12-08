@@ -1,19 +1,11 @@
-import { Router } from "express";
-import { check } from "express-validator";
-import { validate } from "../middlewares/validator";
-import { loginUser } from "../controllers/auth";
+import { Router } from 'express';
+import { loginUser, github } from '../controllers/auth';
+import {} from '../middlewares/authValidator';
 
 const router = Router();
 
-router.post(
-  "/",
-  [
-    check("email", "Invalid email").isEmail(),
-    check("email", "email is Required").not().isEmpty(),
-    check("password", "password is Required").not().isEmpty(),
-    validate,
-  ],
-  loginUser
-);
+router.post('/', loginUser);
+
+router.get('/', github);
 
 module.exports = router;
