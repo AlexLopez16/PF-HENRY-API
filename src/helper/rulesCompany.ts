@@ -21,12 +21,18 @@ export const rulesUpdateUserCompany = [
 ];
 
 export const rulesGetUserCompany = [
-    verifyToken,
-    check('rol').custom(validateCompanyRol),
-    validate,
-    // companyRole,
+  verifyToken,
+  // check('rol').custom(isValidRole),
+  // validate,
+  // companyRole,
 ];
 
+// export const rulesGetUsersCompany = [
+//   verifyToken,
+//   // check('rol').custom(isValidRole),
+//   // validate,
+//   // companyRole,
+// ];
 export const rulesGetUsersCompany = [
     verifyToken,
     check('rol').custom(validateCompanyRol),
@@ -35,8 +41,8 @@ export const rulesGetUsersCompany = [
 ];
 
 export const rulesDeleteUsersCompany = [
-    verifyToken,
-    check('rol').custom(validateCompanyRol),
-    validate,
-    // companyRole,
+  verifyToken,
+  // check('rol').custom(isValidRole),
+  // validate,
+  // companyRole,
 ];

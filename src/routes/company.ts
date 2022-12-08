@@ -5,7 +5,7 @@ import { validate } from '../middlewares/validator';
 import {
     rulesCreateUserCompany,
     rulesUpdateUserCompany,
-    rulesDeleteUsersCompany,
+    // rulesDeleteUsersCompany,
     rulesGetUserCompany,
 } from '../helper/rulesCompany';
 import {
@@ -20,12 +20,12 @@ const router = Router();
 
 // router.get('/', rulesGetUsersCompany, getUsersCompany);
 
-router.get('/:id', rulesGetUserCompany, getUserCompany);
+// router.get('/:id', rulesGetUserCompany, getUserCompany);
 
 router.post('/', rulesCreateUserCompany, createUserCompany);
 
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
 
-router.delete('/:id', rulesDeleteUsersCompany, deleteUserCompany);
+// router.delete('/:id', rulesDeleteUsersCompany, deleteUserCompany);
 
 module.exports = router;
