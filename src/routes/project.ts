@@ -22,7 +22,7 @@ router.post(
   ],
   createProject
 );
-router.put("/", addStudentToProject);
+router.put("/:id",addStudentToProject);
 router.delete("/:id", deleteProject);
 
 module.exports = router;
