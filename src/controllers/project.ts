@@ -5,6 +5,7 @@ const Project = require('../models/project');
 export const getProjects: RequestHandler = async (req, res) => {
   try {
     const { limit = 10, init = 0 } = req.query;
+  
   const query = { state: true };
 
   const [total, projects] = await Promise.all([
@@ -26,7 +27,9 @@ export const createProject: RequestHandler = async (req, res) => {
   try {
     const { ...body } = req.body;
     const data = {
-    ...body
+    ...body, 
+    //agregamos la request de user para hacer la relacion.
+    company: req.user._id
   };
   const project = new Project(data);
   await project.save();
