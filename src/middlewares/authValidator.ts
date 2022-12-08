@@ -11,7 +11,7 @@ declare global {
     }
   }
 }
-const pathsWithoutAuth: Set<string> = new Set(["/api/auth","/api/students","api/company"]);
+const pathsWithoutAuth: Set<string> = new Set(["/api/auth","/api/student","/api/company"]);
 
 export const verifyToken: RequestHandler = async(req, res, next) => {
   let requestUri: string = req.originalUrl;
