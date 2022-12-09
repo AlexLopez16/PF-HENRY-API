@@ -1,7 +1,7 @@
 Hola, prueba para mi!! NO APROBAR
 
 
-
-*relaciones de compania con proyectos y hacer la ruta de conexion
-*relacionar company con invoices y hacer la ruta
-*relacionar projects con reviews
+Jona: company, pulir rutas y traer toda la info. Traer todas las relaciones de projects.
+Nachito: invoices, pulir rutas y traer toda la info. Traer todas las relaciones de projects.
+Hugo: students
+sil: projects

@@ -1,30 +1,31 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
+import { verifyToken } from '../middlewares/authValidator';
 import { validate } from '../middlewares/validator';
 import {
-  createUserCompany,
-  deleteUserCompany,
-  getUserCompany,
-  getUsersCompany,
-  updateUserCompany,
+    rulesCreateUserCompany,
+    rulesUpdateUserCompany,
+    // rulesDeleteUsersCompany,
+    rulesGetUserCompany,
+} from '../helper/rulesCompany';
+import {
+    createUserCompany,
+    deleteUserCompany,
+    getUserCompany,
+    getUsersCompany,
+    updateUserCompany,
 } from './../controllers/company';
+
 const router = Router();
 
-router.get('/', getUsersCompany);
+// router.get('/', rulesGetUsersCompany, getUsersCompany);
 
-router.get('/:id', getUserCompany);
+// router.get('/:id', rulesGetUserCompany, getUserCompany);
 
-router.post(
-  '/',
-  [
-    check('name', 'Name is Required').not().isEmpty(),
-    check('email', 'Invalid email').isEmail(),
-    validate,
-  ],
-  createUserCompany,
-);
+router.post('/', rulesCreateUserCompany, createUserCompany);
 
-router.put('/:id', updateUserCompany);
-router.delete('/:id', deleteUserCompany);
+router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
+
+// router.delete('/:id', rulesDeleteUsersCompany, deleteUserCompany);
 
 module.exports = router;

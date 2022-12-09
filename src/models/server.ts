@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import { connDB } from '../database/config';
 import { verifyToken } from '../middlewares/authValidator';
+import {cors} from '../middlewares/cors'
 
 const server = express();
 
@@ -10,6 +11,20 @@ server.use(express.json());
 
 //Morgan
 server.use(morgan('dev'));
+//conexion con front
+server.use(cors)
+//validacion del token
+//Validacion de tokens
+// server.use(verifyToken);
+
+/*
+  By Hugo.
+  Nota: los roles se verifican antes de continuar a la ruta con el siguiente middelware.  
+*/
+// import { verifyRol } from '../middlewares/rolValidator';
+// server.use(verifyRol);
+
+
 
 // server.use(verifyToken);
 

@@ -1,6 +1,27 @@
-import { RequestHandler } from 'express';
+import { RequestHandler } from "express";
 // const User = require("../models/alumno");
-const Project = require('../models/project');
+const Project = require("../models/project");
+import { formatError } from "../utils/formatErros";
+
+export const getProjects: RequestHandler = async (req, res) => {
+  try {
+    const { limit = 10, init = 0 } = req.query;
+
+    const query = { state: true };
+
+    const [total, projects] = await Promise.all([
+      Project.countDocuments(query),
+      Project.find(query).skip(init).limit(limit),
+    ]);
+
+    return res.status(200).json({
+      total,
+      projects,
+    });
+  } catch (error: any) {
+    return res.status(500).json(formatError(error.message));
+  }
+};
 
 export const getProject: RequestHandler = async (req, res) => {
   const { limit = 10, init = 0 } = req.query;

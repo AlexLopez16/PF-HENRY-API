@@ -28,24 +28,19 @@ export const getUser: RequestHandler = async (req, res) => {
   });
 };
 
-export const createUser: RequestHandler = async (req, res) => {
-    let { name, lastName, birth, email, password } = req.body;
-    let hashPassword = await hash(password);
-    birth = new Date(birth);
-    const user = new User({
-        name,
-        lastName,
-        email,
-        password: hashPassword,
-    });
-    await user.save();
+// Traemos todos los estudiantes de la db.
+export const getStudents: RequestHandler = async (req, res) => {
+    try {
+        const { limit = 5, init = 0 } = req.query;
+        const query = { state: true };
 
   res.status(201).json({
     user,
   });
 };
 
-export const updateUser: RequestHandler = async (req, res) => {
+// Permitimos actualizar todos los atributos del estudiante.
+export const updateStudent: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const {
         email,
@@ -77,4 +72,4 @@ export const deleteUser: RequestHandler = async (req, res) => {
   );
 
   res.status(200).json(user);
-};
+}}

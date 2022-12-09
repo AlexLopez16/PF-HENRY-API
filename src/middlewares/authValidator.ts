@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 require("dotenv").config();
 
-import { searchUser } from "../helper/searchuser";
+import { searchUser } from "../helper/searchUser";
 
 declare global {
   namespace Express {

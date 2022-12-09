@@ -48,6 +48,12 @@ const CompanySchema = new Schema({
             ref: 'Invoice',
         },
     ],
+    rol: {
+        type: String,
+        required: [true, 'Role is required'],
+        default: 'COMPANY_ROL',
+        emun: ['COMPANY_ROL'],
+    },
 });
 
 CompanySchema.methods.toJSON = function () {

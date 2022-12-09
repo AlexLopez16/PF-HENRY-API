@@ -3,7 +3,6 @@ import { Schema, model } from 'mongoose';
 const InvoiceSchema = new Schema({
   amount: {
     type: String,
-    required: [true, 'amount is requiered']
   },
   date: {
     type: Date,
@@ -13,11 +12,9 @@ const InvoiceSchema = new Schema({
   },
   invoice: {
     type: Number,
-    required: [true, 'invoice is requiered']
   },
   description: {
     type: String,
-    required: [true, 'description is requiered']
   },
   company: {
     type: Schema.Types.ObjectId,

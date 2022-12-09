@@ -1,13 +1,16 @@
-import { validationResult } from "express-validator";
-import { RequestHandler } from "express";
-require("dotenv").config();
+import { validationResult, ValidationError } from 'express-validator';
+import { RequestHandler } from 'express';
+require('dotenv').config();
 
 export const validate: RequestHandler = (req, res, next) => {
-  const errors = validationResult(req);
+    const errorFormatter = ({ msg }: ValidationError) => {
+        return { msg: `${msg}` };
+    };
 
-  if (!errors.isEmpty()) {
-    return res.status(400).json(errors);
-  }
-
-  next();
+    const errors = validationResult(req).formatWith(errorFormatter);
+    if (!errors.isEmpty()) {
+        // Verificar despues: { onlyFirstError: true }
+        return res.status(400).json({ errors: errors.array() });
+    }
+    next();
 };
