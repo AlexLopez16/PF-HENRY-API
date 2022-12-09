@@ -34,7 +34,7 @@ const ProjectSchema = new Schema({
   },
 });
 
-ProjectSchema.index({ name: 1});
+ProjectSchema.index({ name: 'text'});
 
 ProjectSchema.methods.toJSON = function () {
   const { __v, _id, ...project } = this.toObject();
