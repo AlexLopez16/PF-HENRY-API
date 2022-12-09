@@ -5,13 +5,19 @@ import { formatError } from "../utils/formatErros";
 
 export const getProjects: RequestHandler = async (req, res) => {
   try {
-    const { limit = 10, init = 0 } = req.query;
+    const { limit = 10, init = 0, name } = req.query;
+   
 
-    const query = { state: true };
+    let initialQuery = { state: true };
+    if(name){
+      let query={state:true,name}
+    
+       const projectbyName =await Project.find({state:true,$text: { $search: `${name}`}}).skip(init).limit(limit)
+    }
 
     const [total, projects] = await Promise.all([
-      Project.countDocuments(query),
-      Project.find(query).skip(init).limit(limit),
+      Project.countDocuments(initialQuery),
+      Project.find(initialQuery).skip(init).limit(limit),
     ]);
 
     return res.status(200).json({
