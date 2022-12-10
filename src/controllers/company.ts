@@ -1,7 +1,6 @@
 import { RequestHandler } from 'express';
 const User = require('../models/company');
 import { hash } from '../helper/hash';
-import jwt from 'jsonwebtoken';
 
 export const getUsersCompany: RequestHandler = async (req, res) => {
   const { limit = 10, init = 0 } = req.query;
@@ -35,18 +34,10 @@ export const createUserCompany: RequestHandler = async (req, res) => {
   let hashPassword = await hash(password);
   const user = new User({ name, email, country, password: hashPassword });
   await user.save();
-  const token = jwt.sign(
-    {
-      name: user.name,
-      id: user._id,
-    },
-    process.env.TOKEN_SECRET as string,
-    { expiresIn: '2h' },
-  );
 
   res.status(201).json({
     user,
-    token,
+    
   });
 };
 
