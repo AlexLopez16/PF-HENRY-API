@@ -57,9 +57,9 @@ const CompanySchema = new Schema({
 });
 
 CompanySchema.methods.toJSON = function () {
-    const { __v, _id, ...company } = this.toObject();
-    company.uid = _id;
-    return company;
+  const { __v, _id, ...company } = this.toObject();
+  company.uid = _id;
+  return company;
 };
 
 module.exports = model('Company', CompanySchema);
