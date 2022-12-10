@@ -11,7 +11,7 @@ export const getProjects: RequestHandler = async (req, res) => {
       name,
       requirements,
       orderBy,
-      typeOfOrder = 'asc',
+      typeOfOrder = "asc",
     } = req.query;
 
     // validar que el orderBy sea un campo valido
@@ -19,12 +19,12 @@ export const getProjects: RequestHandler = async (req, res) => {
       throw new Error("Orderby is not valid.");
     }
 
-    if(typeOfOrder !== 'asc' && typeOfOrder !== 'desc'){
+    if (typeOfOrder !== "asc" && typeOfOrder !== "desc") {
       throw new Error("typeOfOrder is not valid.");
     }
 
     let initialQuery: any = { state: true };
-   
+
     if (name) {
       initialQuery.name = { $regex: name, $options: "i" };
     }
@@ -32,14 +32,17 @@ export const getProjects: RequestHandler = async (req, res) => {
       initialQuery.requirements = { $regex: requirements, $options: "i" };
     }
 
-    let sort:any = {};
-    if (orderBy){
-      sort[orderBy]=typeOfOrder;
+    let sort: any = {};
+    if (orderBy) {
+      sort[orderBy] = typeOfOrder;
     }
-        
+
     const [total, projects] = await Promise.all([
       Project.countDocuments(initialQuery),
-      Project.find(initialQuery).sort(sort).skip(init).limit(limit),
+      Project.find(initialQuery).sort(sort).skip(init).limit(limit).populate({
+        path: "company",
+        select: "name",
+      }),
     ]);
     return res.status(200).json({
       total,
@@ -97,10 +100,15 @@ export const getProject: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const query = { state: true, _id: id };
 
-    const projects = await Project.find(query).populate({
-      path: "students",
-      select: "-password",
-    });
+    const projects = await Project.find(query)
+      .populate({
+        path: "students",
+        select: "-password",
+      })
+      .populate({
+        path: "company",
+        select: "-password",
+      });
     if (!projects.length) throw new Error("project no found");
     let project = projects[0];
     return res.status(200).json(project);
