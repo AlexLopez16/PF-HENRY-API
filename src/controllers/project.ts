@@ -5,21 +5,42 @@ import { formatError } from "../utils/formatErros";
 
 export const getProjects: RequestHandler = async (req, res) => {
   try {
-    const { limit = 10, init = 0, name } = req.query;
-   
+    const {
+      limit = 10,
+      init = 0,
+      name,
+      requirements,
+      orderBy,
+      typeOfOrder = 'asc',
+    } = req.query;
 
-    let initialQuery = { state: true };
-    if(name){
-      let query={state:true,name}
-    
-       const projectbyName =await Project.find({state:true,$text: { $search: `${name}`}}).skip(init).limit(limit)
+    // validar que el orderBy sea un campo valido
+    if (orderBy && orderBy !== "participants") {
+      throw new Error("Orderby is not valid.");
     }
 
+    if(typeOfOrder !== 'asc' && typeOfOrder !== 'desc'){
+      throw new Error("typeOfOrder is not valid.");
+    }
+
+    let initialQuery: any = { state: true };
+   
+    if (name) {
+      initialQuery.name = { $regex: name, $options: "i" };
+    }
+    if (requirements) {
+      initialQuery.requirements = { $regex: requirements, $options: "i" };
+    }
+
+    let sort:any = {};
+    if (orderBy){
+      sort[orderBy]=typeOfOrder;
+    }
+        
     const [total, projects] = await Promise.all([
       Project.countDocuments(initialQuery),
-      Project.find(initialQuery).skip(init).limit(limit),
+      Project.find(initialQuery).sort(sort).skip(init).limit(limit),
     ]);
-
     return res.status(200).json({
       total,
       projects,
