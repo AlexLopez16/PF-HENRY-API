@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-import { Router } from 'express';
-// import { check } from "express-validator";
-// import { validate } from "../middlewares/validator";
-import { addStudentToProject, createProject, getProject } from '../controllers/project';
-const router = Router();
-
-router.get('/', getProject);
-router.post('/', createProject);
-router.put('/', addStudentToProject);
-=======
 import { Router } from "express";
 import { check } from "express-validator";
 import { validate } from "../middlewares/validator";
@@ -35,6 +24,5 @@ router.post(
 );
 router.put("/:id",addStudentToProject);
 router.delete("/:id", deleteProject);
->>>>>>> desarrollo
 
 module.exports = router;

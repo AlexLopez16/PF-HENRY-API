@@ -15,7 +15,7 @@ server.use(morgan('dev'));
 server.use(cors)
 //validacion del token
 //Validacion de tokens
-// server.use(verifyToken);
+server.use(verifyToken);
 
 /*
   By Hugo.

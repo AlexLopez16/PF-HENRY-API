@@ -30,10 +30,10 @@ export const getUserCompany: RequestHandler = async (req, res) => {
 };
 
 export const createUserCompany: RequestHandler = async (req, res) => {
-  const { name, email, country, password } = req.body;
-  let hashPassword = await hash(password);
-  const user = new User({ name, email, country, password: hashPassword });
-  await user.save();
+    const { name, email, country, password } = req.body;
+    let hashPassword = await hash(password);
+    const user = new User({ name, email, country, password: hashPassword });
+    await user.save();
 
     res.status(201).json({
         user,
@@ -41,12 +41,14 @@ export const createUserCompany: RequestHandler = async (req, res) => {
 };
 
 export const updateUserCompany: RequestHandler = async (req, res) => {
-  const { id } = req.params;
-  const { email, country, premium, password, ...user } = req.body;
-  let hashPassword = await hash(password);
-  if (password) {
-    user.password = hashPassword;
-  }
+    const { id } = req.params;
+    const { email, country, premium, password, ...user } = req.body;
+    let hashPassword = await hash(password);
+    if (password) {
+        user.password = hashPassword;
+    }
+
+    const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
 
     res.status(200).json(userUpdated);
 };

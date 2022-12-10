@@ -65,7 +65,8 @@ export const loginUser: RequestHandler = async (req, res) => {
       process.env.TOKEN_SECRET as string,
       { expiresIn: "2h" }
     );
-    return res.json({ data: "Sucessful login", token });
+    return res.json({ data: "Sucessful login", token, user });
+    // debe devolver el rol del usuario
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({ error: error.message });
