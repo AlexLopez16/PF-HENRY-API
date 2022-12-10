@@ -3,8 +3,6 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { searchUser } from '../helper/searchUser';
 require('dotenv').config();
 
-
-
 // Este declare nos permite crear nuestras porpias requests.
 
 declare global {
