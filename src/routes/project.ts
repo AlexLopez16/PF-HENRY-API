@@ -12,7 +12,7 @@ import {
 import { rulesCreateProject,rulesGetProjects } from "../helper/rulesProjects";
 const router = Router();
 
-router.get("/",rulesGetProjects,getProjects);
+router.get("/",getProjects);
 router.get("/:id", getProject);
 router.post("/", rulesCreateProject, createProject);
 router.put("/:id", addStudentToProject);
