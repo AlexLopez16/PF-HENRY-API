@@ -7,7 +7,7 @@ import { companyRole } from '../middlewares/rolCompanyValidator';
 export const rulesCreateUserCompany = [
   check('name', 'Name is required').not().isEmpty(),
   check('country', 'Country ir required').not().isEmpty(),
-  check('email').custom(validateCompanyRol),
+  // check('email').custom(validateCompanyRol),
   check('email', 'Email is required').not().isEmpty(),
   validate,
 ];

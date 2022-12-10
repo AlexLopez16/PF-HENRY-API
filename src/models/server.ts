@@ -26,6 +26,8 @@ server.use(verifyToken);
 
 
 
+// server.use(verifyToken);
+
 //Routes Paths
 const paths = {
     student: '/api/student',

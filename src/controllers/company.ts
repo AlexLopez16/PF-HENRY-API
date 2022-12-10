@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 const User = require('../models/company');
 import { hash } from '../helper/hash';
+import { jwtGenerator } from '../helper/jwt';
 
 export const getUsersCompany: RequestHandler = async (req, res) => {
   const { limit = 10, init = 0 } = req.query;
@@ -32,11 +33,14 @@ export const getUserCompany: RequestHandler = async (req, res) => {
 export const createUserCompany: RequestHandler = async (req, res) => {
   const { name, email, country, password } = req.body;
   let hashPassword = await hash(password);
-  const user = new User({ name, email, country, password: hashPassword });
-  await user.save();
-
+  let user = new User({ name, email, country, password: hashPassword });
+  user = await user.save();
+  const rol = user.rol;
+  const token = jwtGenerator(user._id, user.name);
   res.status(201).json({
-    user,
+    data: 'Successfull Sing up',
+    token,
+    rol,
   });
 };
 
