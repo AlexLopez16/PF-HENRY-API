@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 const ProjectSchema = new Schema({
   name: {
     type: String,
-    required: [true, 'Name is requiered'],
+    required: [true, 'Name is required'],
   },
   description: {
     type: String,
@@ -33,6 +33,8 @@ const ProjectSchema = new Schema({
     ref: 'Company',
   },
 });
+
+ProjectSchema.index({ name: 'text'});
 
 ProjectSchema.methods.toJSON = function () {
   const { __v, _id, ...project } = this.toObject();

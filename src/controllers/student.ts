@@ -2,7 +2,8 @@ import { RequestHandler } from 'express';
 const User = require('../models/student');
 import { hash } from '../helper/hash';
 import { formatError } from '../utils/formatErros';
-
+import { jwtGenerator } from '../helper/jwt';
+require('dotenv').config();
 // Creamos el estudiante de la db y hasheamos el password.
 export const createStudent: RequestHandler = async (req, res) => {
     try {
@@ -14,10 +15,22 @@ export const createStudent: RequestHandler = async (req, res) => {
             email,
             password: hashPassword,
         });
-        await user.save();
-        res.status(201).json({
-            user,
-        });
+        const dbResponse = await user.save();
+        console.log(dbResponse);
+        // Una vez creado el user, devolvemos el token.
+        // const token = jwt.sign(
+        //     {
+        //         name: user.name,
+        //         id: dbResponse._id,
+        //     },
+        //     process.env.TOKEN_SECRET as string,
+        //     {
+        //         expiresIn: '24h',
+        //     }
+        // );
+        let rol = user.rol;
+        const token = jwtGenerator(user._id, user.name);
+        res.status(201).json({ data: 'Sucessful singup', token, rol });
     } catch (error) {
         res.status(500).json(formatError('Internal Server Error'));
     }
