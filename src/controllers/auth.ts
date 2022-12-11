@@ -85,8 +85,9 @@ export const loginUser: RequestHandler = async (req, res) => {
       }
     }
     let rol = user.rol;
+    let verify=user.verify
     const token = jwtGenerator(user._id, user.name);
-    return res.status(200).json({ data: "Sucessful login", token, rol });
+    return res.status(200).json({ data: "Sucessful login", token, rol,verify });
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({ error: error.message });
