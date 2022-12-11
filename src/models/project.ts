@@ -13,6 +13,9 @@ const ProjectSchema = new Schema({
     type: Number,
     required: [true, 'Number of employees is required'],
   },
+  image:{
+    type:String
+  },
   requirements: {
     type: Array,
     required: [true, 'Language is required'],
