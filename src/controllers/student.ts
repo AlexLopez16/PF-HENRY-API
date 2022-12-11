@@ -39,6 +39,7 @@ export const getStudent: RequestHandler = async (req, res) => {
             tecnologies,
             project,
             company,
+            country,
         } = await Student.findById(id)
             .populate({
                 path: 'project',
@@ -58,6 +59,7 @@ export const getStudent: RequestHandler = async (req, res) => {
             id: _id,
             name,
             lastName,
+            country,
             image,
             description,
             email,

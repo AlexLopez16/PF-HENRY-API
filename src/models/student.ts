@@ -17,6 +17,9 @@ const StudentSchema = new Schema({
         required: [true, 'Email is required'],
         unique: true,
     },
+    country: {
+        type: String,
+    },
     password: {
         type: String,
         required: [true, 'Password is required'],
