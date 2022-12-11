@@ -17,9 +17,18 @@ const StudentSchema = new Schema({
         required: [true, 'Email is required'],
         unique: true,
     },
+    country: {
+        type: String,
+    },
     password: {
         type: String,
         required: [true, 'Password is required'],
+    },
+    image: {
+        type: String,
+    },
+    description: {
+        type: String,
     },
     state: {
         type: Boolean,
@@ -33,11 +42,18 @@ const StudentSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    tecnologies: {
+        type: Array,
+    },
     rol: {
         type: String,
         required: [true, 'Role is required'],
         default: 'STUDENT_ROL',
         emun: ['STUDENT_ROL'],
+    },
+    project: {
+        type: Schema.Types.ObjectId,
+        ref: 'Project',
     },
 });
 

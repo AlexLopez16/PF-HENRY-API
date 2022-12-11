@@ -2,7 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import { connDB } from '../database/config';
 import { verifyToken } from '../middlewares/authValidator';
-import {cors} from '../middlewares/cors'
+import { cors } from '../middlewares/cors';
 
 const server = express();
 
@@ -12,7 +12,7 @@ server.use(express.json());
 //Morgan
 server.use(morgan('dev'));
 //conexion con front
-server.use(cors)
+server.use(cors);
 //validacion del token
 //Validacion de tokens
 server.use(verifyToken);
@@ -24,7 +24,7 @@ server.use(verifyToken);
 // import { verifyRol } from '../middlewares/rolValidator';
 // server.use(verifyRol);
 
-
+server.use(verifyToken);
 
 //Routes Paths
 const paths = {

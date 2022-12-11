@@ -7,6 +7,7 @@ require("dotenv").config();
 const { OAuth2Client } = require("google-auth-library");
 import axios from "axios";
 import querystring from "querystring";
+import { jwtGenerator } from "../helper/jwt";
 
 export const loginUser: RequestHandler = async (req, res) => {
   try {
@@ -56,16 +57,17 @@ export const loginUser: RequestHandler = async (req, res) => {
           .status(400)
           .json({ error: "The user or password is incorrect." });
     }
-
-    const token = jwt.sign(
-      {
-        name: user.name,
-        id: user._id,
-      },
-      process.env.TOKEN_SECRET as string,
-      { expiresIn: "2h" }
-    );
-    return res.json({ data: "Sucessful login", token });
+    let rol = user.rol;
+    const token = jwtGenerator(user._id, user.name);
+    // const token = jwt.sign(
+    //   {
+    //     name: user.name,
+    //     id: user._id,
+    //   },
+    //   process.env.TOKEN_SECRET as string,
+    //   { expiresIn: "2h" }
+    // );
+    return res.status(200).json({ data: "Sucessful login", token, rol });
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({ error: error.message });
@@ -75,14 +77,18 @@ export const loginUser: RequestHandler = async (req, res) => {
 export const github: RequestHandler = async (req, res) => {
   try {
     const { code } = req.query;
-    console.log("code", code)
+    console.log("code", code);
     if (!code) throw new Error("No code");
     const gitHubUser = await getGitHubUser(code);
-    console.log("gitHubUser", gitHubUser)
-    const token = jwt.sign({ id: gitHubUser.id }, process.env.TOKEN_SECRET as string, {
-      expiresIn: "500s"
-    });
-    console.log("token", token)
+    console.log("gitHubUser", gitHubUser);
+    const token = jwt.sign(
+      { id: gitHubUser.id },
+      process.env.TOKEN_SECRET as string,
+      {
+        expiresIn: "500s",
+      }
+    );
+    console.log("token", token);
     return res.json({ data: "Sucessful login", token });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
@@ -91,14 +97,13 @@ export const github: RequestHandler = async (req, res) => {
 
 const getGitHubUser = async (code: any) => {
   try {
-
     const github = await axios.post(
       `https://github.com/login/oauth/access_token?client_id=${process.env.CLIENT_IDG}&client_secret=${process.env.SECRET}&code=${code}`
     );
     const githubToken = github.data;
     const decode = querystring.parse(githubToken);
-    console.log("githubToken", githubToken)
-    console.log("decode", decode)
+    console.log("githubToken", githubToken);
+    console.log("decode", decode);
     const accessToken = decode.access_token;
     return axios
       .get("https://api.github.com/user", {

@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 const CompanySchema = new Schema({
     name: {
         type: String,
-        require: [true, 'Name is requiered'],
+        required: [true, 'Name is requiered'],
     },
     country: {
         type: String,
@@ -33,7 +33,9 @@ const CompanySchema = new Schema({
         type: Boolean,
         default: false,
     },
-
+    image: {
+        type: String,
+    },
     project: [
         {
             type: Schema.Types.ObjectId,
@@ -55,9 +57,9 @@ const CompanySchema = new Schema({
 });
 
 CompanySchema.methods.toJSON = function () {
-    const { __v, _id, ...company } = this.toObject();
-    company.uid = _id;
-    return company;
+  const { __v, _id, ...company } = this.toObject();
+  company.uid = _id;
+  return company;
 };
 
 module.exports = model('Company', CompanySchema);
