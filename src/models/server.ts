@@ -15,7 +15,7 @@ server.use(morgan('dev'));
 server.use(cors)
 //validacion del token
 //Validacion de tokens
-// server.use(verifyToken);
+server.use(verifyToken);
 
 /*
   By Hugo.
@@ -30,7 +30,7 @@ server.use(cors)
 const paths = {
     student: '/api/student',
     company: '/api/company',
-    auth: '/api/auth',
+    auth:    '/api/auth',
     project: '/api/project',
     invoice: '/api/invoice',
 };
@@ -38,7 +38,7 @@ const paths = {
 //Routes
 server.use(paths.student, require('../routes/student'));
 server.use(paths.company, require('../routes/company'));
-server.use(paths.auth, require('../routes/auth'));
+server.use(paths.auth,    require('../routes/auth'));
 server.use(paths.invoice, require('../routes/invoice'));
 server.use(paths.project, require('../routes/project'));
 //DB Connection

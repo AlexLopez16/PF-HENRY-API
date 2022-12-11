@@ -79,7 +79,7 @@ export const github: RequestHandler = async (req, res) => {
     if (!code) throw new Error("No code");
     const gitHubUser = await getGitHubUser(code);
     console.log("gitHubUser", gitHubUser)
-    const token = jwt.sign({id:gitHubUser.id}, process.env.TOKEN_SECRET as string, {
+    const token = jwt.sign({ id: gitHubUser.id }, process.env.TOKEN_SECRET as string, {
       expiresIn: "500s"
     });
     console.log("token", token)
@@ -91,7 +91,7 @@ export const github: RequestHandler = async (req, res) => {
 
 const getGitHubUser = async (code: any) => {
   try {
-   
+
     const github = await axios.post(
       `https://github.com/login/oauth/access_token?client_id=${process.env.CLIENT_IDG}&client_secret=${process.env.SECRET}&code=${code}`
     );
