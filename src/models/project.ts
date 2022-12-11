@@ -37,12 +37,12 @@ const ProjectSchema = new Schema({
   },
 });
 
-ProjectSchema.index({ name: 'text'});
+ProjectSchema.index({ name: 'text' });
 
 ProjectSchema.methods.toJSON = function () {
-  const { __v, _id, ...project } = this.toObject();
-  project.uid = _id;
-  return project;
+    const { __v, _id, ...project } = this.toObject();
+    project.uid = _id;
+    return project;
 };
 
 module.exports = model('Project', ProjectSchema);
