@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 // const User = require("../models/alumno");
 const Project = require("../models/project");
 import { formatError } from "../utils/formatErros";
-const Student=require('../models/student')
+const Student = require("../models/student");
 
 export const getProjects: RequestHandler = async (req, res) => {
   try {
@@ -10,10 +10,10 @@ export const getProjects: RequestHandler = async (req, res) => {
       limit = 10,
       init = 0,
       name,
-      requirements,
+      tecnologies,
       orderBy,
       typeOfOrder = "asc",
-    } = req.query;
+    }: any = req.query;
 
     // validar que el orderBy sea un campo valido
     if (orderBy && orderBy !== "participants") {
@@ -29,8 +29,9 @@ export const getProjects: RequestHandler = async (req, res) => {
     if (name) {
       initialQuery.name = { $regex: name, $options: "i" };
     }
-    if (requirements) {
-      initialQuery.requirements = { $regex: requirements, $options: "i" };
+    if (tecnologies) {
+      const requirements: any = tecnologies.split(",");
+      initialQuery.requirements = { $all: requirements };
     }
 
     let sort: any = {};
@@ -83,8 +84,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
       project.students = [...project.students, userId];
 
       await project.save();
-      await Student.findByIdAndUpdate(userId,{project:id}) 
-      
+      await Student.findByIdAndUpdate(userId, { project: id });
 
       const infoProject = await project.populate({
         path: "students",
@@ -138,16 +138,17 @@ export const deleteProject: RequestHandler = async (req, res) => {
 export const editProject: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const query = { state: true, _id: id,company:req.user._id };
+    const query = { state: true, _id: id, company: req.user._id };
     const { ...body } = req.body;
     const editUpdate = await Project.findByIdAndUpdate(
-      query,{...body},
-      {new:true}
+      query,
+      { ...body },
+      { new: true }
     ).populate({
       path: "company",
       select: "-password",
-    })
-      
+    });
+
     if (!editUpdate) throw new Error("project no found");
     return res.status(200).send(editUpdate);
   } catch (error: any) {

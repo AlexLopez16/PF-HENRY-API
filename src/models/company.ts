@@ -3,20 +3,18 @@ import { Schema, model } from 'mongoose';
 const CompanySchema = new Schema({
     name: {
         type: String,
-        required: [true, 'Name is requiered'],
+        required: [true, 'Name is required'],
     },
     country: {
-        type: String,
-        required: [true, 'Country is requiered'],
+        type: String
     },
     email: {
         type: String,
-        required: [true, 'Email is required'],
         unique: true,
+        required: [true, 'Email is required'],
     },
     password: {
-        type: String,
-        required: [true, 'Password is required'],
+        type: String
     },
     website: {
         type: String,
