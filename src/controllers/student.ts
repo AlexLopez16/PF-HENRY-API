@@ -29,9 +29,10 @@ export const createStudent: RequestHandler = async (req, res) => {
 export const getStudent: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, _id, email } = await Student.findById(id).populate({
-            path: 'projects',
-        });
+        const { name, _id, email, tecnologies } = await Student.findById(id);
+        // .populate({
+        //     path: 'projects',
+        // });
         /*
             const projects = await Project.find(query).populate({
             path: "students",
@@ -43,6 +44,7 @@ export const getStudent: RequestHandler = async (req, res) => {
             id: _id,
             name,
             email,
+            tecnologies,
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
