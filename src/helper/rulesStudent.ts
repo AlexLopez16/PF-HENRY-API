@@ -29,7 +29,26 @@ export const rulesGetStudent = [
     NOTA: esto debe verificar el estudiante.
      */
     // validateExistStudent,
-    check('rol').custom(validateStudentRol),
-    validate,
+    // check('rol').custom(validateStudentRol),
+    // validate,
     studentRole,
 ];
+
+export const rulesFilterStudentByName = [verifyToken];
+
+export const rulesFilterTecnologies = [verifyToken];
+
+export const rulesUpdateStudent = [
+    verifyToken,
+    check('name', 'Name is required').not().isEmpty(),
+    check('name', 'The name is invalid')
+        .escape()
+        .matches(/^[A-Za-z ]+$/),
+    check('lastName', 'Last name is required').not().isEmpty(),
+    check('lastName', 'The last name is invalid')
+        .escape()
+        .matches(/^[A-Za-z ]+$/),
+    validate,
+];
+
+export const rulesDeleteStudent = [verifyToken];

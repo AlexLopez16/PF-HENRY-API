@@ -33,6 +33,9 @@ const StudentSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    tecnologies: {
+        type: Array,
+    },
     rol: {
         type: String,
         required: [true, 'Role is required'],
