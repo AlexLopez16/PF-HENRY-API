@@ -11,7 +11,7 @@ check("participants", "Participants is required").not().isEmpty(),
 check("requirements", "Requirements is required").not().isEmpty(),validate,]
 
 export const rulesGetProjects = [
-    check('rol').custom(validateStudentRol),
-    validate,
-    studentRole
+    // check('rol').custom(validateStudentRol),
+    // validate,
+    // studentRole
   ];

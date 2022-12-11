@@ -24,6 +24,8 @@ server.use(verifyToken);
 // import { verifyRol } from '../middlewares/rolValidator';
 // server.use(verifyRol);
 
+server.use(verifyToken);
+
 //Routes Paths
 const paths = {
     student: '/api/student',

@@ -17,7 +17,8 @@ const pathsWithoutAuth = new Map<string, Set<string>>();
 pathsWithoutAuth.set('/api/auth', new Set(['POST', 'GET', 'OPTIONS']));
 pathsWithoutAuth.set('/api/student', new Set(['POST', 'OPTIONS']));
 pathsWithoutAuth.set('/api/company', new Set(['POST', 'OPTIONS']));
-pathsWithoutAuth.set('/api/company', new Set(['POST', 'OPTIONS']));
+pathsWithoutAuth.set('/api/project', new Set(['OPTIONS']));
+pathsWithoutAuth.set('/api/invoice', new Set(['OPTIONS']));
 
 export const verifyToken: RequestHandler = async (req, res, next) => {
     let requestUri: string = req.originalUrl;
