@@ -29,22 +29,43 @@ export const createStudent: RequestHandler = async (req, res) => {
 export const getStudent: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, _id, email, tecnologies } = await Student.findById(id);
-        // .populate({
-        //     path: 'projects',
-        // });
-        /*
-            const projects = await Project.find(query).populate({
-            path: "students",
-            select: "-password",
+        const {
+            name,
+            lastName,
+            _id,
+            email,
+            image,
+            description,
+            tecnologies,
+            project,
+            company,
+            country,
+        } = await Student.findById(id)
+            .populate({
+                path: 'project',
+                populate: {
+                    path: 'students',
+                    select: 'name lastName',
+                },
+            })
+            .populate({
+                path: 'project',
+                populate: {
+                    path: 'company',
+                    select: 'name',
+                },
             });
-        */
-
         res.status(200).json({
             id: _id,
             name,
+            lastName,
+            country,
+            image,
+            description,
             email,
             tecnologies,
+            project,
+            company,
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
@@ -54,21 +75,59 @@ export const getStudent: RequestHandler = async (req, res) => {
 // Traemos todos los estudiantes de la db.
 export const getStudents: RequestHandler = async (req, res) => {
     try {
-        const { limit = 5, init = 0 } = req.query;
-        const query = { state: true };
+        const { limit = 10, init = 0, name, tecnologies } = req.query;
 
-        const [total, users] = await Promise.all([
+        // Estado inicial de nuestro query.
+        let query: any = { state: true };
+
+        // Agegramos si quiere filtrar por nombre.
+        if (name) query.name = { $regex: name, $options: 'i' };
+
+        // Agregamos si quiere filtrar por tecnologias.
+        if (tecnologies) {
+            let tecnologiesList: any = tecnologies;
+            tecnologiesList = tecnologiesList.split(',');
+            query.tecnologies = { $all: tecnologiesList };
+        }
+
+        // Ignora estos campos al momento de generarnos una respuesta, es decir, no nos muestra esa info.
+
+        const ignore: any = {
+            password: false,
+            state: false,
+            gmail: false,
+            github: false,
+            rol: false,
+        };
+
+        const [total, students] = await Promise.all([
             Student.countDocuments(query),
-            Student.find(query).skip(init).limit(limit),
+            Student.find(query, ignore).skip(init).limit(limit).populate({
+                path: 'project',
+                select: 'name',
+            }),
         ]);
-
-        res.status(200).json({
-            total,
-            users,
-        });
+        res.status(200).json({ total: total, students });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
     }
+
+    // try {
+    //     const { limit = 5, init = 0 } = req.query;
+    //     const query = { state: true };
+
+    //     const [total, users] = await Promise.all([
+    //         Student.countDocuments(query),
+    //         Student.find(query).skip(init).limit(limit),
+    //     ]);
+
+    //     res.status(200).json({
+    //         total,
+    //         users,
+    //     });
+    // } catch (error: any) {
+    //     res.status(500).json(formatError(error.message));
+    // }
 };
 
 // Permitimos actualizar todos los atributos del estudiante.
