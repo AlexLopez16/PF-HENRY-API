@@ -29,26 +29,37 @@ export const createStudent: RequestHandler = async (req, res) => {
 export const getStudent: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, lastName, _id, email, tecnologies, project, company } =
-            await Student.findById(id)
-                .populate({
-                    path: 'project',
-                    populate: {
-                        path: 'students',
-                        select: 'name lastName',
-                    },
-                })
-                .populate({
-                    path: 'project',
-                    populate: {
-                        path: 'company',
-                        select: 'name',
-                    },
-                });
+        const {
+            name,
+            lastName,
+            _id,
+            email,
+            image,
+            description,
+            tecnologies,
+            project,
+            company,
+        } = await Student.findById(id)
+            .populate({
+                path: 'project',
+                populate: {
+                    path: 'students',
+                    select: 'name lastName',
+                },
+            })
+            .populate({
+                path: 'project',
+                populate: {
+                    path: 'company',
+                    select: 'name',
+                },
+            });
         res.status(200).json({
             id: _id,
             name,
             lastName,
+            image,
+            description,
             email,
             tecnologies,
             project,

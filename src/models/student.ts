@@ -24,6 +24,9 @@ const StudentSchema = new Schema({
     image: {
         type: String,
     },
+    description: {
+        type: String,
+    },
     state: {
         type: Boolean,
         default: true,
