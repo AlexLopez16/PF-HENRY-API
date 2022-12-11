@@ -1,7 +1,6 @@
 import { RequestHandler } from "express";
 const Student = require("../models/student");
 const Company = require("../models/company");
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 require("dotenv").config();
 const { OAuth2Client } = require("google-auth-library");
@@ -9,17 +8,57 @@ import axios from "axios";
 import querystring from "querystring";
 import { jwtGenerator } from "../helper/jwt";
 
+const authenticateWithGoogle = async (userType: string, token: string) => {
+  let payload: any;
+  let email;
+  let user;
+  const client = new OAuth2Client(process.env.CLIENT_ID);
+  async function verify() {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.CLIENT_ID,
+    });
+    payload = ticket.getPayload();
+    email = payload.email;
+  }
+  await verify();
+  user = await Student.findOne({ email: email, gmail: true });
+  if (!user) {
+    user = await Company.findOne({ email: email, gmail: true });
+  }
+  if (!user) {
+    if (userType === "student") {
+      user = await new Student({
+        name: payload.given_name,
+        lastName: payload.family_name,
+        email: payload.email,
+        image: payload.picture,
+        gmail: true,
+      });
+    } else if (userType === "company") {
+      user = await new Company({
+        name: payload.name,
+        email: payload.email,
+        image: payload.picture,
+        gmail: true,
+      });
+    } else {
+      throw new Error("userType is invalid.");
+    }
+    await user.save();
+  }
+  return user;
+};
+
 export const loginUser: RequestHandler = async (req, res) => {
   try {
-    const { email, password, from, tok } = req.body;
-
+    const { email, password, from, tok, userType } = req.body;
     let user;
     let validPassword;
     if (email && password) {
       user = await Student.findOne({ email });
       if (!user) {
         user = await Company.findOne({ email });
-        console.log(user);
         if (user) {
           validPassword = await bcrypt.compare(password, user.password);
         } else {
@@ -36,37 +75,17 @@ export const loginUser: RequestHandler = async (req, res) => {
           .json({ error: "The user or password is incorrect." });
       }
     } else {
-      let emai;
       if (from && from === "gmail") {
-        const client = new OAuth2Client(process.env.CLIENT_ID);
-        async function verify() {
-          const ticket = await client.verifyIdToken({
-            idToken: tok,
-            audience: process.env.CLIENT_ID,
-          });
-          const payload = ticket.getPayload();
-          emai = payload.email;
-        }
-        await verify();
+        user = await authenticateWithGoogle(userType, tok);
       }
-
-      user = await Student.findOne({ email: emai });
-      console.log(emai);
-      if (!user)
+      if (!user) {
         return res
           .status(400)
           .json({ error: "The user or password is incorrect." });
+      }
     }
     let rol = user.rol;
     const token = jwtGenerator(user._id, user.name);
-    // const token = jwt.sign(
-    //   {
-    //     name: user.name,
-    //     id: user._id,
-    //   },
-    //   process.env.TOKEN_SECRET as string,
-    //   { expiresIn: "2h" }
-    // );
     return res.status(200).json({ data: "Sucessful login", token, rol });
   } catch (error: any) {
     console.log(error);
@@ -77,19 +96,26 @@ export const loginUser: RequestHandler = async (req, res) => {
 export const github: RequestHandler = async (req, res) => {
   try {
     const { code } = req.query;
-    console.log("code", code);
     if (!code) throw new Error("No code");
     const gitHubUser = await getGitHubUser(code);
-    console.log("gitHubUser", gitHubUser);
-    const token = jwt.sign(
-      { id: gitHubUser.id },
-      process.env.TOKEN_SECRET as string,
-      {
-        expiresIn: "500s",
-      }
-    );
-    console.log("token", token);
-    return res.json({ data: "Sucessful login", token });
+    let user = await Student.findOne({
+      username: gitHubUser.login,
+      github: true,
+    });
+    if (!user) {
+      user = await new Student({
+        name: gitHubUser.name,
+        username: gitHubUser.login,
+        email: gitHubUser.email,
+        image: gitHubUser.avatar_url,
+        github: true,
+      });
+      await user.save();
+    }
+    const token = jwtGenerator(user._id, user.name);
+    return res
+      .status(200)
+      .json({ data: "Sucessful login", token, rol: user.rol });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
@@ -102,8 +128,6 @@ const getGitHubUser = async (code: any) => {
     );
     const githubToken = github.data;
     const decode = querystring.parse(githubToken);
-    console.log("githubToken", githubToken);
-    console.log("decode", decode);
     const accessToken = decode.access_token;
     return axios
       .get("https://api.github.com/user", {
@@ -111,7 +135,6 @@ const getGitHubUser = async (code: any) => {
       })
       .then((res) => res.data)
       .catch((error) => {
-        console.error(`Error getting user from GitHub`);
         throw error;
       });
   } catch (error) {
