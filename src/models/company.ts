@@ -18,24 +18,7 @@ const CompanySchema = new Schema({
         type: String,
         required: [true, 'Password is required'],
     },
-    website: {
-        type: String,
-    },
-    state: {
-        type: Boolean,
-        default: true,
-    },
-    gmail: {
-        type: Boolean,
-        default: false,
-    },
-    premium: {
-        type: Boolean,
-        default: false,
-    },
-    image: {
-        type: String,
-    },
+
     project: [
         {
             type: Schema.Types.ObjectId,
