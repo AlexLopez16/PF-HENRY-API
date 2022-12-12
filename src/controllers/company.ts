@@ -73,19 +73,19 @@ export const updateUserCompany: RequestHandler = async (req, res) => {
   }
 };
 
-  // DELETE
-  export const deleteUserCompany: RequestHandler = async (req, res) => {
-    try {
-      const { id } = req.params;
+// DELETE
+export const deleteUserCompany: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-      const user = await User.findByIdAndUpdate(
-        id,
-        { state: false },
-        { new: true },
-      );
+    const user = await User.findByIdAndUpdate(
+      id,
+      { state: false },
+      { new: true },
+    );
 
-      res.status(200).json(user);
-    } catch (error: any) {
-      res.status(400).send(formatError(error.message));
-    }
-  };
+    res.status(200).json(user);
+  } catch (error: any) {
+    res.status(400).send(formatError(error.message));
+  }
+};
