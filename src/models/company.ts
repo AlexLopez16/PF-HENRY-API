@@ -1,40 +1,58 @@
 import { Schema, model } from 'mongoose';
 
 const CompanySchema = new Schema({
-    name: {
-        type: String,
-        required: [true, 'Name is required'],
-    },
-    country: {
-        type: String
-    },
-    email: {
-        type: String,
-        unique: true,
-        required: [true, 'Email is required'],
-    },
-    password: {
-        type: String
-    },
+  name: {
+    type: String,
+    required: [true, 'Name is required'],
+  },
+  country: {
+    type: String,
+  },
+  email: {
+    type: String,
+    unique: true,
+    required: [true, 'Email is required'],
+  },
+  password: {
+    type: String,
+  },
+  website: {
+    type: String,
+  },
+  state: {
+    type: Boolean,
+    default: true,
+  },
+  gmail: {
+    type: Boolean,
+    default: false,
+  },
+  premium: {
+    type: Boolean,
+    default: false,
+  },
+  image: {
+    type: String,
+  },
 
-    project: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Project',
-        },
-    ],
-    Invoice: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Invoice',
-        },
-    ],
-    rol: {
-        type: String,
-        required: [true, 'Role is required'],
-        default: 'COMPANY_ROL',
-        emun: ['COMPANY_ROL'],
+  project: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Project',
     },
+  ],
+  Invoice: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Invoice',
+    },
+  ],
+  rol: {
+    type: String,
+    required: [true, 'Role is required'],
+    default: 'COMPANY_ROL',
+    emun: ['COMPANY_ROL'],
+  },
 });
 
 CompanySchema.methods.toJSON = function () {
