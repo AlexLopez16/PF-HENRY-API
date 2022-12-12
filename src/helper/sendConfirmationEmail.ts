@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 import jwt from 'jsonwebtoken';
+import { confirmEmail } from '../controllers/email';
 require('dotenv').config();
 const {
     HOST_EMAIL,
@@ -41,3 +42,4 @@ export const sendConfirmationEmail = async (user: any) => {
         html: `<p>Confirm your email: <a href="${urlConfirm}">Confirm</a></p>`, // html body
     });
 };
+
