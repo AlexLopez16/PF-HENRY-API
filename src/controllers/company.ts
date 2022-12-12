@@ -3,6 +3,7 @@ const User = require('../models/company');
 import { hash } from '../helper/hash';
 import { jwtGenerator } from '../helper/jwt';
 import { formatError } from '../utils/formatErros';
+import { sendConfirmationEmail } from '../helper/sendConfirmationEmail';
 
 // CREATE
 export const createUserCompany: RequestHandler = async (req, res) => {
@@ -10,13 +11,18 @@ export const createUserCompany: RequestHandler = async (req, res) => {
     const { name, email, country, password } = req.body;
     let hashPassword = await hash(password);
     let user = new User({ name, email, country, password: hashPassword });
+    let verify = user.verify;
+    let id = user._id;
     user = await user.save();
+    sendConfirmationEmail(user);
     const rol = user.rol;
     const token = jwtGenerator(user._id, user.name);
     res.status(201).json({
       data: 'Successfull Sing up',
       token,
       rol,
+      verify,
+      id,
     });
   } catch (error: any) {
     res.status(500).send(formatError(error.message));
