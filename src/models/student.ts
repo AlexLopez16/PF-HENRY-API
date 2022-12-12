@@ -9,7 +9,7 @@ const StudentSchema = new Schema({
     },
     username: {
         type: String,
-        unique: true
+       
     },
     email: {
         type: String,
@@ -38,6 +38,10 @@ const StudentSchema = new Schema({
     github: {
         type: Boolean,
         default: false
+    },
+    verify: {
+        type: Boolean,
+        default: false,
     },
     tecnologies: {
         type: Array,
