@@ -86,10 +86,11 @@ export const loginUser: RequestHandler = async (req, res) => {
     }
     let rol = user.rol;
     let verify = user.verify;
+    let id=user._id
     const token = jwtGenerator(user._id, user.name);
     return res
       .status(200)
-      .json({ data: "Sucessful login", token, rol, verify });
+      .json({ data: "Sucessful login", token, rol, verify,id });
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({ error: error.message });
@@ -123,6 +124,7 @@ export const github: RequestHandler = async (req, res) => {
         token,
         rol: user.rol,
         verify: user.verify,
+        id:user._id
       });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
