@@ -17,9 +17,13 @@ export const createStudent: RequestHandler = async (req, res) => {
             password: hashPassword,
         });
         user = await user.save();
+<<<<<<< HEAD
         // Aca llamamos a la funcion de confirmationEmail.
         sendConfirmationEmail(user);
         // console.log(info);
+=======
+  
+>>>>>>> desarrollo
         let rol = user.rol;
         let verify = user.verify;
         let id = user._id;
