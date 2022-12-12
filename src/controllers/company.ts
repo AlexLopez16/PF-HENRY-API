@@ -4,40 +4,6 @@ import { hash } from '../helper/hash';
 import { jwtGenerator } from '../helper/jwt';
 import { formatError } from '../utils/formatErros';
 
-// GET USERS
-export const getUsersCompany: RequestHandler = async (req, res) => {
-  try {
-    const { limit = 10, init = 0 } = req.query;
-    const query = { state: true };
-    const [total, usersCompany] = await Promise.all([
-      User.countDocuments(query),
-      User.find(query).skip(init).limit(limit),
-    ]);
-    res.status(200).json({
-      total,
-      usersCompany,
-    });
-  } catch (error: any) {
-    res.status(400).send(formatError(error.message));
-  }
-};
-
-// GET USER
-export const getUserCompany: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, _id, email, country } = await User.findById(id);
-    res.status(200).json({
-      id: _id,
-      name,
-      country,
-      email,
-    });
-  } catch (error: any) {
-    res.status(400).send(formatError(error.message));
-  }
-};
-
 // CREATE
 export const createUserCompany: RequestHandler = async (req, res) => {
   try {
@@ -53,7 +19,49 @@ export const createUserCompany: RequestHandler = async (req, res) => {
       rol,
     });
   } catch (error: any) {
-    res.status(400).send(formatError(error.message));
+    res.status(500).send(formatError(error.message));
+  }
+};
+
+// GET USERS
+export const getUsersCompany: RequestHandler = async (req, res) => {
+  try {
+    const { limit = 10, init = 0 } = req.query;
+    const query = { state: true };
+    const ignore: any = {
+      password: false,
+      state: false,
+      gmail: false,
+      github: false,
+      rol: false,
+    };
+    const [total, usersCompany] = await Promise.all([
+      User.countDocuments(query),
+      User.find(query, ignore).skip(init).limit(limit),
+    ]);
+    res.status(200).json({
+      total,
+      usersCompany,
+    });
+  } catch (error: any) {
+    res.status(500).send(formatError(error.message));
+  }
+};
+
+// GET USER
+export const getUserCompany: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, _id, email, country } = await User.findById(id);
+
+    res.status(200).json({
+      id: _id,
+      name,
+      country,
+      email,
+    });
+  } catch (error: any) {
+    res.status(500).send(formatError(error.message));
   }
 };
 
@@ -69,7 +77,7 @@ export const updateUserCompany: RequestHandler = async (req, res) => {
     const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
     res.status(200).json(userUpdated);
   } catch (error: any) {
-    res.status(400).send(formatError(error.message));
+    res.status(500).send(formatError(error.message));
   }
 };
 
@@ -86,6 +94,6 @@ export const deleteUserCompany: RequestHandler = async (req, res) => {
 
     res.status(200).json(user);
   } catch (error: any) {
-    res.status(400).send(formatError(error.message));
+    res.status(500).send(formatError(error.message));
   }
 };
