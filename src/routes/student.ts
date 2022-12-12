@@ -7,9 +7,7 @@ import { Router } from 'express';
 
 import {
     rulesCreateStudent,
-    rulesFilterStudentByName,
     rulesGetStudent,
-    rulesFilterTecnologies,
     rulesUpdateStudent,
     rulesDeleteStudent,
 } from '../helper/rulesStudent';
@@ -19,17 +17,14 @@ import {
     getStudent,
     updateStudent,
     deleteStudent,
-    filterByName,
-    filterByTecnologies,
+    getStudents,
 } from '../controllers/student';
 
 const router = Router();
 
 router.post('/', rulesCreateStudent, createStudent);
 
-router.get('/', rulesFilterStudentByName, filterByName);
-
-router.get('/tecnologies', rulesFilterTecnologies, filterByTecnologies);
+router.get('/', getStudents);
 
 router.get('/:id', rulesGetStudent, getStudent);
 
