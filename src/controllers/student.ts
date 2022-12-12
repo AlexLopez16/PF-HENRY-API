@@ -149,7 +149,7 @@ export const updateStudent: RequestHandler = async (req, res) => {
             new: true,
         });
 
-        res.status(200).json({ msg: 'Student update succesfully' });
+        res.status(200).json(student);
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
     }
