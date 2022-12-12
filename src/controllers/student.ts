@@ -16,7 +16,7 @@ export const createStudent: RequestHandler = async (req, res) => {
             password: hashPassword,
         });
         user = await user.save();
-        // console.log(user);
+  
         let rol = user.rol;
         const token = jwtGenerator(user._id, user.name);
         res.status(201).json({ data: 'Sucessful singup', token, rol });
