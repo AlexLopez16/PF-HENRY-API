@@ -42,6 +42,10 @@ const StudentSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    verify: {
+        type: Boolean,
+        default: false,
+    },
     tecnologies: {
         type: Array,
     },
