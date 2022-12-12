@@ -2,39 +2,42 @@ import { Schema, model } from 'mongoose';
 
 const StudentSchema = new Schema({
     name: {
-        type: String,
-        required: [true, 'Name is required'],
+        type: String
     },
     lastName: {
-        type: String,
-        required: [true, 'Last name is required'],
+        type: String
     },
     username: {
         type: String,
+        unique: true
     },
     email: {
         type: String,
-        required: [true, 'Email is required'],
-        unique: true,
+        unique: true
+    },
+    country: {
+        type: String,
     },
     password: {
-        type: String,
-        required: [true, 'Password is required'],
+        type: String
     },
     image: {
         type: String,
     },
+    description: {
+        type: String,
+    },
     state: {
         type: Boolean,
-        default: true,
+        default: true
     },
     gmail: {
         type: Boolean,
-        default: false,
+        default: false
     },
     github: {
         type: Boolean,
-        default: false,
+        default: false
     },
     tecnologies: {
         type: Array,
