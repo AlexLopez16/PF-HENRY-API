@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { searchUser } from '../helper/searchUser';
+import { searchUser } from '../helper/searchuser';
 require('dotenv').config();
 
 // Este declare nos permite crear nuestras porpias requests.
@@ -16,6 +16,7 @@ declare global {
 const pathsWithoutAuth = new Map<string, Set<string>>();
 pathsWithoutAuth.set('/api/auth', new Set(['POST', 'GET', 'OPTIONS']));
 pathsWithoutAuth.set('/api/student', new Set(['POST', 'OPTIONS']));
+pathsWithoutAuth.set('/api/student/63967514a8c9c78422b7356f', new Set(['OPTIONS']));
 pathsWithoutAuth.set('/api/company', new Set(['POST', 'OPTIONS']));
 pathsWithoutAuth.set('/api/project', new Set(['OPTIONS']));
 pathsWithoutAuth.set('/api/invoice', new Set(['OPTIONS']));
