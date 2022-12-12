@@ -19,7 +19,7 @@ export const confirmEmail: RequestHandler = async (req, res) => {
             if (student.verify) throw new Error('Student already verifid');
             student.verify = true;
             await student.save();
-            return res.sendStatus(200);
+            //return res.sendStatus(200);
         }
         // Si es company, actualizamos el verify en company.
         if (rol === 'COMPANY_ROL') {
@@ -28,8 +28,10 @@ export const confirmEmail: RequestHandler = async (req, res) => {
             if (company.verify) throw new Error('Company already verifid');
             company.verifid = true;
             await company.save();
-            return res.sendStatus(200);
+            //return res.sendStatus(200);
         }
+
+        return res.redirect('https://google.com');
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
     }
