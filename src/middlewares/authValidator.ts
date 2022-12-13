@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { searchUser } from '../helper/searchuser';
+import { formatError } from '../utils/formatErros';
 require('dotenv').config();
 
 // Este declare nos permite crear nuestras porpias requests.
@@ -32,7 +33,7 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
         return;
     }
     const token = req.header('user-token');
-    if (!token) return res.status(401).json({ error: 'Access denied' });
+    if (!token) return res.status(401).json(formatError('Access denied'));
     try {
         const { id } = jwt.verify(
             token,
@@ -40,9 +41,9 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
         ) as JwtPayload;
         const user = await searchUser(id);
         req.user = user;
+        if (!user.verify) throw new Error('Confirm your email');
         next();
-    } catch (error) {
-        console.log(error);
-        return res.status(401).json({ error: 'Access denied' });
+    } catch (error: any) {
+        return res.status(500).json(formatError(error.message));
     }
 };

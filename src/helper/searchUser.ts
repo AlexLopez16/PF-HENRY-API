@@ -8,3 +8,4 @@ export const searchUser = async (id: string) => {
     }
     return user;
 };
+///// prueba de esta mierda que no anda
