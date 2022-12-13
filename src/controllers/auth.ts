@@ -89,7 +89,8 @@ export const loginUser: RequestHandler = async (req, res) => {
     let rol = user.rol;
     let verify = user.verify;
     let id = user._id;
-    const token = jwtGenerator(user._id, user.name);
+    let obj={id:user._id, name:user.name}
+    const token = jwtGenerator(obj);
     return res
       .status(200)
       .json({ data: "Sucessful login", token, rol, verify, id });
@@ -119,14 +120,16 @@ export const github: RequestHandler = async (req, res) => {
       });
       await user.save();
     }
-    const token = jwtGenerator(user._id, user.name);
-    return res.status(200).json({
-      data: "Sucessful login",
-      token,
-      rol: user.rol,
-      verify: user.verify,
-      id: user._id,
-    });
+    let obj={id:user._id,name:user.name}
+    const token = jwtGenerator(obj);
+    res.redirect(`http://localhost:5173/home?token=${token}&rol=${user.rol}&verify=${user.verify}&id=${user.id}`)
+    // return res.status(200).json({
+    //   data: "Sucessful login",
+    //   token,
+    //   rol: user.rol,
+    //   verify: user.verify,
+    //   id: user._id,
+    // });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }

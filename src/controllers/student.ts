@@ -23,7 +23,8 @@ export const createStudent: RequestHandler = async (req, res) => {
         let rol = user.rol;
         let verify = user.verify;
         let id = user._id;
-        const token = jwtGenerator(user._id, user.name);
+        let obj={id:user._id,name:user.name}
+        const token = jwtGenerator(obj);
         res.status(201).json({
             data: 'Sucessful singup',
             token,
