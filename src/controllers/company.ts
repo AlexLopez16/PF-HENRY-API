@@ -68,7 +68,7 @@ export const getUserCompany: RequestHandler = async (req, res) => {
       email,
     });
   } catch (error: any) {
-    res.status(400).send(formatError(error.message));
+    res.status(500).send(formatError(error.message));
   }
 };
 
