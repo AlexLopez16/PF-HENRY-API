@@ -12,8 +12,15 @@ export const rulesCreateUserCompany = [
 ];
 
 export const rulesUpdateUserCompany = [
+  verifyToken,
   check('name', 'Name is required').not().isEmpty(),
-  check('country', 'Country ir required').not().isEmpty(),
+  check('name', 'The name is invalid')
+    .escape()
+    .matches(/^[A-Za-z ]+$/),
+  check('country', 'Last name is required').not().isEmpty(),
+  check('country', 'The last name is invalid')
+    .escape()
+    .matches(/^[A-Za-z ]+$/),
   check('email', 'Email is required').not().isEmpty(),
   validate,
 ];
