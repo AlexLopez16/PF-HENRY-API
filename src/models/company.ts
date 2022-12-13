@@ -34,7 +34,10 @@ const CompanySchema = new Schema({
   image: {
     type: String,
   },
-
+  verify: {
+    type: Boolean,
+    default: false,
+  },
   project: [
     {
       type: Schema.Types.ObjectId,
