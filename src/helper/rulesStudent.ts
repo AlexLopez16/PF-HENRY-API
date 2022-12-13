@@ -1,10 +1,6 @@
 import { check, ValidationError } from 'express-validator';
 import { validate } from '../middlewares/validator';
-import {
-    validateStudentEmail,
-    validateStudentRol,
-    validateExistStudent,
-} from './dbStudentValidator';
+import { validateStudentEmail, validateStudentRol } from './dbStudentValidator';
 import { verifyToken } from '../middlewares/authValidator';
 import { studentRole } from '../middlewares/rolStudentValidator';
 
@@ -22,16 +18,14 @@ export const rulesCreateStudent = [
     validate,
 ];
 
-export const rulesGetStudent = [
+export const rulesGetStudent = [verifyToken, studentRole];
+
+export const rulesGetStudents = [
     verifyToken,
-    // Verificar este error despues.
     /*
-    NOTA: esto debe verificar el estudiante.
-     */
-    // validateExistStudent,
-    // check('rol').custom(validateStudentRol),
-    // validate,
-    studentRole,
+    Nota para el proximo sprint:
+    Aca tambien tiene que ir el validador, de que el que rol de los que piden la lista de estudiantes, sea company o admin, ya que no tiene sentido que un estudiante vea la lista de todos los estudiantes.
+    */
 ];
 
 export const rulesFilterStudentByName = [verifyToken];

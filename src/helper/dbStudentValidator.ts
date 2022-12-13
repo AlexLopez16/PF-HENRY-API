@@ -14,8 +14,3 @@ export const validateStudentEmail = async (email: string) => {
     // Si ya esta registrado devolvemos un erros.
     if (searchEmail) throw new Error('The email is already registered');
 };
-
-export const validateExistStudent = async (id: string) => {
-    const searchStudent = await Student.findOne({ id: id });
-    console.log(searchStudent);
-};
