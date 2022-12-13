@@ -31,7 +31,7 @@ export const confirmEmail: RequestHandler = async (req, res) => {
             //return res.sendStatus(200);
         }
 
-        return res.redirect('https://google.com');
+        return res.redirect('http://localhost:5173/dashboard/student');
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
     }
