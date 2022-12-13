@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-// const User = require("../models/alumno");
 const Project = require("../models/project");
 import { formatError } from "../utils/formatErros";
 const Student = require("../models/student");
@@ -13,6 +12,8 @@ export const getProjects: RequestHandler = async (req, res) => {
       tecnologies,
       orderBy,
       typeOfOrder = "asc",
+      category,
+      stateOfProject,
     }: any = req.query;
 
     // validar que el orderBy sea un campo valido
@@ -32,6 +33,12 @@ export const getProjects: RequestHandler = async (req, res) => {
     if (tecnologies) {
       const requirements: any = tecnologies.split(",");
       initialQuery.requirements = { $all: requirements };
+    }
+    if (category) {
+      initialQuery.category = { $regex: category, $options: "i" };
+    }
+    if (stateOfProject) {
+      initialQuery.stateOfProject = { $regex: stateOfProject, $options: "i" };
     }
 
     let sort: any = {};
@@ -76,24 +83,25 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user._id;
+
     const query = { state: true, _id: id };
+    const verifyStudent = await Project.find({ state: true, students: userId });
+
+    if (verifyStudent.length) {
+      throw new Error("Student is already in a project");
+    }
     const projects = await Project.find(query);
     if (!projects.length) throw new Error("project no found");
     let project = projects[0];
-    if (!project.students.filter((s: any) => s.toString() == userId).length) {
-      project.students = [...project.students, userId];
+    project.students = [...project.students, userId];
+    await project.save();
+    await Student.findByIdAndUpdate(userId, { project: id });
 
-      await project.save();
-      await Student.findByIdAndUpdate(userId, { project: id });
-
-      const infoProject = await project.populate({
-        path: "students",
-        select: "-password",
-      });
-      return res.status(200).json(infoProject);
-    } else {
-      throw new Error("student is in the project");
-    }
+    const infoProject = await project.populate({
+      path: "students",
+      select: "-password",
+    });
+    return res.status(200).json(infoProject);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
   }
