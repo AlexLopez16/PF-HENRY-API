@@ -46,7 +46,8 @@ export const createUserCompany: RequestHandler = async (req, res) => {
     let user = new User({ name, email, country, password: hashPassword });
     user = await user.save();
     const rol = user.rol;
-    const token = jwtGenerator(user._id, user.name);
+    let obj={id:user._id, name:user.name}
+    const token = jwtGenerator(obj);
     res.status(201).json({
       data: 'Successfull Sing up',
       token,

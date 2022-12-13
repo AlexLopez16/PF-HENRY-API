@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 import jwt from 'jsonwebtoken';
+import {jwtGenerator} from '../helper/jwt'
 require('dotenv').config();
 const {
     HOST_EMAIL,
@@ -20,16 +21,21 @@ export const sendConfirmationEmail = async (user: any) => {
             pass: PASS_EMAIL,
         },
     });
+  let obj={email: user.email,
+            rol: user.rol,}
 
+    const token =jwtGenerator(obj)
     // Creamos la url con un jwt.
-    const token = jwt.sign(
-        {
-            email: user.email,
-            rol: user.rol,
-        },
-        process.env.TOKEN_SECRET as string,
-        { expiresIn: '24h' }
-    );
+
+    
+    // const token = jwt.sign(
+    //     {
+    //         email: user.email,
+    //         rol: user.rol,
+    //     },
+    //     process.env.TOKEN_SECRET as string,
+    //     { expiresIn: '24h' }
+    // );
     const urlConfirm = `${URL}:${PORT}/account/confirm/${token}`;
 
     // send mail with defined transport object

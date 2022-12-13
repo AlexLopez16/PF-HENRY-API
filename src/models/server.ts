@@ -15,7 +15,7 @@ server.use(morgan('dev'));
 server.use(cors);
 //validacion del token
 //Validacion de tokens
-// server.use(verifyToken);
+//server.use(verifyToken);
 
 /*
   By Hugo.
@@ -24,7 +24,7 @@ server.use(cors);
 // import { verifyRol } from '../middlewares/rolValidator';
 // server.use(verifyRol);
 
-// server.use(verifyToken);
+
 
 //Routes Paths
 const paths = {
@@ -43,6 +43,7 @@ server.use(paths.auth, require('../routes/auth'));
 server.use(paths.email, require('../routes/email'));
 server.use(paths.invoice, require('../routes/invoice'));
 server.use(paths.project, require('../routes/project'));
+
 //DB Connection
 connDB();
 

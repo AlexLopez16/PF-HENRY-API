@@ -36,6 +36,9 @@ const ProjectSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Company',
   },
+  category:{
+    type:String
+  }
 });
 
 ProjectSchema.index({ name: 'text' });
