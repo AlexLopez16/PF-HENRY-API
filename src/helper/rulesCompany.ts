@@ -17,8 +17,8 @@ export const rulesUpdateUserCompany = [
   check('name', 'The name is invalid')
     .escape()
     .matches(/^[A-Za-z ]+$/),
-  check('country', 'Last name is required').not().isEmpty(),
-  check('country', 'The last name is invalid')
+  check('country', 'Country is required').not().isEmpty(),
+  check('country', 'The country is invalid')
     .escape()
     .matches(/^[A-Za-z ]+$/),
   check('email', 'Email is required').not().isEmpty(),
