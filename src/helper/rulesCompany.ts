@@ -1,7 +1,6 @@
 import { check } from 'express-validator';
 import { verifyToken } from '../middlewares/authValidator';
 import { validate } from '../middlewares/validator';
-import { validateCompanyRol } from './dbCompanyValidator';
 import { companyRole } from '../middlewares/rolCompanyValidator';
 
 export const rulesCreateUserCompany = [
