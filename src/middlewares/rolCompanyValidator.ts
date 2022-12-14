@@ -15,14 +15,14 @@ declare global {
 export const companyRole: RequestHandler = async (req, res, next) => {
   if (!req.user) {
     return res.status(500).json({
-      error: 'Check token first',
+      error: 'Unauthorized',
     });
   }
 
-  const { name, rol } = req.user;
+  const { rol } = req.user;
   if (rol != 'COMPANY_ROL') {
     return res.status(401).json({
-      error: `Unauthorized - ${name} has invalid role`,
+      error: `Unauthorized`,
     });
   }
   next();

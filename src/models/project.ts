@@ -4,6 +4,7 @@ const ProjectSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Name is required'],
+    unique: true
   },
   description: {
     type: String,
@@ -12,6 +13,9 @@ const ProjectSchema = new Schema({
   participants: {
     type: Number,
     required: [true, 'Number of employees is required'],
+  },
+  image:{
+    type:String
   },
   requirements: {
     type: Array,
@@ -32,14 +36,21 @@ const ProjectSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Company',
   },
+  category:{
+    type:String
+  },
+  stateOfProject:{
+    type:String,
+    emun: ['Reclutamiento', 'En desarrollo', 'Terminado']
+  }
 });
 
-ProjectSchema.index({ name: 'text'});
+ProjectSchema.index({ name: 'text' });
 
 ProjectSchema.methods.toJSON = function () {
-  const { __v, _id, ...project } = this.toObject();
-  project.uid = _id;
-  return project;
+    const { __v, _id, ...project } = this.toObject();
+    project.uid = _id;
+    return project;
 };
 
 module.exports = model('Project', ProjectSchema);
