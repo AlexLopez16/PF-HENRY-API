@@ -12,7 +12,7 @@ declare global {
     }
   }
 }
-const pathsWithoutAuth: Set<string> = new Set(["/api/auth","/api/students","api/company"]);
+
 
 const pathsWithoutAuth = new Map<string, Set<string>>();
 pathsWithoutAuth.set("/api/auth", new Set(["POST", "GET","OPTIONS"]));
@@ -24,7 +24,8 @@ pathsWithoutAuth.set("/api/invoice", new Set(["OPTIONS"]));
 export const verifyToken: RequestHandler = async (req, res, next) => {
   let requestUri: string = req.originalUrl;
   const baseUrl = requestUri.indexOf('?') === -1 ? requestUri : requestUri.slice(0, requestUri.indexOf('?'));
-  if (pathsWithoutAuth.has(baseUrl)) {
+  
+  if (pathsWithoutAuth.get(baseUrl)?.has(req.method)) {
     next();
     return;
   }
@@ -34,6 +35,8 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
     const {id}=jwt.verify(token, process.env.TOKEN_SECRET as string)as JwtPayload;
     
     const user = await searchUser(id)
+    console.log(user);
+    
     req.user=user;
     next();
   } catch (error) {
