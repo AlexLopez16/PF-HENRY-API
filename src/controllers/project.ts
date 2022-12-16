@@ -152,6 +152,9 @@ export const getProject: RequestHandler = async (req, res) => {
       .populate({
         path: 'company',
         select: '-password',
+      }).populate({
+        path: 'reviews',
+        select: '-rating'
       });
 
     if (!projects.length) throw new Error('project no found');
