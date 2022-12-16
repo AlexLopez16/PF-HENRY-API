@@ -2,16 +2,15 @@ import e, { RequestHandler } from 'express';
 const Student = require('../models/student');
 const Company = require('../models/company');
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import {verifyJwt} from '../helper/verifyJwt'
 import { formatError } from '../utils/formatErros';
 require('dotenv').config();
 // Creamos el estudiante de la db y hasheamos el password.
 export const confirmEmail: RequestHandler = async (req, res) => {
     try {
         const { token } = req.params;
-        const { email, rol } = jwt.verify(
-            token,
-            process.env.TOKEN_SECRET as string
-        ) as JwtPayload;
+        console.log(token)
+        const {email,rol}=verifyJwt(token)
         // Si es estudiante, actualizamos el verify en student.
         if (rol === 'STUDENT_ROL') {
             let student = await Student.findOne({ email: email });

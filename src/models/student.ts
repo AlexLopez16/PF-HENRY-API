@@ -13,7 +13,6 @@ const StudentSchema = new Schema({
     },
     email: {
         type: String,
-        unique: true
     },
     country: {
         type: String,
@@ -56,6 +55,10 @@ const StudentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Project',
     },
+    review: {
+        type: Schema.Types.ObjectId,
+        ref: 'Review',
+    }
 });
 
 StudentSchema.methods.toJSON = function () {
