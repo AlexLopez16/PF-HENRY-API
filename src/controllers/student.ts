@@ -5,6 +5,15 @@ import { formatError } from '../utils/formatErros';
 import { jwtGenerator } from '../helper/jwt';
 import { sendConfirmationEmail } from '../helper/sendConfirmationEmail';
 require('dotenv').config();
+
+interface InitialIgnore {
+    password: boolean,
+    state: boolean,
+    gmail: boolean,
+    github: boolean,
+    rol: boolean,
+}
+
 // Creamos el estudiante de la db y hasheamos el password.
 export const createStudent: RequestHandler = async (req, res) => {
     try {
@@ -104,7 +113,7 @@ export const getStudents: RequestHandler = async (req, res) => {
 
         // Ignora estos campos al momento de generarnos una respuesta, es decir, no nos muestra esa info.
 
-        const ignore: any = {
+        const ignore: InitialIgnore = {
             password: false,
             state: false,
             gmail: false,

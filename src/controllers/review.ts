@@ -1,6 +1,4 @@
-import { verify } from 'crypto';
 import { RequestHandler } from 'express';
-import { ResultWithContext } from 'express-validator/src/chain';
 import { formatError } from '../utils/formatErros';
 const Review = require('../models/review');
 const Project = require('../models/project');
@@ -12,6 +10,8 @@ interface InitialBody {
 
 export const getReview: RequestHandler = async (req, res) => {
   try {
+
+
     const { id } = req.params;
     let findReview = await Review.findById(id)
       .populate({
@@ -36,8 +36,6 @@ export const createReview: RequestHandler = async (req, res) => {
 
     const verifyStudent = await Project.find({ state: true, students: _id });
 
-    console.log(verifyStudent)
-
     if (!verifyStudent.length)
       throw new Error('No se encuentra registrado en el proyecto');
 
@@ -51,8 +49,6 @@ export const createReview: RequestHandler = async (req, res) => {
       project: idProject,
     });
 
-    console.log(review)
-
     await review.save();
 
     res.status(201).json({
@@ -62,3 +58,31 @@ export const createReview: RequestHandler = async (req, res) => {
     res.status(500).json(formatError(error.message));
   }
 };
+
+export const editReview: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { description, rating }: InitialBody = req.body;
+  
+    const review = await Review.findByIdAndUpdate(id, { description, rating });
+    await review.save();
+  
+    res.status(200).json('Rview actualizada');
+  } catch (error: any) {
+    res.status(500).json(formatError(error.message));
+  }
+}
+
+export const deleteReview: RequestHandler = async (req, res) => {
+
+  try {
+    const { id } = req.params;
+    const review = await Review.deleteOne({_id: id})
+
+    res.status(200).send('Review borrado con exito')
+    
+  } catch (error: any) {
+    res.status(500).json(formatError(error.message));
+  }
+
+}
