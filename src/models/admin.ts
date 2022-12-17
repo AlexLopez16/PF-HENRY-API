@@ -18,12 +18,20 @@ const AdminSchema = new Schema({
         type: String,
         required: [true, 'Password is required'],
     },
+    verify: {
+        type: Boolean,
+        default:false,
+    },
     rol: {
         type: String,
         required: [true, 'Role is required'],
         default: 'ADMIN_ROL',
         emun: ['ADMIN_ROL'],
     },
+    state:{
+        type: Boolean,
+        default:true
+    }
 });
 
 AdminSchema.methods.toJSON = function () {
