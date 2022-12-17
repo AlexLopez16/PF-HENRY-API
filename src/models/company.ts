@@ -50,6 +50,12 @@ const CompanySchema = new Schema({
       ref: 'Invoice',
     },
   ],
+  requests:[
+    {
+      type:Schema.Types.ObjectId,
+      ref:"Student"
+    }
+  ],
   rol: {
     type: String,
     required: [true, 'Role is required'],
