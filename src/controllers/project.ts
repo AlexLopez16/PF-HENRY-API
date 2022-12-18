@@ -128,6 +128,7 @@ export const getProject: RequestHandler = async (req, res) => {
     return res.status(400).send(formatError(error.message));
   }
 };
+
 export const deleteProject: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
@@ -163,3 +164,16 @@ export const editProject: RequestHandler = async (req, res) => {
     return res.status(400).send(formatError(error.message));
   }
 };
+
+
+
+export const getCategory: RequestHandler = async (req, res) => {
+  try {
+    const projects = await Project.find();
+    const categories = projects.map(({ category }: any) => category.toLowerCase())
+    return res.status(200).json(categories);
+  } catch (error: any) {
+    return res.status(400).send(formatError(error.message));
+  }
+};
+
