@@ -9,11 +9,10 @@ const StudentSchema = new Schema({
     },
     username: {
         type: String,
-        unique: true
+       
     },
     email: {
         type: String,
-        unique: true
     },
     country: {
         type: String,

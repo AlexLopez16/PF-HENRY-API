@@ -1,23 +1,26 @@
 import { Router } from "express";
-import { check } from "express-validator";
-import { validate } from "../middlewares/validator";
 import {
   addStudentToProject,
   createProject,
   getProject,
   getProjects,
   deleteProject,
-  editProject
+  editProject,
 } from "../controllers/project";
 
-import { rulesCreateProject,ruleseEditProjects,rulesDeleteProject } from "../helper/rulesProjects";
+import {
+  rulesCreateProject,
+  ruleseEditProjects,
+  rulesDeleteProject,
+} from "../helpers/rulesProjects";
+import { verifyToken } from "../middlewares/authValidator";
 const router = Router();
 
-router.get("/",getProjects);
-router.get("/:id", getProject);
+router.get("/", verifyToken, getProjects);
+router.get("/:id", verifyToken, getProject);
 router.post("/", rulesCreateProject, createProject);
-router.put("/:id", addStudentToProject);
-router.put('/edit/:id',ruleseEditProjects,editProject)
-router.delete("/:id",rulesDeleteProject, deleteProject);
+router.put("/:id", verifyToken, addStudentToProject);
+router.put("/edit/:id", ruleseEditProjects, editProject);
+router.delete("/:id", rulesDeleteProject, deleteProject);
 
 module.exports = router;

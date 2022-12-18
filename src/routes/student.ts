@@ -10,7 +10,7 @@ import {
     rulesGetStudent,
     rulesUpdateStudent,
     rulesDeleteStudent,
-} from '../helper/rulesStudent';
+} from '../helpers/rulesStudent';
 
 import {
     createStudent,

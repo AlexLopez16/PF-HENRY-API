@@ -34,14 +34,17 @@ const CompanySchema = new Schema({
   image: {
     type: String,
   },
-
+  verify: {
+    type: Boolean,
+    default: false,
+  },
   project: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Project',
     },
   ],
-  Invoice: [
+  invoice: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Invoice',
