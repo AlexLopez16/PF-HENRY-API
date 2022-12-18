@@ -38,6 +38,10 @@ const ProjectSchema = new Schema({
   },
   category:{
     type:String
+  },
+  stateOfProject:{
+    type:String,
+    emun: ['Reclutamiento', 'En desarrollo', 'Terminado']
   }
 });
 

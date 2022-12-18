@@ -12,7 +12,7 @@ import {
   rulesCreateProject,
   ruleseEditProjects,
   rulesDeleteProject,
-} from "../helpers/rulesProjects";
+} from "../helper/rulesProjects";
 import { verifyToken } from "../middlewares/authValidator";
 const router = Router();
 
