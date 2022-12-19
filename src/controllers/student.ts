@@ -50,6 +50,10 @@ export const createStudent: RequestHandler = async (req, res) => {
 export const getStudent: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
+
+        if(req.user.id !== id) {
+            return res.status(401).json(formatError("Access denied"));
+        }
         const {
             name,
             lastName,
