@@ -33,8 +33,8 @@ export const createUserCompany: RequestHandler = async (req, res) => {
 // GET USERS
 export const getUsersCompany: RequestHandler = async (req, res) => {
   try {
-    const { limit = 10, init = 0 } = req.query;
-    const query = { state: true };
+    const { limit = 10, init = 0, name, country} = req.query;
+    const query: any = { state: true };
     const ignore: any = {
       password: false,
       state: false,
@@ -42,6 +42,11 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
       github: false,
       rol: false,
     };
+
+    if (name) query.name = { $regex: name, $options: 'i' };
+
+   if (country) query.country = { $regex: country, $options: 'i' };
+
     const [total, usersCompany] = await Promise.all([
       User.countDocuments(query),
       User.find(query, ignore).skip(init).limit(limit),
@@ -50,6 +55,7 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
       total,
       usersCompany,
     });
+
   } catch (error: any) {
     res.status(500).send(formatError(error.message));
   }
