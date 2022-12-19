@@ -22,7 +22,16 @@ const paths = {
     email: '/account/confirm',
     project: '/api/project',
     invoice: '/api/invoice',
+
     review: '/api/review'
+
+
+    admin: '/api/admin',
+
+
+    password:'/recover/password'
+
+
 };
 
 //Routes
@@ -33,6 +42,10 @@ server.use(paths.email, require('../routes/email'));
 server.use(paths.invoice, require('../routes/invoice'));
 server.use(paths.project, require('../routes/project'));
 server.use(paths.review, require('../routes/review'))
+server.use(paths.admin, require('../routes/admin'));
+server.use(paths.password, require('../routes/password'));
+
+
 //DB Connection
 connDB();
 

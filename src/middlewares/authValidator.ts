@@ -21,7 +21,7 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
   if (!token) return res.status(401).json(formatError("Access denied"));
   try {
     const {id}=verifyJwt(token)
-  
+
     const user = await searchUser(id);
    
     req.user = user;

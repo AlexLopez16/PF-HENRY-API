@@ -35,12 +35,14 @@ const ProjectSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Company',
   },
+
   reviews: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Review'
     }
   ],
+
   category:{
     type:String
   },

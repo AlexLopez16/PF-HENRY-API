@@ -34,6 +34,7 @@ declare module namespace {
 
 }
 
+
 export const getProjects: RequestHandler = async (req, res) => {
   try {
     const {
@@ -46,6 +47,7 @@ export const getProjects: RequestHandler = async (req, res) => {
       category,
       stateOfProject,
     }: Query = req.query;
+
 
     // validar que el orderBy sea un campo valido
     if (orderBy && orderBy !== 'participants') {
@@ -66,10 +68,12 @@ export const getProjects: RequestHandler = async (req, res) => {
       initialQuery.requirements = { $all: requirements };
     }
     if (category) {
-      initialQuery.category = { $regex: category, $options: 'i' };
+
+      initialQuery.category = { $regex: category, $options: "i" };
     }
     if (stateOfProject) {
-      initialQuery.stateOfProject = { $regex: stateOfProject, $options: 'i' };
+      initialQuery.stateOfProject = { $regex: stateOfProject, $options: "i" };
+
     }
 
     let sort: any = {};
@@ -130,8 +134,8 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
     await Student.findByIdAndUpdate(userId, { project: id });
 
     const infoProject = await project.populate({
-      path: 'students',
-      select: '-password',
+      path: "students",
+      select: "-password",
     });
     return res.status(200).json(infoProject);
   } catch (error: any) {
