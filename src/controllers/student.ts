@@ -1,9 +1,9 @@
 import e, { RequestHandler } from 'express';
 const Student = require('../models/student');
-import { hash } from '../helper/hash';
+import { hash } from '../helpers/hash';
 import { formatError } from '../utils/formatErros';
-import { jwtGenerator } from '../helper/jwt';
-import { sendConfirmationEmail } from '../helper/sendConfirmationEmail';
+import { jwtGenerator } from '../helpers/jwt';
+import { sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
 require('dotenv').config();
 // Creamos el estudiante de la db y hasheamos el password.
 export const createStudent: RequestHandler = async (req, res) => {
@@ -23,7 +23,8 @@ export const createStudent: RequestHandler = async (req, res) => {
         let rol = user.rol;
         let verify = user.verify;
         let id = user._id;
-        const token = jwtGenerator(user._id, user.name);
+        let obj={id:user._id,name:user.name}
+        const token = jwtGenerator(obj);
         res.status(201).json({
             data: 'Sucessful singup',
             token,

@@ -13,7 +13,6 @@ const StudentSchema = new Schema({
     },
     email: {
         type: String,
-        unique: true
     },
     country: {
         type: String,

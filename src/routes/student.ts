@@ -10,6 +10,7 @@ import {
     rulesGetStudent,
     rulesUpdateStudent,
     rulesDeleteStudent,
+    rulesGetStudents,
 } from '../helper/rulesStudent';
 
 import {
@@ -24,11 +25,11 @@ const router = Router();
 
 router.post('/', rulesCreateStudent, createStudent);
 
-router.get('/', getStudents);
+router.get('/', rulesGetStudents, getStudents);
 
 router.get('/:id', rulesGetStudent, getStudent);
 
-router.put('/:id', rulesUpdateStudent, updateStudent);
+router.put('/:id', updateStudent);
 
 router.delete('/:id', rulesDeleteStudent, deleteStudent);
 

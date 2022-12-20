@@ -1,12 +1,13 @@
 import { RequestHandler } from "express";
 const Student = require("../models/student");
 const Company = require("../models/company");
+const Admin = require("../models/admin")
 import bcrypt from "bcryptjs";
 require("dotenv").config();
 const { OAuth2Client } = require("google-auth-library");
 import axios from "axios";
 import querystring from "querystring";
-import { jwtGenerator } from "../helper/jwt";
+import { jwtGenerator } from "../helpers/jwt";
 
 const authenticateWithGoogle = async (userType: string, token: string) => {
   let payload: any;
@@ -27,40 +28,47 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
     user = await Company.findOne({ email: email, gmail: true });
   }
   if (!user) {
-    if (userType === "student") {
-      user = await new Student({
-        name: payload.given_name,
-        lastName: payload.family_name,
-        email: payload.email,
-        image: payload.picture,
-        gmail: true,
-        verify: true
-      });
-    } else if (userType === "company") {
-      user = await new Company({
-        name: payload.name,
-        email: payload.email,
-        image: payload.picture,
-        gmail: true,
-        verify: true
-      });
-    } else {
-      throw new Error("userType is invalid.");
-    }
-    await user.save();
+    user = await Admin.findOne({ email: email, gmail: true });
   }
+  if (userType === "student") {
+    user = await new Student({
+      name: payload.given_name,
+      lastName: payload.family_name,
+      email: payload.email,
+      image: payload.picture,
+      gmail: true,
+      verify: true
+    });
+  } else if (userType === "company") {
+    user = await new Company({
+      name: payload.name,
+      email: payload.email,
+      image: payload.picture,
+      gmail: true,
+      verify: true
+    });
+  }
+
+  else {
+    throw new Error("userType is invalid.");
+  }
+  await user.save();
+
   return user;
 };
 
 export const loginUser: RequestHandler = async (req, res) => {
   try {
-    const { email, password, from, tok, userType } = req.body;
+    const { email, password, from, tok, userType } = req.body;    
     let user;
     let validPassword;
     if (email && password) {
       user = await Student.findOne({ email });
       if (!user) {
         user = await Company.findOne({ email });
+        if (!user) {
+          user = await Admin.findOne({ email });
+        }
         if (user) {
           validPassword = await bcrypt.compare(password, user.password);
         } else {
@@ -89,7 +97,8 @@ export const loginUser: RequestHandler = async (req, res) => {
     let rol = user.rol;
     let verify = user.verify;
     let id = user._id;
-    const token = jwtGenerator(user._id, user.name);
+    let obj = { id: user._id, name: user.name }
+    const token = jwtGenerator(obj);
     return res
       .status(200)
       .json({ data: "Sucessful login", token, rol, verify, id });
@@ -119,14 +128,16 @@ export const github: RequestHandler = async (req, res) => {
       });
       await user.save();
     }
-    const token = jwtGenerator(user._id, user.name);
-    return res.status(200).json({
-      data: "Sucessful login",
-      token,
-      rol: user.rol,
-      verify: user.verify,
-      id: user._id,
-    });
+    let obj = { id: user._id, name: user.name }
+    const token = jwtGenerator(obj);
+    res.redirect(`http://localhost:5173/home?token=${token}&rol=${user.rol}&verify=${user.verify}&id=${user.id}`)
+    // return res.status(200).json({
+    //   data: "Sucessful login",
+    //   token,
+    //   rol: user.rol,
+    //   verify: user.verify,
+    //   id: user._id,
+    // });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
