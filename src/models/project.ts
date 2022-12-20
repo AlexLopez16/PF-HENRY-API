@@ -31,11 +31,16 @@ const ProjectSchema = new Schema({
       ref: 'Student',
     },
   ],
-
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company',
   },
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Review'
+    }
+  ],
   category:{
     type:String
   },

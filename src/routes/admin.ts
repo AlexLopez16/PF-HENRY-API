@@ -19,7 +19,7 @@ import { deleteUserCompany, getUserCompany, getUsersCompany, updateUserCompany }
 import { addStudentToProject, deleteProject, getProject, getProjects } from '../controllers/project';
 import { createAdmin, deleteAdmin, getAdmin, getAdminById, updateAdmin } from '../controllers/admin';
 
-import { rulesAdmin } from '../helper/rulesAdmin';
+import { rulesAdmin } from '../helpers/rulesAdmin';
  
  const router = Router();
  //url/api/admin

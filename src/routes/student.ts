@@ -11,7 +11,7 @@ import {
     rulesUpdateStudent,
     rulesDeleteStudent,
     rulesGetStudents,
-} from '../helper/rulesStudent';
+} from '../helpers/rulesStudent';
 
 import {
     createStudent,
