@@ -71,5 +71,4 @@ export const modifyPassword: RequestHandler = async (req, res) => {
     res.status(500).json(formatError(error.message));
   }
 
-  ("$2a$10$MH.dIr9QBAQBWh3AoQNWwecUV6SRf3IH5zcqeaUUPJXwFD27sp88.");
 };
