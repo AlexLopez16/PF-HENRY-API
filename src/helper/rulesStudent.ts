@@ -18,7 +18,6 @@ export const rulesCreateStudent = [
     validate,
 ];
 
-export const rulesGetStudent = [verifyToken, studentRole];
 
 export const rulesGetStudents = [
     verifyToken,
@@ -28,11 +27,9 @@ export const rulesGetStudents = [
     */
 ];
 
-export const rulesFilterStudentByName = [verifyToken];
-
-export const rulesFilterTecnologies = [verifyToken];
-
+export const rulesGetStudent = [verifyToken, studentRole];
 export const rulesUpdateStudent = [
+
     verifyToken,
     check('name', 'Name is required').not().isEmpty(),
     check('name', 'The name is invalid')
@@ -45,4 +42,8 @@ export const rulesUpdateStudent = [
     validate,
 ];
 
+export const rulesFilterStudentByName = [verifyToken];
+export const rulesFilterTecnologies = [verifyToken];
 export const rulesDeleteStudent = [verifyToken];
+
+// export const rulesStudent = [verifyToken];

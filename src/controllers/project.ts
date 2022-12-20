@@ -165,8 +165,6 @@ export const editProject: RequestHandler = async (req, res) => {
   }
 };
 
-
-
 export const getCategory: RequestHandler = async (req, res) => {
   try {
     const projects = await Project.find();
@@ -177,3 +175,35 @@ export const getCategory: RequestHandler = async (req, res) => {
   }
 };
 
+  export const acceptStudentToProject: RequestHandler = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const searchStudent = await Project.find({ state: true, students:id });
+      if (!searchStudent.length) {
+        throw new Error("no esta asociado");
+      }  
+      searchStudent[0].accepts=[...searchStudent[0].accepts,id]//lo agrego a accept
+      searchStudent[0].students=searchStudent[0].students.filter((e:String)=>e!=id)
+      searchStudent[0].save()
+      return res.status(200).json("alumno aceptado");
+
+    } catch (error: any) {
+      return res.status(400).send(formatError(error.message));
+    }
+  };
+
+  export const FromAcceptoToStudent: RequestHandler =async (req,res)=>{
+    try {
+      const { id } = req.params;
+      const searchStudent = await Project.find({ state: true, accepts:id });
+      if (!searchStudent.length) {
+        throw new Error("no esta aceptado");
+      }  
+      searchStudent[0].students=[...searchStudent[0].students,id]//lo agrego a students
+      searchStudent[0].accepts=searchStudent[0].accepts.filter((e:String)=>e!=id)
+      searchStudent[0].save()
+      return res.status(200).json("alumno movido");
+    } catch (error: any) {
+      return res.status(400).send(formatError(error.message));
+    }
+  };

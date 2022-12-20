@@ -2,9 +2,7 @@ import { Router } from 'express';
 import {
   rulesCreateUserCompany,
   rulesUpdateUserCompany,
-  rulesDeleteUsersCompany,
-  rulesGetUsersCompany,
-  rulesGetUserCompany,
+  rulesUsersCompany,
 } from '../helper/rulesCompany';
 import {
     createUserCompany,
@@ -16,14 +14,14 @@ import {
 
 const router = Router();
 
-router.get('/', rulesGetUsersCompany, getUsersCompany);
+router.get('/', rulesUsersCompany, getUsersCompany);
 
-router.get('/:id', rulesGetUserCompany, getUserCompany);
+router.get('/:id', rulesUsersCompany, getUserCompany);
 
 router.post('/', rulesCreateUserCompany, createUserCompany);
 
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
 
-router.delete('/:id', rulesDeleteUsersCompany, deleteUserCompany);
+router.delete('/:id', rulesUsersCompany, deleteUserCompany);
 
 module.exports = router;
