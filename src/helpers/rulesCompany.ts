@@ -24,8 +24,4 @@ export const rulesUpdateUserCompany = [
   validate,
 ];
 
-export const rulesGetUserCompany = [verifyToken, companyRole];
-
-export const rulesGetUsersCompany = [verifyToken, companyRole];
-
-export const rulesDeleteUsersCompany = [verifyToken, companyRole];
+export const rulesUsersCompany = [verifyToken, companyRole];

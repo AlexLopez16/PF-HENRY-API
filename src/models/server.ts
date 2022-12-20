@@ -25,16 +25,17 @@ const paths = {
     project: '/api/project',
     checkout: '/api/checkout',
     admin: '/api/admin',
-    password:'/recover/password',
-    invoice: '/api/invoice',
-    review: '/api/review'
+    password:'/recover/password',  
+    review: '/api/review',
 };
+
+
 
 //Routes
 server.use(paths.student, require('../routes/student'));
 server.use(paths.company, require('../routes/company'));
-server.use(paths.auth, require('../routes/auth'));
-server.use(paths.email, require('../routes/email'));
+server.use(paths.auth,    require('../routes/auth'));
+server.use(paths.email,   require('../routes/email'));
 server.use(paths.project, require('../routes/project'));
 server.use(paths.admin, require('../routes/admin'));
 server.use(paths.password, require('../routes/password'));
