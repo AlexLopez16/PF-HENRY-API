@@ -5,7 +5,7 @@ import {
   rulesDeleteUsersCompany,
   rulesGetUsersCompany,
   rulesGetUserCompany,
-} from '../helper/rulesCompany';
+} from '../helpers/rulesCompany';
 import {
     createUserCompany,
     deleteUserCompany,

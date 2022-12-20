@@ -2,7 +2,7 @@ import e, { RequestHandler } from 'express';
 const Student = require('../models/student');
 const Company = require('../models/company');
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import {verifyJwt} from '../helper/verifyJwt'
+import {verifyJwt} from '../helpers/verifyJwt'
 import { formatError } from '../utils/formatErros';
 require('dotenv').config();
 // Creamos el estudiante de la db y hasheamos el password.

@@ -4,8 +4,6 @@ import { Query, InitialQuery, InitialProject } from '../interfaces/interfaces';
 const Project = require('../models/project');
 const Student = require('../models/student');
 
-
-
 export const getProjects: RequestHandler = async (req, res) => {
   try {
     const {
@@ -49,22 +47,20 @@ export const getProjects: RequestHandler = async (req, res) => {
       sort[orderBy] = typeOfOrder;
     }
 
-    const [total, projects]: [number, InitialProject[]]= await Promise.all([
+    const [total, projects]: [number, InitialProject[]] = await Promise.all([
       Project.countDocuments(initialQuery),
       Project.find(initialQuery).sort(sort).skip(init).limit(limit).populate({
         path: 'company',
         select: 'name',
       }),
     ]);
-
-    console.log(projects)
     return res.status(200).json({
       total,
       projects,
     });
   } catch (error: any) {
     //use any because type of error can be undefined
-    return res.status(500).json(formatError(error.message) );
+    return res.status(500).json(formatError(error.message));
   }
 };
 
@@ -99,15 +95,20 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
     const projects = await Project.find(query);
     if (!projects.length) throw new Error('project no found');
     let project = projects[0];
-    project.students = [...project.students, userId];
-    await project.save();
-    await Student.findByIdAndUpdate(userId, { project: id });
+    if (!project.students.filter((s: any) => s.toString() == userId).length) {
+      project.students = [...project.students, userId];
 
-    const infoProject = await project.populate({
-      path: 'students',
-      select: '-password',
-    });
-    return res.status(200).json(infoProject);
+      await project.save();
+      await Student.findByIdAndUpdate(userId, { project: id });
+
+      const infoProject = await project.populate({
+        path: 'students',
+        select: '-password',
+      });
+      return res.status(200).json(infoProject);
+    } else {
+      throw new Error('student is in the project');
+    }
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
   }
@@ -126,11 +127,7 @@ export const getProject: RequestHandler = async (req, res) => {
       .populate({
         path: 'company',
         select: '-password',
-      }).populate({
-        path: 'reviews',
-        select: '-rating'
       });
-
     if (!projects.length) throw new Error('project no found');
     let project = projects[0];
     return res.status(200).json(project);

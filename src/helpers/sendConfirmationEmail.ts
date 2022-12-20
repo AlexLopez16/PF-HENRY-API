@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-import { jwtGenerator } from "../helper/jwt";
+import { jwtGenerator } from "./jwt";
 require("dotenv").config();
 const {
   HOST_EMAIL,
@@ -40,4 +40,3 @@ export const sendConfirmationEmail = async (user: any) => {
     console.log(error.message);
   }
 };
-
