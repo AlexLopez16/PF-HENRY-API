@@ -29,7 +29,7 @@ router.get('/', rulesGetStudents, getStudents);
 
 router.get('/:id', rulesGetStudent, getStudent);
 
-router.put('/:id', rulesUpdateStudent, updateStudent);
+router.put('/:id', updateStudent);
 
 router.delete('/:id', rulesDeleteStudent, deleteStudent);
 

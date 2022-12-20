@@ -7,7 +7,7 @@ require("dotenv").config();
 const { OAuth2Client } = require("google-auth-library");
 import axios from "axios";
 import querystring from "querystring";
-import { jwtGenerator } from "../helper/jwt";
+import { jwtGenerator } from "../helpers/jwt";
 
 const authenticateWithGoogle = async (userType: string, token: string) => {
   let payload: any;

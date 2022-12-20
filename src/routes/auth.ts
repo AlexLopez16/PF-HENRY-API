@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { loginUser, github } from '../controllers/auth';
-import {} from '../middlewares/authValidator';
 
 const router = Router();
 

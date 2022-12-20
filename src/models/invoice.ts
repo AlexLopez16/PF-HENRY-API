@@ -1,20 +1,26 @@
 import { Schema, model } from 'mongoose';
 
 const InvoiceSchema = new Schema({
-  amount: {
-    type: String,
-  },
   date: {
-    type: Date,
+    type: String
   },
-  method: {
-    type: String,
-  },
-  invoice: {
-    type: Number,
+  amount: {
+    type: Number
   },
   description: {
-    type: String,
+    type: String
+  },
+  currency: {
+    type: String
+  },
+  invoice_url: {
+    type: String
+  },
+  invoice_pdf: {
+    type: String
+  },
+  invoice_id: {
+    type: String
   },
   company: {
     type: Schema.Types.ObjectId,

@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 const User = require('../models/company');
-import { hash } from '../helper/hash';
-import { jwtGenerator } from '../helper/jwt';
+import { hash } from '../helpers/hash';
+import { jwtGenerator } from '../helpers/jwt';
 import { formatError } from '../utils/formatErros';
 import { sendConfirmationEmail } from '../helper/sendConfirmationEmail';
 
