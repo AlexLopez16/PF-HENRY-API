@@ -50,10 +50,10 @@ const StudentSchema = new Schema({
         default: 'STUDENT_ROL',
         emun: ['STUDENT_ROL'],
     },
-    project: {
+    project: [{
         type: Schema.Types.ObjectId,
         ref: 'Project',
-    },
+    }],
 });
 
 StudentSchema.methods.toJSON = function () {

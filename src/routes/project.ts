@@ -9,6 +9,8 @@ import {
   getCategory,
   acceptStudentToProject,
   FromAcceptoToStudent,
+  getPostulated,
+  getAccepts,
 
 } from "../controllers/project";
 
@@ -21,11 +23,13 @@ const router = Router();
 
 router.get("/", verifyToken, getProjects);
 router.get("/category", verifyToken,getCategory);
+router.get("/postulated/:id", verifyToken,getPostulated)
+router.get("/accepts/:id", verifyToken,getAccepts)
 router.get("/:id", verifyToken, getProject);
 
 
 router.post("/", rulesCreateProject, createProject);
-router.put("/:id", verifyToken, addStudentToProject);
+router.put("/:id", verifyToken, addStudentToProject);//agregar validator rol-student
 router.put("/edit/:id", rulesProject, editProject);
 router.put('/accept/:id',rulesProject,acceptStudentToProject)
 router.put( '/denied/:id',rulesProject,FromAcceptoToStudent)

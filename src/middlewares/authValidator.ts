@@ -28,6 +28,6 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
     if (!user.verify) throw new Error("Confirm your email");
     next();
   } catch (error: any) {
-    return res.status(500).json(formatError(error.message));
+    return res.status(401).json(formatError(error.message));
   }
 };
