@@ -17,7 +17,7 @@ import {
 import {
   rulesCreateProject,
   rulesProject,
-} from "../helper/rulesProjects";
+} from "../helpers/rulesProjects";
 import { verifyToken } from "../middlewares/authValidator";
 const router = Router();
 

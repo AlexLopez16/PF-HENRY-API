@@ -3,7 +3,7 @@ import {
   rulesCreateUserCompany,
   rulesUpdateUserCompany,
   rulesUsersCompany,
-} from '../helper/rulesCompany';
+} from '../helpers/rulesCompany';
 import {
     createUserCompany,
     deleteUserCompany,

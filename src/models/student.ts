@@ -54,6 +54,10 @@ const StudentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Project',
     }],
+    review: {
+        type: Schema.Types.ObjectId,
+        ref: 'Review',
+    }
 });
 
 StudentSchema.methods.toJSON = function () {
