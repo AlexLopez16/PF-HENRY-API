@@ -1,38 +1,10 @@
 import { RequestHandler } from 'express';
-const Project = require('../models/project');
 import { formatError } from '../utils/formatErros';
+import { Query, InitialQuery, InitialProject } from '../interfaces/interfaces';
+const Project = require('../models/project');
 const Student = require('../models/student');
 
-interface Query {
-  limit?: number;
-  init?: number;
-  name?: string;
-  tecnologies?: string;
-  orderBy?: string;
-  typeOfOrder?: string;
-  category?: string;
-  stateOfProject?: boolean;
-}
 
-interface InitialQuery {
-  state: boolean;
-  name?: {};
-  requirements?: {};
-  category?: {};
-  stateOfProject?: {};
-}
-
-declare module namespace {
-
-  export interface Error {
-      msg: string;
-  }
-
-  export interface RootObject {
-      errors: Error[];
-  }
-
-}
 
 export const getProjects: RequestHandler = async (req, res) => {
   try {
@@ -77,13 +49,15 @@ export const getProjects: RequestHandler = async (req, res) => {
       sort[orderBy] = typeOfOrder;
     }
 
-    const [total, projects] = await Promise.all([
+    const [total, projects]: [number, InitialProject[]]= await Promise.all([
       Project.countDocuments(initialQuery),
       Project.find(initialQuery).sort(sort).skip(init).limit(limit).populate({
         path: 'company',
         select: 'name',
       }),
     ]);
+
+    console.log(projects)
     return res.status(200).json({
       total,
       projects,
