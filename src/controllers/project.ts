@@ -12,8 +12,8 @@ export const getProjects: RequestHandler = async (req, res) => {
       tecnologies,
       orderBy,
       typeOfOrder = "asc",
-      category,
-      stateOfProject,
+      categories,
+      stateProject,
     }: any = req.query;
 
     // validar que el orderBy sea un campo valido
@@ -34,13 +34,14 @@ export const getProjects: RequestHandler = async (req, res) => {
       const requirements: any = tecnologies.split(",");
       initialQuery.requirements = { $all: requirements };
     }
-    if (category) {
-      initialQuery.category = { $regex: category, $options: "i" };
+    if (categories) {
+      const category: any = categories.split(",");
+      initialQuery.category = { $all: category};
     }
-    if (stateOfProject) {
-      initialQuery.stateOfProject = { $regex: stateOfProject, $options: "i" };
+    if (stateProject) {
+      const stateOfProject: any = stateProject.split(",");
+      initialQuery.stateOfProject = { $all: stateOfProject};
     }
-
     let sort: any = {};
     if (orderBy) {
       sort[orderBy] = typeOfOrder;

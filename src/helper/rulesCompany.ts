@@ -26,6 +26,6 @@ export const rulesUpdateUserCompany = [
 
 export const rulesGetUserCompany = [verifyToken, companyRole];
 
-export const rulesGetUsersCompany = [verifyToken, companyRole];
+export const rulesGetUsersCompany = [verifyToken, companyRole];//consultar pòrq esta repetido,
 
 export const rulesDeleteUsersCompany = [verifyToken, companyRole];

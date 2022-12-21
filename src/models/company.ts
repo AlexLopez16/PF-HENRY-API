@@ -19,10 +19,6 @@ const CompanySchema = new Schema({
   website: {
     type: String,
   },
-  state: {
-    type: Boolean,
-    default: true,
-  },
   gmail: {
     type: Boolean,
     default: false,
@@ -49,12 +45,6 @@ const CompanySchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'Invoice',
     },
-  ],
-  requests:[
-    {
-      type:Schema.Types.ObjectId,
-      ref:"Student"
-    }
   ],
   rol: {
     type: String,

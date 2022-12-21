@@ -21,6 +21,7 @@ const ProjectSchema = new Schema({
     type: Array,
     required: [true, 'Language is required'],
   },
+ 
   state: {
     type: Boolean,
     default: true,
@@ -31,7 +32,6 @@ const ProjectSchema = new Schema({
       ref: 'Student',
     },
   ],
-
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company',

@@ -6,6 +6,7 @@ import {
   rulesGetUsersCompany,
   rulesGetUserCompany,
 } from '../helper/rulesCompany';
+import { verifyToken } from '../middlewares/authValidator';
 import {
     createUserCompany,
     deleteUserCompany,
