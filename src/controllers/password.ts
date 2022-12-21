@@ -11,7 +11,7 @@ require("dotenv").config();
 
 export const password: RequestHandler = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email } = req.query;
     let user = await Student.findOne({ email: email });
     if (!user) {
       user = await Company.findOne({ email: email });

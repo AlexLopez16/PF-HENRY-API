@@ -26,10 +26,12 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
   user = await Student.findOne({ email: email, gmail: true });
   if (!user) {
     user = await Company.findOne({ email: email, gmail: true });
+    if (!user) {
+      user = await Admin.findOne({ email: email, gmail: true });
+    }
   }
-  if (!user) {
-    user = await Admin.findOne({ email: email, gmail: true });
-  }
+ 
+ if(!user){
   if (userType === 'student') {
     user = await new Student({
       name: payload.given_name,
@@ -50,6 +52,7 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
   } else {
     throw new Error('userType is invalid.');
   }
+}
   await user.save();
 
   return user;

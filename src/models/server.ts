@@ -25,7 +25,7 @@ const paths = {
     project: '/api/project',
     checkout: '/api/checkout',
     admin: '/api/admin',
-    password:'/recover/password',  
+    password:'/api/recover/password',  
     review: '/api/review',
 };
 
