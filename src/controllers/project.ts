@@ -13,8 +13,8 @@ export const getProjects: RequestHandler = async (req, res) => {
       tecnologies,
       orderBy,
       typeOfOrder = 'asc',
-      category,
-      stateOfProject,
+      categories,
+      stateProject,
     }: Query = req.query;
 
     // validar que el orderBy sea un campo valido
@@ -35,13 +35,14 @@ export const getProjects: RequestHandler = async (req, res) => {
       const requirements: string[] = tecnologies.split(',');
       initialQuery.requirements = { $all: requirements };
     }
-    if (category) {
-      initialQuery.category = { $regex: category, $options: 'i' };
+    if (categories) {
+      const category = categories.split(",");
+      initialQuery.category = { $all: category};
     }
-    if (stateOfProject) {
-      initialQuery.stateOfProject = { $regex: stateOfProject, $options: 'i' };
+    if (stateProject) {
+      const stateOfProject = stateProject.split(",");
+      initialQuery.stateOfProject = { $all: stateOfProject};
     }
-
     let sort: any = {};
     if (orderBy) {
       sort[orderBy] = typeOfOrder;
@@ -234,3 +235,11 @@ export const getAccepts: RequestHandler = async (req, res) => {
     return res.status(400).send(formatError(error.message));
   }
 };
+
+
+
+
+
+
+
+

@@ -19,10 +19,6 @@ const CompanySchema = new Schema({
   website: {
     type: String,
   },
-  state: {
-    type: Boolean,
-    default: true,
-  },
   gmail: {
     type: Boolean,
     default: false,
