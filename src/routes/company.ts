@@ -17,9 +17,9 @@ const router = Router();
 
 router.get('/', rulesUsersCompany, getUsersCompany);
 
-router.get('/:id', rulesUsersCompany, getUserCompany);
+router.get("/login",rulesUsersCompany,getCompanyProject);
 
-router.get("/login/:id",rulesUsersCompany,getCompanyProject);
+router.get('/:id', rulesUsersCompany, getUserCompany);
 
 router.post('/', rulesCreateUserCompany, createUserCompany);
 

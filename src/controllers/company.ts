@@ -109,10 +109,11 @@ export const deleteUserCompany: RequestHandler = async (req, res) => {
     res.status(500).send(formatError(error.message));
   }
 };
+
 export const getCompanyProject: RequestHandler = async (req,res)=>{
   try {
   
-    const{id} = req.params
+    const{id} = req.user
     const company= await User.findById(id)
     return res.status(200).json(company.project)
     
