@@ -36,12 +36,13 @@ export const getProjects: RequestHandler = async (req, res) => {
       initialQuery.requirements = { $all: requirements };
     }
     if (categories) {
-      initialQuery.category = { $regex: categories, $options: 'i' };
+      const category = categories.split(",");
+      initialQuery.category = { $all: category};
     }
     if (stateProject) {
-      initialQuery.stateOfProject = { $regex: stateProject, $options: 'i' };
+      const stateOfProject = stateProject.split(",");
+      initialQuery.stateOfProject = { $all: stateOfProject};
     }
-
     let sort: any = {};
     if (orderBy) {
       sort[orderBy] = typeOfOrder;
@@ -234,3 +235,11 @@ export const getAccepts: RequestHandler = async (req, res) => {
     return res.status(400).send(formatError(error.message));
   }
 };
+
+
+
+
+
+
+
+

@@ -5,8 +5,8 @@ export interface Query {
   tecnologies?: string;
   orderBy?: string;
   typeOfOrder?: string;
-  categories?: string;
-  stateProject?: boolean;
+  categories?:string;
+  stateProject?:string;
 }
 
 export interface InitialQuery {
