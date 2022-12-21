@@ -40,7 +40,7 @@ const CompanySchema = new Schema({
       ref: 'Project',
     },
   ],
-  Invoice: [
+  invoice: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Invoice',

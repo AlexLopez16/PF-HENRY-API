@@ -2,14 +2,12 @@ import { Router } from 'express';
 import {
   rulesCreateUserCompany,
   rulesUpdateUserCompany,
-  rulesDeleteUsersCompany,
-  rulesGetUsersCompany,
-  rulesGetUserCompany,
-} from '../helper/rulesCompany';
-import { verifyToken } from '../middlewares/authValidator';
+  rulesUsersCompany,
+} from '../helpers/rulesCompany';
 import {
     createUserCompany,
     deleteUserCompany,
+    getCompanyProject,
     getUserCompany,
     getUsersCompany,
     updateUserCompany,
@@ -17,14 +15,16 @@ import {
 
 const router = Router();
 
-router.get('/', rulesGetUsersCompany, getUsersCompany);
+router.get('/', rulesUsersCompany, getUsersCompany);
 
-router.get('/:id', rulesGetUserCompany, getUserCompany);
+router.get('/:id', rulesUsersCompany, getUserCompany);
+
+router.get("/login/:id",rulesUsersCompany,getCompanyProject);
 
 router.post('/', rulesCreateUserCompany, createUserCompany);
 
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
 
-router.delete('/:id', rulesDeleteUsersCompany, deleteUserCompany);
+router.delete('/:id', rulesUsersCompany, deleteUserCompany);
 
 module.exports = router;

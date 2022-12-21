@@ -9,12 +9,20 @@ const ReviewSchema = new Schema({
         + Description
         + Rating
     */
-    Description: {
+    description: {
         type: String,
     },
-    Rating: {
-        type: Array,
+    rating: {
+        type: Number,
     },
+    student: {
+        type: Schema.Types.ObjectId,
+        ref: 'Student'
+    },
+    project: {
+        type: Schema.Types.ObjectId,
+        ref: 'Project'
+    }
 });
 
 ReviewSchema.methods.toJSON = function () {

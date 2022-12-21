@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express';
 const User = require('../models/company');
-import { hash } from '../helper/hash';
-import { jwtGenerator } from '../helper/jwt';
+import { hash } from '../helpers/hash';
+import { jwtGenerator } from '../helpers/jwt';
 import { formatError } from '../utils/formatErros';
-import { sendConfirmationEmail } from '../helper/sendConfirmationEmail';
+import { sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
 
 // CREATE
 export const createUserCompany: RequestHandler = async (req, res) => {
@@ -16,7 +16,7 @@ export const createUserCompany: RequestHandler = async (req, res) => {
     user = await user.save();
     sendConfirmationEmail(user);
     const rol = user.rol;
-    let obj={id:user._id, name:user.name}
+    let obj = { id: user._id, name: user.name };
     const token = jwtGenerator(obj);
     res.status(201).json({
       data: 'Successfull Sing up',
@@ -33,8 +33,8 @@ export const createUserCompany: RequestHandler = async (req, res) => {
 // GET USERS
 export const getUsersCompany: RequestHandler = async (req, res) => {
   try {
-    const { limit = 10, init = 0 } = req.query;
-    const query = { state: true };
+    const { limit = 10, init = 0, name, country } = req.query;
+    const query: any = { state: true };
     const ignore: any = {
       password: false,
       state: false,
@@ -42,6 +42,11 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
       github: false,
       rol: false,
     };
+
+    if (name) query.name = { $regex: name, $options: 'i' };
+
+    if (country) query.country = { $regex: country, $options: 'i' };
+
     const [total, usersCompany] = await Promise.all([
       User.countDocuments(query),
       User.find(query, ignore).skip(init).limit(limit),
@@ -104,3 +109,14 @@ export const deleteUserCompany: RequestHandler = async (req, res) => {
     res.status(500).send(formatError(error.message));
   }
 };
+export const getCompanyProject: RequestHandler = async (req,res)=>{
+  try {
+  
+    const{id} = req.params
+    const company= await User.findById(id)
+    return res.status(200).json(company.project)
+    
+  } catch (error:any) {
+    res.status(400).send(formatError(error.message))
+    
+  }}

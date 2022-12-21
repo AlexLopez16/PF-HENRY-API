@@ -2,14 +2,13 @@ import { Schema, model } from 'mongoose';
 
 const StudentSchema = new Schema({
     name: {
-        type: String
+        type: String,
     },
     lastName: {
-        type: String
+        type: String,
     },
     username: {
         type: String,
-       
     },
     email: {
         type: String,
@@ -51,10 +50,14 @@ const StudentSchema = new Schema({
         default: 'STUDENT_ROL',
         emun: ['STUDENT_ROL'],
     },
-    project: {
+    project: [{
         type: Schema.Types.ObjectId,
         ref: 'Project',
-    },
+    }],
+    review: {
+        type: Schema.Types.ObjectId,
+        ref: 'Review',
+    }
 });
 
 StudentSchema.methods.toJSON = function () {
