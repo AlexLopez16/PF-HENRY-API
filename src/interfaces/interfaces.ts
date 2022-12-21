@@ -36,3 +36,23 @@ export interface InitialProject {
   accepts: any[];
   uid: string;
 }
+
+export interface Error {
+  msg: string;
+}
+
+export interface InitialError {
+  errors: Error[];
+}
+
+
+export interface InitialCreateProject {
+  name: string,
+  description: string,
+  participants: number,
+  image: string,
+  requirements: string[],
+  category?: string,
+  stateOfProject?: string[]
+
+}
