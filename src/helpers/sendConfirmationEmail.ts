@@ -11,9 +11,10 @@ const {
   PORT,
 } = process.env;
 
+
 export const sendConfirmationEmail = async (user: any) => {
   try {
-    let transport = nodemailer.createTransport({
+    let  transport = nodemailer.createTransport({
       host: HOST_EMAIL,
       port: PORT_EMAIL,
       auth: {
@@ -40,3 +41,31 @@ export const sendConfirmationEmail = async (user: any) => {
     console.log(error.message);
   }
 };
+
+export const recuperatePassword = async (user: any) => {
+  try {
+    let  transport = nodemailer.createTransport({
+      host: HOST_EMAIL,
+      port: PORT_EMAIL,
+      auth: {
+        user: USER_EMAIL,
+        pass: PASS_EMAIL,
+      },
+    });
+    let obj = { email: user.email};
+
+    // Creamos la url con un jwt.
+    const token = jwtGenerator(obj);
+    const urlmodifyPassword = `${URL}:${PORT}/api/recover/password/redirect/${token}`;
+    // send mail with defined transport object
+    const sendEmail = await transport.sendMail({
+      from: FROM_EMAIL, // sender address
+      to: user.email, // list of receivers
+      subject: "Please,ingrese al link", // Subject line
+      //text: 'Hello world', // plain text body
+      html: `<p>ingrese al link: <a href="${urlmodifyPassword}">Recuperar contraseña</a></p>`, // html body
+    });
+    console.log(sendEmail);
+  } catch (error: any) {
+    console.log(error.message);
+  }}
