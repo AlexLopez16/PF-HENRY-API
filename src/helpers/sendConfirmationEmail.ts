@@ -50,7 +50,7 @@ export const recuperatePassword = async (user: any) => {
 
     // Creamos la url con un jwt.
     const token = jwtGenerator(obj);
-    const urlmodifyPassword = `${URL}:${PORT}/recover/password/${token}`;
+    const urlmodifyPassword = `${URL}:${PORT}/api/recover/password/redirect/${token}`;
     // send mail with defined transport object
     const sendEmail = await transport.sendMail({
       from: FROM_EMAIL, // sender address
