@@ -7,6 +7,7 @@ import {
 import {
     createUserCompany,
     deleteUserCompany,
+    getCompanyProject,
     getUserCompany,
     getUsersCompany,
     updateUserCompany,
@@ -15,6 +16,8 @@ import {
 const router = Router();
 
 router.get('/', rulesUsersCompany, getUsersCompany);
+
+router.get("/login",rulesUsersCompany,getCompanyProject);
 
 router.get('/:id', rulesUsersCompany, getUserCompany);
 
