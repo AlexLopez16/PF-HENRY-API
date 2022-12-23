@@ -114,8 +114,16 @@ export const getCompanyProject: RequestHandler = async (req,res)=>{
   try {
   
     const{id} = req.user
-    const company= await User.findById(id)
-    return res.status(200).json(company.project)
+    
+    const company= await User.find({_id:id}).populate({
+      path: 'project'
+    })
+    
+    const compa= await company[0].populate({
+      path: 'project'
+    })
+   
+    return res.status(200).json(compa.project)
     
   } catch (error:any) {
     res.status(400).send(formatError(error.message))
