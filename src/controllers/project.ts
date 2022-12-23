@@ -89,22 +89,24 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
     const query = { state: true, _id: id };
     const verifyStudent = await Project.find({ state: true, students: userId });
 
-    if (verifyStudent.length===3) {
+    if (verifyStudent.length === 3) {
       throw new Error("Student is already in three projects");
     }
     const projects = await Project.find(query);
+
     if (!projects.length) throw new Error('project no found');
     let project = projects[0];
     if (!project.students.filter((s: any) => s.toString() == userId).length) {
       project.students = [...project.students, userId];
-
       await project.save();
-      await Student.findByIdAndUpdate(userId, { project: id });
-
+      const students = await Student.findById(userId);
+      students.project = [...students.project, id]
+      await students.save()
       const infoProject = await project.populate({
         path: 'students',
         select: '-password',
       });
+      
       return res.status(200).json(infoProject);
     } else {
       throw new Error('student is in the project');
@@ -217,8 +219,8 @@ export const FromAcceptoToStudent: RequestHandler = async (req, res) => {
 
 export const getPostulated: RequestHandler = async (req, res) => {
   try {
-    const {id}=req.params
-    const project= await Project.findById(id);
+    const { id } = req.params
+    const project = await Project.findById(id);
     return res.status(200).json(project.students);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
@@ -227,8 +229,8 @@ export const getPostulated: RequestHandler = async (req, res) => {
 
 export const getAccepts: RequestHandler = async (req, res) => {
   try {
-    const {id}=req.params
-    const project= await Project.findById(id);
+    const { id } = req.params
+    const project = await Project.findById(id);
     return res.status(200).json(project.accepts);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
