@@ -1,6 +1,6 @@
 import { hash } from "../helpers/hash";
 import { RequestHandler } from "express";
-// import { recuperatePassword } from "../helpers/sendConfirmationEmail";
+ import { recuperatePassword } from "../helpers/sendConfirmationEmail";
 import { verifyJwt } from "../helpers/verifyJwt";
 
 import { formatError } from "../utils/formatErros";
@@ -18,7 +18,7 @@ export const password: RequestHandler = async (req, res) => {
     }
     if (!user) throw new Error("Email invalid");
 
-    // recuperatePassword(user);
+     recuperatePassword(user);
 
     res.status(200).json({
       msg: "Email send",
