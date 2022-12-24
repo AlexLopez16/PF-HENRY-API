@@ -179,7 +179,7 @@ export const editProject: RequestHandler = async (req, res) => {
 export const getCategory: RequestHandler = async (req, res) => {
   try {
     const projects = await Project.find();
-    const categories = projects.map(({ category }: any) => category.toLowerCase())
+    const categories = projects.map(({ category }: any) => category)
     return res.status(200).json(categories);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
