@@ -14,8 +14,8 @@ const ProjectSchema = new Schema({
     type: Number,
     required: [true, 'Number of employees is required'],
   },
-  image: {
-    type: String
+  images: {
+    type: Array
   },
   requirements: {
     type: Array,
@@ -53,7 +53,8 @@ const ProjectSchema = new Schema({
   },
   stateOfProject: {
     type: String,
-    emun: ['Reclutamiento', 'En desarrollo', 'Terminado']
+    emun: ['Reclutamiento', 'En desarrollo', 'Terminado',"En revision"],
+    default: "En revision"
   }
 });
 
