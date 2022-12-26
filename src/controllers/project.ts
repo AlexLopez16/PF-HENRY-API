@@ -3,7 +3,7 @@ import { formatError } from '../utils/formatErros';
 import { Query, InitialQuery, InitialProject } from '../interfaces/interfaces';
 const Project = require('../models/project');
 const Student = require('../models/student');
-const Company=require('../models/company')
+const Company = require('../models/company')
 
 export const getProjects: RequestHandler = async (req, res) => {
   try {
@@ -38,11 +38,11 @@ export const getProjects: RequestHandler = async (req, res) => {
     }
     if (categories) {
       const category = categories.split(",");
-      initialQuery.category = { $all: category};
+      initialQuery.category = { $all: category };
     }
     if (stateProject) {
       const stateOfProject = stateProject.split(",");
-      initialQuery.stateOfProject = { $all: stateOfProject};
+      initialQuery.stateOfProject = { $all: stateOfProject };
     }
     let sort: any = {};
     if (orderBy) {
@@ -76,8 +76,8 @@ export const createProject: RequestHandler = async (req, res) => {
     };
     const project = new Project(data);
     await project.save();
-    const company=await Company.findById(req.user._id)
-    company.project=[...company.project,project._id]
+    const company = await Company.findById(req.user._id)
+    company.project = [...company.project, project._id]
     await company.save();
     return res.status(200).send(project);
   } catch (error: any) {
@@ -110,7 +110,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
         path: 'students',
         select: '-password',
       });
-      
+
       return res.status(200).json(infoProject);
     } else {
       throw new Error('student is in the project');
@@ -191,15 +191,20 @@ export const getCategory: RequestHandler = async (req, res) => {
 export const acceptStudentToProject: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const searchStudent = await Project.find({ state: true, students: id });
-    if (!searchStudent.length) {
+    const { idstudent } = req.body;
+    console.log("id",idstudent);
+    
+    const project = await Project.findById(id);
+    
+    if (!project.students.includes(idstudent)) {
       throw new Error("no esta asociado");
+    } 
+    else {
+      project.accepts = [...project.accepts, idstudent]//lo agrego a accept
+      project.students = project.students.filter((e: String) => e != idstudent)//lo elimino de students 
+      project.save()
     }
-    searchStudent[0].accepts = [...searchStudent[0].accepts, id]//lo agrego a accept
-    searchStudent[0].students = searchStudent[0].students.filter((e: String) => e != id)
-    searchStudent[0].save()
-    return res.status(200).json(searchStudent);
-
+    return res.status(200).json(project);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
   }
@@ -208,7 +213,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
 export const FromAcceptoToStudent: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const searchStudent = await Project.find({ state: true, accepts: id });
+    const searchStudent = await Project.find({ state: true, student: id });
     if (!searchStudent.length) {
       throw new Error("no esta aceptado");
     }
@@ -235,6 +240,7 @@ export const getAccepts: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params
     const project = await Project.findById(id);
+
     return res.status(200).json(project.accepts);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));

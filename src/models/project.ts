@@ -33,9 +33,10 @@ const ProjectSchema = new Schema({
     },
   ],
 
-  accepts: {
-    type: Array
-  },
+  accepts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Student',
+  }],
 
   company: {
     type: Schema.Types.ObjectId,

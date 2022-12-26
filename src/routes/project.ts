@@ -24,7 +24,7 @@ const router = Router();
 router.get("/", verifyToken, getProjects);
 router.get("/category", verifyToken,getCategory);
 router.get("/postulated/:id", verifyToken,getPostulated)
-router.get("/accepts/:id", verifyToken,getAccepts)
+router.get("/accept/:id", verifyToken,getAccepts)
 router.get("/:id", verifyToken, getProject);
 
 
