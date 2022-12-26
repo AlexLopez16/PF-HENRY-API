@@ -12,16 +12,18 @@ const {
 } = process.env;
 
 
+const transport = nodemailer.createTransport({
+  host: HOST_EMAIL,
+  port: PORT_EMAIL,
+  auth: {
+    user: USER_EMAIL,
+    pass: PASS_EMAIL,
+  },
+  tls:{rejectUnauthorized:false} //arregla el error del mail
+});
+
 export const sendConfirmationEmail = async (user: any) => {
   try {
-    let  transport = nodemailer.createTransport({
-      host: HOST_EMAIL,
-      port: PORT_EMAIL,
-      auth: {
-        user: USER_EMAIL,
-        pass: PASS_EMAIL,
-      },
-    });
     let obj = { email: user.email, rol: user.rol };
 
     // Creamos la url con un jwt.
@@ -41,17 +43,9 @@ export const sendConfirmationEmail = async (user: any) => {
     console.log(error.message);
   }
 };
-
 export const recuperatePassword = async (user: any) => {
   try {
-    let  transport = nodemailer.createTransport({
-      host: HOST_EMAIL,
-      port: PORT_EMAIL,
-      auth: {
-        user: USER_EMAIL,
-        pass: PASS_EMAIL,
-      },
-    });
+
     let obj = { email: user.email};
 
     // Creamos la url con un jwt.
