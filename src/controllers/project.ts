@@ -79,6 +79,10 @@ export const createProject: RequestHandler = async (req, res) => {
     const project = new Project(data);
     await project.save();
     const company=await Company.findById(req.user._id)
+    console.log(company)
+    if(company.project.length > 1) {
+      throw new Error('Contract premium to add more projects')
+    }
     company.project=[...company.project,project._id]
     await company.save();
     return res.status(200).send(project);

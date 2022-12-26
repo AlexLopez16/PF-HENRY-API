@@ -82,8 +82,8 @@ export const updateUserCompany: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
     const { email, country, premium, password, ...user } = req.body;
-    let hashPassword = await hash(password);
     if (password) {
+      let hashPassword = await hash(password);
       user.password = hashPassword;
     }
     const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
