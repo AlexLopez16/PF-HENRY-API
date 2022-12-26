@@ -13,6 +13,4 @@ export const rulesCreateProject = [
   companyRole,
 ];
 
-export const ruleseEditProjects = [verifyToken, validate, companyRole];
-
-export const rulesDeleteProject = [verifyToken, validate, companyRole];
+export const rulesProject = [verifyToken, validate, companyRole];

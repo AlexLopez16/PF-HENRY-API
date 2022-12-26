@@ -62,27 +62,29 @@ export const createReview: RequestHandler = async (req, res) => {
 export const editReview: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { description, rating }: InitialBody = req.body;
-  
-    const review = await Review.findByIdAndUpdate(id, { description, rating });
-    await review.save();
-  
-    res.status(200).json('Rview actualizada');
+    const { description, rating } = req.body;
+
+    const filter = { _id: id };
+    const update = { description, rating };
+
+    const findReview = await Review.findOneAndUpdate(filter, update, {
+      new: true,
+    });
+    await findReview.save();
+
+    res.status(201).json(findReview);
   } catch (error: any) {
     res.status(500).json(formatError(error.message));
   }
-}
+};
 
 export const deleteReview: RequestHandler = async (req, res) => {
-
   try {
     const { id } = req.params;
-    const review = await Review.deleteOne({_id: id})
+    const review = await Review.deleteOne({ _id: id });
 
-    res.status(200).send('Review borrado con exito')
-    
+    res.status(200).send('Review borrado con exito');
   } catch (error: any) {
     res.status(500).json(formatError(error.message));
   }
-
-}
+};

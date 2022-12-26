@@ -6,21 +6,36 @@ import {
   getProjects,
   deleteProject,
   editProject,
+  getCategory,
+  acceptStudentToProject,
+  FromAcceptoToStudent,
+  getPostulated,
+  getAccepts,
+
 } from "../controllers/project";
 
 import {
   rulesCreateProject,
-  ruleseEditProjects,
-  rulesDeleteProject,
-} from "../helper/rulesProjects";
+  rulesProject,
+} from "../helpers/rulesProjects";
 import { verifyToken } from "../middlewares/authValidator";
 const router = Router();
 
 router.get("/", verifyToken, getProjects);
+router.get("/category", verifyToken,getCategory);
+router.get("/postulated/:id", verifyToken,getPostulated)
+router.get("/accepts/:id", verifyToken,getAccepts)
 router.get("/:id", verifyToken, getProject);
+
+
 router.post("/", rulesCreateProject, createProject);
-router.put("/:id", verifyToken, addStudentToProject);
-router.put("/edit/:id", ruleseEditProjects, editProject);
-router.delete("/:id", rulesDeleteProject, deleteProject);
+router.put("/:id", verifyToken, addStudentToProject);//agregar validator rol-student
+router.put("/edit/:id", rulesProject, editProject);
+router.put('/accept/:id',rulesProject,acceptStudentToProject)
+router.put( '/denied/:id',rulesProject,FromAcceptoToStudent)
+
+router.delete("/:id", rulesProject, deleteProject);
+
+
 
 module.exports = router;

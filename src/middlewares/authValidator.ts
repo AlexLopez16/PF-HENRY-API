@@ -1,8 +1,8 @@
 import { RequestHandler, Router } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { searchUser } from "../helper/searchUser";
+import { searchUser } from "../helpers/searchUser";
 import { formatError } from "../utils/formatErros";
-import {verifyJwt} from '../helper/verifyJwt'
+import {verifyJwt} from '../helpers/verifyJwt'
 require("dotenv").config();
 
 // Este declare nos permite crear nuestras porpias requests.
@@ -28,6 +28,6 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
     if (!user.verify) throw new Error("Confirm your email");
     next();
   } catch (error: any) {
-    return res.status(500).json(formatError(error.message));
+    return res.status(401).json(formatError(error.message));
   }
 };

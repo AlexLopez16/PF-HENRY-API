@@ -1,7 +1,7 @@
-import { hash } from "../helper/hash";
+import { hash } from "../helpers/hash";
 import { RequestHandler } from "express";
-import { recuperatePassword } from "../helper/sendConfirmationEmail";
-import { verifyJwt } from "../helper/verifyJwt";
+// import { recuperatePassword } from "../helpers/sendConfirmationEmail";
+import { verifyJwt } from "../helpers/verifyJwt";
 
 import { formatError } from "../utils/formatErros";
 const Student = require("../models/student");
@@ -18,7 +18,7 @@ export const password: RequestHandler = async (req, res) => {
     }
     if (!user) throw new Error("Email invalid");
 
-    recuperatePassword(user);
+    // recuperatePassword(user);
 
     res.status(200).json({
       msg: "Email send",
@@ -71,5 +71,4 @@ export const modifyPassword: RequestHandler = async (req, res) => {
     res.status(500).json(formatError(error.message));
   }
 
-  ("$2a$10$MH.dIr9QBAQBWh3AoQNWwecUV6SRf3IH5zcqeaUUPJXwFD27sp88.");
 };

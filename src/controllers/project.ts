@@ -1,38 +1,8 @@
 import { RequestHandler } from 'express';
-const Project = require('../models/project');
 import { formatError } from '../utils/formatErros';
+import { Query, InitialQuery, InitialProject } from '../interfaces/interfaces';
+const Project = require('../models/project');
 const Student = require('../models/student');
-
-interface Query {
-  limit?: number;
-  init?: number;
-  name?: string;
-  tecnologies?: string;
-  orderBy?: string;
-  typeOfOrder?: string;
-  category?: string;
-  stateOfProject?: boolean;
-}
-
-interface InitialQuery {
-  state: boolean;
-  name?: {};
-  requirements?: {};
-  category?: {};
-  stateOfProject?: {};
-}
-
-declare module namespace {
-
-  export interface Error {
-      msg: string;
-  }
-
-  export interface RootObject {
-      errors: Error[];
-  }
-
-}
 
 
 export const getProjects: RequestHandler = async (req, res) => {
@@ -44,8 +14,8 @@ export const getProjects: RequestHandler = async (req, res) => {
       tecnologies,
       orderBy,
       typeOfOrder = 'asc',
-      category,
-      stateOfProject,
+      categories,
+      stateProject,
     }: Query = req.query;
 
 
@@ -67,21 +37,20 @@ export const getProjects: RequestHandler = async (req, res) => {
       const requirements: string[] = tecnologies.split(',');
       initialQuery.requirements = { $all: requirements };
     }
-    if (category) {
-
-      initialQuery.category = { $regex: category, $options: "i" };
+    if (categories) {
+      const category = categories.split(",");
+      initialQuery.category = { $all: category};
     }
-    if (stateOfProject) {
-      initialQuery.stateOfProject = { $regex: stateOfProject, $options: "i" };
-
+    if (stateProject) {
+      const stateOfProject = stateProject.split(",");
+      initialQuery.stateOfProject = { $all: stateOfProject};
     }
-
     let sort: any = {};
     if (orderBy) {
       sort[orderBy] = typeOfOrder;
     }
 
-    const [total, projects] = await Promise.all([
+    const [total, projects]: [number, InitialProject[]] = await Promise.all([
       Project.countDocuments(initialQuery),
       Project.find(initialQuery).sort(sort).skip(init).limit(limit).populate({
         path: 'company',
@@ -94,7 +63,7 @@ export const getProjects: RequestHandler = async (req, res) => {
     });
   } catch (error: any) {
     //use any because type of error can be undefined
-    return res.status(500).json(formatError(error.message) );
+    return res.status(500).json(formatError(error.message));
   }
 };
 
@@ -123,21 +92,27 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
     const query = { state: true, _id: id };
     const verifyStudent = await Project.find({ state: true, students: userId });
 
-    if (verifyStudent.length) {
-      throw new Error('Student is already in a project');
+
+    if (verifyStudent.length===3) {
+      throw new Error("Student is already in three projects");
     }
     const projects = await Project.find(query);
     if (!projects.length) throw new Error('project no found');
     let project = projects[0];
-    project.students = [...project.students, userId];
-    await project.save();
-    await Student.findByIdAndUpdate(userId, { project: id });
+    if (!project.students.filter((s: any) => s.toString() == userId).length) {
+      project.students = [...project.students, userId];
 
-    const infoProject = await project.populate({
-      path: "students",
-      select: "-password",
-    });
-    return res.status(200).json(infoProject);
+      await project.save();
+      await Student.findByIdAndUpdate(userId, { project: id });
+
+      const infoProject = await project.populate({
+        path: 'students',
+        select: '-password',
+      });
+      return res.status(200).json(infoProject);
+    } else {
+      throw new Error('student is in the project');
+    }
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
   }
@@ -156,11 +131,7 @@ export const getProject: RequestHandler = async (req, res) => {
       .populate({
         path: 'company',
         select: '-password',
-      }).populate({
-        path: 'reviews',
-        select: '-rating'
       });
-
     if (!projects.length) throw new Error('project no found');
     let project = projects[0];
     return res.status(200).json(project);
@@ -168,6 +139,7 @@ export const getProject: RequestHandler = async (req, res) => {
     return res.status(400).send(formatError(error.message));
   }
 };
+
 export const deleteProject: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
@@ -203,3 +175,67 @@ export const editProject: RequestHandler = async (req, res) => {
     return res.status(400).send(formatError(error.message));
   }
 };
+
+export const getCategory: RequestHandler = async (req, res) => {
+  try {
+    const projects = await Project.find();
+    const categories = projects.map(({ category }: any) => category.toLowerCase())
+    return res.status(200).json(categories);
+  } catch (error: any) {
+    return res.status(400).send(formatError(error.message));
+  }
+};
+
+export const acceptStudentToProject: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const searchStudent = await Project.find({ state: true, students: id });
+    if (!searchStudent.length) {
+      throw new Error("no esta asociado");
+    }
+    searchStudent[0].accepts = [...searchStudent[0].accepts, id]//lo agrego a accept
+    searchStudent[0].students = searchStudent[0].students.filter((e: String) => e != id)
+    searchStudent[0].save()
+    return res.status(200).json("alumno aceptado");
+
+  } catch (error: any) {
+    return res.status(400).send(formatError(error.message));
+  }
+};
+
+export const FromAcceptoToStudent: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const searchStudent = await Project.find({ state: true, accepts: id });
+    if (!searchStudent.length) {
+      throw new Error("no esta aceptado");
+    }
+    searchStudent[0].students = [...searchStudent[0].students, id]//lo agrego a students
+    searchStudent[0].accepts = searchStudent[0].accepts.filter((e: String) => e != id)
+    searchStudent[0].save()
+    return res.status(200).json("alumno movido");
+  } catch (error: any) {
+    return res.status(400).send(formatError(error.message));
+  }
+};
+
+export const getPostulated: RequestHandler = async (req, res) => {
+  try {
+    const {id}=req.params
+    const project= await Project.findById(id);
+    return res.status(200).json(project.students);
+  } catch (error: any) {
+    return res.status(400).send(formatError(error.message));
+  }
+};
+
+export const getAccepts: RequestHandler = async (req, res) => {
+  try {
+    const {id}=req.params
+    const project= await Project.findById(id);
+    return res.status(200).json(project.accepts);
+  } catch (error: any) {
+    return res.status(400).send(formatError(error.message));
+  }
+};
+

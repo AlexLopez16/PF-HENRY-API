@@ -19,10 +19,6 @@ const CompanySchema = new Schema({
   website: {
     type: String,
   },
-  state: {
-    type: Boolean,
-    default: true,
-  },
   gmail: {
     type: Boolean,
     default: false,
@@ -44,7 +40,7 @@ const CompanySchema = new Schema({
       ref: 'Project',
     },
   ],
-  Invoice: [
+  invoice: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Invoice',
