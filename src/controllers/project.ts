@@ -3,6 +3,7 @@ import { formatError } from '../utils/formatErros';
 import { Query, InitialQuery, InitialProject } from '../interfaces/interfaces';
 const Project = require('../models/project');
 const Student = require('../models/student');
+const Company=require('../models/company')
 
 export const getProjects: RequestHandler = async (req, res) => {
   try {
@@ -75,7 +76,9 @@ export const createProject: RequestHandler = async (req, res) => {
     };
     const project = new Project(data);
     await project.save();
-
+    const company=await Company.findById(req.user._id)
+    company.project=[...company.project,project._id]
+    await company.save();
     return res.status(200).send(project);
   } catch (error: any) {
     return res.status(500).send(formatError(error.message));
