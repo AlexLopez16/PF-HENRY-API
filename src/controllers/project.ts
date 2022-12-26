@@ -8,8 +8,8 @@ const Company = require("../models/company");
 export const getProjects: RequestHandler = async (req, res) => {
   try {
     const {
-      limit = 10,
-      init = 0,
+      limit,
+      init ,
       name,
       tecnologies,
       orderBy,
@@ -17,7 +17,7 @@ export const getProjects: RequestHandler = async (req, res) => {
       categories,
       stateProject,
     }: Query = req.query;
-
+    console.log(init,limit)
     // validar que el orderBy sea un campo valido
     if (orderBy && orderBy !== "participants") {
       throw new Error("Orderby is not valid.");
@@ -51,11 +51,12 @@ export const getProjects: RequestHandler = async (req, res) => {
 
     const [total, projects]: [number, InitialProject[]] = await Promise.all([
       Project.countDocuments(initialQuery),
-      Project.find(initialQuery).sort(sort).skip(init).limit(limit).populate({
+      Project.find(initialQuery).sort(sort).limit(limit).skip(init).populate({
         path: "company",
         select: "name",
       }),
     ]);
+    
     return res.status(200).json({
       total,
       projects,
