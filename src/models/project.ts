@@ -52,7 +52,8 @@ const ProjectSchema = new Schema({
   },
   stateOfProject: {
     type: String,
-    emun: ['Reclutamiento', 'En desarrollo', 'Terminado']
+    emun: ['Reclutamiento', 'En desarrollo', 'Terminado',"En revision"],
+    default: "En revision"
   }
 });
 
