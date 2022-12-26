@@ -195,7 +195,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
     searchStudent[0].accepts = [...searchStudent[0].accepts, id]//lo agrego a accept
     searchStudent[0].students = searchStudent[0].students.filter((e: String) => e != id)
     searchStudent[0].save()
-    return res.status(200).json("alumno aceptado");
+    return res.status(200).json(searchStudent);
 
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
