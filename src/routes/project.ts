@@ -24,15 +24,15 @@ const router = Router();
 router.get("/", verifyToken, getProjects);
 router.get("/category", verifyToken,getCategory);
 router.get("/postulated/:id", verifyToken,getPostulated)
-router.get("/accepts/:id", verifyToken,getAccepts)
+router.get("/accept/:id", verifyToken,getAccepts)
 router.get("/:id", verifyToken, getProject);
 
 
 router.post("/", rulesCreateProject, createProject);
 router.put("/:id", verifyToken, addStudentToProject);//agregar validator rol-student
 router.put("/edit/:id", rulesProject, editProject);
-router.put('/accept/:id',rulesProject,acceptStudentToProject)
-router.put( '/denied/:id',rulesProject,FromAcceptoToStudent)
+router.put('/accept/:id',acceptStudentToProject)
+router.put('/denied/:id',rulesProject,FromAcceptoToStudent)
 
 router.delete("/:id", rulesProject, deleteProject);
 
