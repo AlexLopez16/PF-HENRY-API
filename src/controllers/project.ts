@@ -128,6 +128,8 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
 
 export const getProject: RequestHandler = async (req, res) => {
   try {
+    console.log("hola");
+
     const { id } = req.params;
     const query = { state: true, _id: id };
 
@@ -139,9 +141,15 @@ export const getProject: RequestHandler = async (req, res) => {
       .populate({
         path: "company",
         select: "-password",
+      })
+      .populate({
+        path: "accepts",
+        select: "-password"
       });
     if (!projects.length) throw new Error("project no found");
     let project = projects[0];
+    console.log(project);
+
     return res.status(200).json(project);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
@@ -198,19 +206,31 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
     const { idstudent } = req.body;
-    console.log("id",idstudent);
-    
-    const project = await Project.findById(id);
-    
+
+
+    let project = await Project.findById(id);
+
     if (!project.students.includes(idstudent)) {
       throw new Error("no esta asociado");
-    } 
+    }
     else {
       project.accepts = [...project.accepts, idstudent]//lo agrego a accept
       project.students = project.students.filter((e: String) => e != idstudent)//lo elimino de students 
       project.save()
+      const infoProject = await project.populate({
+        path: "students",
+        select: "-password",
+      });
+
+
+      const studentSearch = await Student.findById(idstudent)//lo pone en working
+      studentSearch.working = true
+      studentSearch.save();
+
+
+
+      return res.status(200).json(infoProject);
     }
-    return res.status(200).json(project);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
   }
@@ -229,27 +249,6 @@ export const FromAcceptoToStudent: RequestHandler = async (req, res) => {
     );
     searchStudent[0].save();
     return res.status(200).json("alumno movido");
-  } catch (error: any) {
-    return res.status(400).send(formatError(error.message));
-  }
-};
-
-export const getPostulated: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params
-    const project = await Project.findById(id);
-    return res.status(200).json(project.students);
-  } catch (error: any) {
-    return res.status(400).send(formatError(error.message));
-  }
-};
-
-export const getAccepts: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params
-    const project = await Project.findById(id);
-
-    return res.status(200).json(project.accepts);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
   }
