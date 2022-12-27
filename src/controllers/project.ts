@@ -17,7 +17,7 @@ export const getProjects: RequestHandler = async (req, res) => {
       categories,
       stateProject,
     }: Query = req.query;
-    console.log(init,limit)
+  
     // validar que el orderBy sea un campo valido
     if (orderBy && orderBy !== "participants") {
       throw new Error("Orderby is not valid.");
@@ -185,8 +185,7 @@ export const editProject: RequestHandler = async (req, res) => {
 
 export const getCategory: RequestHandler = async (req, res) => {
   try {
-    const projects = await Project.find();
-    const categories = projects.map(({ category }: any) => category);
+    const categories = await Project.distinct('category');
     return res.status(200).json(categories);
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
