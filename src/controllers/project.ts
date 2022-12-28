@@ -157,9 +157,15 @@ export const getProject: RequestHandler = async (req, res) => {
             .populate({
                 path: 'company',
                 select: '-password',
+            })
+            .populate({
+                path: 'accepts',
+                select: '-password',
             });
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
+        console.log(project);
+
         return res.status(200).json(project);
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
@@ -215,9 +221,8 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
         const { idstudent } = req.body;
-        console.log('id', idstudent);
 
-        const project = await Project.findById(id);
+        let project = await Project.findById(id);
 
         if (!project.students.includes(idstudent)) {
             throw new Error('no esta asociado');
@@ -227,47 +232,46 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
                 (e: String) => e != idstudent
             ); //lo elimino de students
             project.save();
+            const infoProject = await project.populate({
+                path: 'students',
+                select: '-password',
+            });
+
+            const studentSearch = await Student.findById(idstudent); //lo pone en working
+            studentSearch.working = true;
+            studentSearch.save();
+
+            return res.status(200).json(infoProject);
         }
-        return res.status(200).json(project);
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
     }
 };
 
-export const FromAcceptoToStudent: RequestHandler = async (req, res) => {
+export const DeleteAccepts: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const searchStudent = await Project.find({ state: true, student: id });
-        if (!searchStudent.length) {
+        const { idstudent } = req.body;
+
+        let project = await Project.findById(id);
+
+        if (!project.accepts.includes(idstudent)) {
             throw new Error('no esta aceptado');
+        } else {
+            project.accepts = project.accepts.filter(
+                (e: String) => e != idstudent
+            ); //lo elimino de accepts
+            project.save();
+
+            const studentSearch = await Student.findById(idstudent);
+            studentSearch.project = studentSearch.project.filter(
+                (e: String) => e != id
+            ); //borra el id del project en student.project
+            studentSearch.working = false;
+            studentSearch.save();
+
+            return res.status(200).json(project);
         }
-        searchStudent[0].students = [...searchStudent[0].students, id]; //lo agrego a students
-        searchStudent[0].accepts = searchStudent[0].accepts.filter(
-            (e: String) => e != id
-        );
-        searchStudent[0].save();
-        return res.status(200).json('alumno movido');
-    } catch (error: any) {
-        return res.status(400).send(formatError(error.message));
-    }
-};
-
-export const getPostulated: RequestHandler = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const project = await Project.findById(id);
-        return res.status(200).json(project.students);
-    } catch (error: any) {
-        return res.status(400).send(formatError(error.message));
-    }
-};
-
-export const getAccepts: RequestHandler = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const project = await Project.findById(id);
-
-        return res.status(200).json(project.accepts);
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
     }

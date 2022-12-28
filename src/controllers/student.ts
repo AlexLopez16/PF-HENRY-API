@@ -23,7 +23,7 @@ export const createStudent: RequestHandler = async (req, res) => {
         let rol = user.rol;
         let verify = user.verify;
         let id = user._id;
-        let obj={id:user._id,name:user.name}
+        let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.status(201).json({
             data: 'Sucessful singup',
@@ -52,6 +52,7 @@ export const getStudent: RequestHandler = async (req, res) => {
             project,
             company,
             country,
+            working,
         } = await Student.findById(id)
             .populate({
                 path: 'project',
@@ -78,6 +79,7 @@ export const getStudent: RequestHandler = async (req, res) => {
             tecnologies,
             project,
             company,
+            working,
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
