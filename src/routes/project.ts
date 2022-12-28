@@ -8,7 +8,7 @@ import {
   editProject,
   getCategory,
   acceptStudentToProject,
-  FromAcceptoToStudent,
+  DeleteAccepts,
 
 } from "../controllers/project";
 
@@ -28,10 +28,10 @@ router.post("/", rulesCreateProject, createProject);
 router.put("/:id", verifyToken, addStudentToProject);//agregar validator rol-student
 router.put("/edit/:id", rulesProject, editProject);
 router.put('/accept/:id',acceptStudentToProject)
-router.put('/denied/:id',rulesProject,FromAcceptoToStudent)
+router.put("/denied/:id",DeleteAccepts)
+
 
 router.delete("/:id", rulesProject, deleteProject);
-
 
 
 module.exports = router;
