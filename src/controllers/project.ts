@@ -129,8 +129,6 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
 
 export const getProject: RequestHandler = async (req, res) => {
   try {
-    console.log("hola");
-
     const { id } = req.params;
     const query = { state: true, _id: id };
 
@@ -236,19 +234,29 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
   }
 };
 
-export const FromAcceptoToStudent: RequestHandler = async (req, res) => {
+export const DeleteAccepts: RequestHandler = async (req, res) => {
   try {
+    
     const { id } = req.params;
-    const searchStudent = await Project.find({ state: true, student: id });
-    if (!searchStudent.length) {
+    const { idstudent } = req.body;
+
+    let project = await Project.findById(id);
+
+    if (!project.accepts.includes(idstudent)) {
       throw new Error("no esta aceptado");
     }
-    searchStudent[0].students = [...searchStudent[0].students, id]; //lo agrego a students
-    searchStudent[0].accepts = searchStudent[0].accepts.filter(
-      (e: String) => e != id
-    );
-    searchStudent[0].save();
-    return res.status(200).json("alumno movido");
+    else {
+      project.accepts = project.accepts.filter((e: String) => e != idstudent)//lo elimino de accepts 
+      project.save()
+     
+      const studentSearch = await Student.findById(idstudent) 
+      studentSearch.project= studentSearch.project.filter((e: String) => e != id)//borra el id del project en student.project
+      studentSearch.working = false
+      studentSearch.save();
+
+
+      return res.status(200).json(project);
+    }
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
   }
