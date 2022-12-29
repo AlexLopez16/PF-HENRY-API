@@ -9,7 +9,7 @@ export const getProjects: RequestHandler = async (req, res) => {
   try {
     const {
       limit,
-      init ,
+      init,
       name,
       tecnologies,
       orderBy,
@@ -17,7 +17,7 @@ export const getProjects: RequestHandler = async (req, res) => {
       categories,
       stateProject,
     }: Query = req.query;
-  
+
     // validar que el orderBy sea un campo valido
     if (orderBy && orderBy !== "participants") {
       throw new Error("Orderby is not valid.");
@@ -56,7 +56,7 @@ export const getProjects: RequestHandler = async (req, res) => {
         select: "name",
       }),
     ]);
-    
+
     return res.status(200).json({
       total,
       projects,
@@ -236,7 +236,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
 
 export const DeleteAccepts: RequestHandler = async (req, res) => {
   try {
-    
+
     const { id } = req.params;
     const { idstudent } = req.body;
 
@@ -248,9 +248,9 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
     else {
       project.accepts = project.accepts.filter((e: String) => e != idstudent)//lo elimino de accepts 
       project.save()
-     
-      const studentSearch = await Student.findById(idstudent) 
-      studentSearch.project= studentSearch.project.filter((e: String) => e != id)//borra el id del project en student.project
+
+      const studentSearch = await Student.findById(idstudent)
+      studentSearch.project = studentSearch.project.filter((e: String) => e != id)//borra el id del project en student.project
       studentSearch.working = false
       studentSearch.save();
 
@@ -259,5 +259,30 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
     }
   } catch (error: any) {
     return res.status(400).send(formatError(error.message));
+  }
+};
+
+export const UnapplyStudent: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idStudent = req.body;
+
+    let project = await Project.findById(id);
+
+    if (!project.students.includes(idStudent)) {
+      throw new Error("no esta asociado");
+    }
+    else {
+      project.students = project.students.filter((e: String) => e != idStudent)//lo elimino de students 
+      project.save()
+      console.log(project);
+
+      // res.status(200).json(user);
+    }
+  } catch (error: any) {
+   
+
+    res.status(500).json(formatError(error.message));
+
   }
 };

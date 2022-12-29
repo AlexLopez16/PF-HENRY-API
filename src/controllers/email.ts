@@ -9,7 +9,6 @@ require('dotenv').config();
 export const confirmEmail: RequestHandler = async (req, res) => {
     try {
         const { token } = req.params;
-        console.log(token);
         const { email, rol } = verifyJwt(token);
         // Si es estudiante, actualizamos el verify en student.
         if (rol === 'STUDENT_ROL') {

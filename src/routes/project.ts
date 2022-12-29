@@ -9,6 +9,7 @@ import {
   getCategory,
   acceptStudentToProject,
   DeleteAccepts,
+  UnapplyStudent,
 
 } from "../controllers/project";
 
@@ -29,7 +30,7 @@ router.put("/:id", verifyToken, addStudentToProject);//agregar validator rol-stu
 router.put("/edit/:id", rulesProject, editProject);
 router.put('/accept/:id',acceptStudentToProject)
 router.put("/denied/:id",DeleteAccepts)
-
+router.put('/unapply/:id',UnapplyStudent)
 
 router.delete("/:id", rulesProject, deleteProject);
 
