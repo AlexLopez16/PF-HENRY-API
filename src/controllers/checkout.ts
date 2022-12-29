@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import { createInvoice } from './invoice';
 import { formatDate } from '../utils/formatDate';
+require("dotenv").config()
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 const YOUR_DOMAIN = process.env.URL_FRONT || 'http://localhost:5173';
