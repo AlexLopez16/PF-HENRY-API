@@ -276,3 +276,28 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
         return res.status(400).send(formatError(error.message));
     }
 };
+
+export const UnapplyStudent: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idStudent = req.body;
+
+    let project = await Project.findById(id);
+
+    if (!project.students.includes(idStudent)) {
+      throw new Error("no esta asociado");
+    }
+    else {
+      project.students = project.students.filter((e: String) => e != idStudent)//lo elimino de students 
+      project.save()
+      console.log(project);
+
+      // res.status(200).json(user);
+    }
+  } catch (error: any) {
+   
+
+    res.status(500).json(formatError(error.message));
+
+  }
+};
