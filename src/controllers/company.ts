@@ -79,20 +79,18 @@ export const getUserCompany: RequestHandler = async (req, res) => {
 
 //PUT
 export const updateUserCompany: RequestHandler = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { email, country, premium, password, ...user } = req.body;
-        let hashPassword = await hash(password);
-        if (password) {
-            user.password = hashPassword;
-        }
-        const userUpdated = await User.findByIdAndUpdate(id, user, {
-            new: true,
-        });
-        res.status(200).json(userUpdated);
-    } catch (error: any) {
-        res.status(500).send(formatError(error.message));
+  try {
+    const { id } = req.params;
+    const { email, premium, password, ...user } = req.body;
+    if (password) {
+      let hashPassword = await hash(password);//modificacion
+      user.password = hashPassword;
     }
+    const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
+    res.status(200).json(userUpdated);
+  } catch (error: any) {
+    res.status(500).send(formatError(error.message));
+  }
 };
 
 // DELETE
