@@ -278,26 +278,24 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
 };
 
 export const UnapplyStudent: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const idStudent = req.body;
+    try {
+        const { id } = req.params;
+        const idStudent = req.body;
 
-    let project = await Project.findById(id);
+        let project = await Project.findById(id);
 
-    if (!project.students.includes(idStudent)) {
-      throw new Error("no esta asociado");
+        if (!project.students.includes(idStudent)) {
+            throw new Error('no esta asociado');
+        } else {
+            project.students = project.students.filter(
+                (e: String) => e != idStudent
+            ); //lo elimino de students
+            project.save();
+            console.log(project);
+
+            // res.status(200).json(user);
+        }
+    } catch (error: any) {
+        res.status(500).json(formatError(error.message));
     }
-    else {
-      project.students = project.students.filter((e: String) => e != idStudent)//lo elimino de students 
-      project.save()
-      console.log(project);
-
-      // res.status(200).json(user);
-    }
-  } catch (error: any) {
-   
-
-    res.status(500).json(formatError(error.message));
-
-  }
 };
