@@ -1,6 +1,12 @@
 import { RequestHandler } from 'express';
 import { formatError } from '../utils/formatErros';
-import { Query, InitialQuery, InitialProject } from '../interfaces/interfaces';
+import { 
+  Query,
+  InitialQuery,
+  InitialProject,
+  InitialError,
+  InitialCreateProject
+} from '../interfaces/interfaces';
 const Project = require('../models/project');
 const Student = require('../models/student');
 const Company=require('../models/company')
@@ -64,17 +70,17 @@ export const getProjects: RequestHandler = async (req, res) => {
     });
   } catch (error: any) {
     //use any because type of error can be undefined
-    return res.status(500).json(formatError(error.message));
+    return res.status(500).json(formatError(error.message) as InitialError);
   }
 };
 
 export const createProject: RequestHandler = async (req, res) => {
   try {
-    const { ...body } = req.body;
-    const data = {
+    const { ...body }: InitialCreateProject = req.body;
+    const data= {
       ...body,
       //agregamos la request de user para hacer la relacion.
-      company: req.user._id,
+      company: req.user._id as String,
     };
     const project = new Project(data);
     await project.save();
@@ -87,14 +93,14 @@ export const createProject: RequestHandler = async (req, res) => {
     await company.save();
     return res.status(200).send(project);
   } catch (error: any) {
-    return res.status(500).send(formatError(error.message));
+    return res.status(500).send(formatError(error.message) as InitialError);
   }
 };
 
 export const addStudentToProject: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user._id;
+    const userId: string = req.user._id;
 
     const query = { state: true, _id: id };
     const verifyStudent = await Project.find({ state: true, students: userId });
@@ -121,7 +127,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
       throw new Error('student is in the project');
     }
   } catch (error: any) {
-    return res.status(400).send(formatError(error.message));
+    return res.status(400).send(formatError(error.message) as InitialError);
   }
 };
 
@@ -143,7 +149,7 @@ export const getProject: RequestHandler = async (req, res) => {
     let project = projects[0];
     return res.status(200).json(project);
   } catch (error: any) {
-    return res.status(400).send(formatError(error.message));
+    return res.status(400).send(formatError(error.message) as InitialError);
   }
 };
 
@@ -158,7 +164,7 @@ export const deleteProject: RequestHandler = async (req, res) => {
     await project.save();
     return res.status(200).json({ msg: 'project sucessfully deleted' });
   } catch (error: any) {
-    return res.status(500).send(formatError(error.message));
+    return res.status(500).send(formatError(error.message) as InitialError);
   }
 };
 
@@ -179,7 +185,7 @@ export const editProject: RequestHandler = async (req, res) => {
     if (!editUpdate) throw new Error('project no found');
     return res.status(200).send(editUpdate);
   } catch (error: any) {
-    return res.status(400).send(formatError(error.message));
+    return res.status(400).send(formatError(error.message) as InitialError);
   }
 };
 
