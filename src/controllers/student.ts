@@ -9,6 +9,11 @@ require('dotenv').config();
 export const createStudent: RequestHandler = async (req, res) => {
     try {
         let { name, lastName, email, password } = req.body;
+        let emailSearch = await Student.find(email)
+        if(emailSearch){
+            throw new Error("Email already in database");
+        }
+
         let hashPassword = await hash(password);
         let user = new Student({
             name,
