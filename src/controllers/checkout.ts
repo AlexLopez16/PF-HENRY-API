@@ -1,9 +1,10 @@
 import { RequestHandler } from 'express';
 import { createInvoice } from './invoice';
 import { formatDate } from '../utils/formatDate';
+require("dotenv").config()
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
-const YOUR_DOMAIN = 'http://localhost:3000';
+const YOUR_DOMAIN = process.env.URL_FRONT || 'http://localhost:5173';
 
 export const checkoutSession: RequestHandler = async (req, res) => {
   const prices = await stripe.prices.list({
@@ -20,8 +21,8 @@ export const checkoutSession: RequestHandler = async (req, res) => {
       },
     ],
     mode: 'subscription',
-    success_url: `${YOUR_DOMAIN}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+    success_url: `${YOUR_DOMAIN}/checkout/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${YOUR_DOMAIN}/dashboard/?canceled=true`,
   });
 
   res.redirect(303, session.url);
@@ -31,7 +32,7 @@ export const portalSession: RequestHandler = async (req, res) => {
   const { session_id } = req.body;
   const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
 
-  const returnUrl = YOUR_DOMAIN;
+  const returnUrl = `${YOUR_DOMAIN}/dashboard`;
 
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: checkoutSession.customer,
