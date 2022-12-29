@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import { formatError } from '../utils/formatErros';
 import { Query, InitialQuery, InitialProject } from '../interfaces/interfaces';
+import { portalSession } from './checkout';
 const Project = require('../models/project');
 const Student = require('../models/student');
 const Company = require('../models/company');
@@ -82,7 +83,7 @@ export const createProject: RequestHandler = async (req, res) => {
             requirements,
             category,
             images,
-        } = req.body;
+        }: any = req.body;
         const data = {
             name,
             description,
@@ -106,21 +107,26 @@ export const createProject: RequestHandler = async (req, res) => {
 
 export const addStudentToProject: RequestHandler = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id: projectId } = req.params;
         const userId = req.user._id;
 
-        const query = { state: true, _id: id };
-        const verifyStudent = await Project.find({
-            state: true,
-            students: userId,
+        const query = { state: true, _id: projectId };
+
+        const studentIsWorking = await Student.find({
+            // Buscamos al usuario por id.
+            _id: userId,
+            // Buscamos que tenga en el wordkin un proyecto.
+            working: { $exists: true, $not: { $size: 0 } },
         });
 
-        if (verifyStudent.length === 3) {
-            throw new Error('Student is already in three projects');
-        }
-        const projects = await Project.find(query);
+        // Si el estudiante esta trabajando.
+        if (studentIsWorking.length) throw new Error('Currently working');
 
+        // Verificamos que el proyecto exista.
+        const projects = await Project.find(query);
         if (!projects.length) throw new Error('project no found');
+
+        // Seleccionamos el proyecto.
         let project = projects[0];
         if (
             !project.students.filter((s: any) => s.toString() == userId).length
@@ -128,7 +134,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             project.students = [...project.students, userId];
             await project.save();
             const students = await Student.findById(userId);
-            students.project = [...students.project, id];
+            students.project = [...students.project, projectId];
             await students.save();
             const infoProject = await project.populate({
                 path: 'students',
@@ -278,26 +284,24 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
 };
 
 export const UnapplyStudent: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const idStudent = req.body;
+    try {
+        const { id } = req.params;
+        const idStudent = req.body;
 
-    let project = await Project.findById(id);
+        let project = await Project.findById(id);
 
-    if (!project.students.includes(idStudent)) {
-      throw new Error("no esta asociado");
+        if (!project.students.includes(idStudent)) {
+            throw new Error('no esta asociado');
+        } else {
+            project.students = project.students.filter(
+                (e: String) => e != idStudent
+            ); //lo elimino de students
+            project.save();
+            console.log(project);
+
+            // res.status(200).json(user);
+        }
+    } catch (error: any) {
+        res.status(500).json(formatError(error.message));
     }
-    else {
-      project.students = project.students.filter((e: String) => e != idStudent)//lo elimino de students 
-      project.save()
-      console.log(project);
-
-      // res.status(200).json(user);
-    }
-  } catch (error: any) {
-   
-
-    res.status(500).json(formatError(error.message));
-
-  }
 };
