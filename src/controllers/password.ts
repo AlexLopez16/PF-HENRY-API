@@ -31,7 +31,6 @@ export const password: RequestHandler = async (req, res) => {
 
 export const redirectPassword: RequestHandler = async (req, res) => {
     try {
-        console.log('hola');
         const { token } = req.params;
         console.log(token);
         const { email } = verifyJwt(token);
@@ -43,7 +42,11 @@ export const redirectPassword: RequestHandler = async (req, res) => {
         let obj = { id: user._id, email: user.email };
         const tok = jwtGenerator(obj);
         res.redirect(
-            `http://localhost:5173/recoverPassword?token=${tok}&rol=${user.rol}&verify=${user.verify}&id=${user.id}`
+            `${
+                process.env.URL_FRONT || 'http://localhost:5173'
+            }/recoverPassword?token=${tok}&rol=${user.rol}&verify=${
+                user.verify
+            }&id=${user.id}`
         );
     } catch (error: any) {
         console.log(error.message);
