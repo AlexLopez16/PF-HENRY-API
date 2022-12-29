@@ -36,7 +36,7 @@ export const sendConfirmationEmail = async (user: any) => {
       to: user.email, // list of receivers
       subject: "Please, confirm your email", // Subject line
       //text: 'Hello world', // plain text body
-      html: `<p>Confirm your email: <a href="${urlConfirm}">Confirm</a></p>`, // html body
+      html: `<p>Confirm your email: <link href="${urlConfirm}">Confirm</link></p>`, // html body
     });
     console.log(sendEmail);
   } catch (error: any) {
@@ -57,7 +57,7 @@ export const recuperatePassword = async (user: any) => {
       to: user.email, // list of receivers
       subject: "Please,ingrese al link", // Subject line
       //text: 'Hello world', // plain text body
-      html: `<p>ingrese al link: <a href="${urlmodifyPassword}">Recuperar contraseña</a></p>`, // html body
+      html: `<p>ingrese al link: <link href="${urlmodifyPassword}">Recuperar contraseña</link></p>`, // html body
     });
     console.log(sendEmail);
   } catch (error: any) {

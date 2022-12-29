@@ -7,83 +7,83 @@ import { sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
 
 // CREATE
 export const createUserCompany: RequestHandler = async (req, res) => {
-  try {
-    const { name, email, country, password } = req.body;
-    let hashPassword = await hash(password);
-    let user = new User({ name, email, country, password: hashPassword });
-    let verify = user.verify;
-    let id = user._id;
-    user = await user.save();
-    sendConfirmationEmail(user);
-    const rol = user.rol;
-    let obj = { id: user._id, name: user.name };
-    const token = jwtGenerator(obj);
-    res.status(201).json({
-      data: 'Successfull Sing up',
-      token,
-      rol,
-      verify,
-      id,
-    });
-  } catch (error: any) {
-    res.status(500).send(formatError(error.message));
-  }
+    try {
+        const { name, email, country, password } = req.body;
+        let hashPassword = await hash(password);
+        let user = new User({ name, email, country, password: hashPassword });
+        let verify = user.verify;
+        let id = user._id;
+        user = await user.save();
+        sendConfirmationEmail(user);
+        const rol = user.rol;
+        let obj = { id: user._id, name: user.name };
+        const token = jwtGenerator(obj);
+        res.status(201).json({
+            data: 'Successfull Sing up',
+            token,
+            rol,
+            verify,
+            id,
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
 };
 
 // GET USERS
 export const getUsersCompany: RequestHandler = async (req, res) => {
-  try {
-    const { limit = 10, init = 0, name, country } = req.query;
-    const query: any = { state: true };
-    const ignore: any = {
-      password: false,
-      state: false,
-      gmail: false,
-      github: false,
-      rol: false,
-    };
+    try {
+        const { limit = 10, init = 0, name, country } = req.query;
+        const query: any = { state: true };
+        const ignore: any = {
+            password: false,
+            state: false,
+            gmail: false,
+            github: false,
+            rol: false,
+        };
 
-    if (name) query.name = { $regex: name, $options: 'i' };
+        if (name) query.name = { $regex: name, $options: 'i' };
 
-    if (country) query.country = { $regex: country, $options: 'i' };
+        if (country) query.country = { $regex: country, $options: 'i' };
 
-    const [total, usersCompany] = await Promise.all([
-      User.countDocuments(query),
-      User.find(query, ignore).skip(init).limit(limit),
-    ]);
-    res.status(200).json({
-      total,
-      usersCompany,
-    });
-  } catch (error: any) {
-    res.status(500).send(formatError(error.message));
-  }
+        const [total, usersCompany] = await Promise.all([
+            User.countDocuments(query),
+            User.find(query, ignore).skip(init).limit(limit),
+        ]);
+        res.status(200).json({
+            total,
+            usersCompany,
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
 };
 
 // GET USER
 export const getUserCompany: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, _id, email, country } = await User.findById(id);
+    try {
+        const { id } = req.params;
+        const { name, _id, email, country } = await User.findById(id);
 
-    res.status(200).json({
-      id: _id,
-      name,
-      country,
-      email,
-    });
-  } catch (error: any) {
-    res.status(500).send(formatError(error.message));
-  }
+        res.status(200).json({
+            id: _id,
+            name,
+            country,
+            email,
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
 };
 
 //PUT
 export const updateUserCompany: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { email, country, premium, password, ...user } = req.body;
-    let hashPassword = await hash(password);
+    const { email, premium, password, ...user } = req.body;
     if (password) {
+      let hashPassword = await hash(password);//modificacion
       user.password = hashPassword;
     }
     const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
@@ -95,37 +95,43 @@ export const updateUserCompany: RequestHandler = async (req, res) => {
 
 // DELETE
 export const deleteUserCompany: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
 
-    const user = await User.findByIdAndUpdate(
-      id,
-      { state: false },
-      { new: true },
-    );
+        const user = await User.findByIdAndUpdate(
+            id,
+            { state: false },
+            { new: true }
+        );
 
-    res.status(200).json(user);
-  } catch (error: any) {
-    res.status(500).send(formatError(error.message));
-  }
+        res.status(200).json(user);
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
 };
 
-export const getCompanyProject: RequestHandler = async (req,res)=>{
-  try {
-  
-    const{id} = req.user
-    
-    const company= await User.find({_id:id}).populate({
-      path: 'project'
-    })
-    
-    const compa= await company[0].populate({
-      path: 'project'
-    })
-   
-    return res.status(200).json(compa.project)
-    
-  } catch (error:any) {
-    res.status(400).send(formatError(error.message))
-    
-  }}
+export const getCompanyProject: RequestHandler = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { value }: any = req.query;
+
+        const company = await User.findById(id).populate({
+            path: 'project',
+        });
+
+        let total = await company.project.length;
+        let obj = { projects: company.project, total: total };
+        if (value) {
+            const val = parseInt(value);
+            const limit = val * 6;
+            const init = limit - 6;
+            let pro;
+            pro = company.project.slice(init, limit);
+            obj = { projects: pro, total: total };
+        }
+
+        return res.status(200).json(obj);
+    } catch (error: any) {
+        res.status(400).send(formatError(error.message));
+    }
+};

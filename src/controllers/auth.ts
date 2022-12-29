@@ -10,50 +10,50 @@ import querystring from 'querystring';
 import { jwtGenerator } from '../helpers/jwt';
 
 const authenticateWithGoogle = async (userType: string, token: string) => {
-  let payload: any;
-  let email;
-  let user;
-  const client = new OAuth2Client(process.env.CLIENT_ID);
-  async function verify() {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.CLIENT_ID,
-    });
-    payload = ticket.getPayload();
-    email = payload.email;
-  }
-  await verify();
-  user = await Student.findOne({ email: email, gmail: true });
-  if (!user) {
-    user = await Company.findOne({ email: email, gmail: true });
-    if (!user) {
-      user = await Admin.findOne({ email: email, gmail: true });
+    let payload: any;
+    let email;
+    let user;
+    const client = new OAuth2Client(process.env.CLIENT_ID);
+    async function verify() {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.CLIENT_ID,
+        });
+        payload = ticket.getPayload();
+        email = payload.email;
     }
-  }
- 
- if(!user){
-  if (userType === 'student') {
-    user = await new Student({
-      name: payload.given_name,
-      lastName: payload.family_name,
-      email: payload.email,
-      image: payload.picture,
-      gmail: true,
-      verify: true,
-    });
-  } else if (userType === 'company') {
-    user = await new Company({
-      name: payload.name,
-      email: payload.email,
-      image: payload.picture,
-      gmail: true,
-      verify: true,
-    });
-  } else {
-    throw new Error('userType is invalid.');
-  }
-}
-  await user.save();
+    await verify();
+    user = await Student.findOne({ email: email, gmail: true });
+    if (!user) {
+        user = await Company.findOne({ email: email, gmail: true });
+        if (!user) {
+            user = await Admin.findOne({ email: email, gmail: true });
+        }
+    }
+
+    if (!user) {
+        if (userType === 'student') {
+            user = await new Student({
+                name: payload.given_name,
+                lastName: payload.family_name,
+                email: payload.email,
+                image: payload.picture,
+                gmail: true,
+                verify: true,
+            });
+        } else if (userType === 'company') {
+            user = await new Company({
+                name: payload.name,
+                email: payload.email,
+                image: payload.picture,
+                gmail: true,
+                verify: true,
+            });
+        } else {
+            throw new Error('userType is invalid.');
+        }
+    }
+    await user.save();
 
     return user;
 };
@@ -135,7 +135,7 @@ export const github: RequestHandler = async (req, res) => {
         let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.redirect(
-            `http://localhost:5173/home?token=${token}&rol=${user.rol}&verify=${user.verify}&id=${user.id}`
+            `${process.env.URL_FRONT}/dashboard?token=${token}&rol=${user.rol}&verify=${user.verify}&id=${user.id}`
         );
         // return res.status(200).json({
         //   data: "Sucessful login",
