@@ -18,10 +18,13 @@ declare global {
 
 export const verifyToken: RequestHandler = async (req, res, next) => {
   const token = req.header("user-token");
+  console.log(token);
+  
   if (!token) return res.status(401).json(formatError("Access denied"));
   try {
     const {id}=verifyJwt(token)
-
+    console.log(id);
+    
     const user = await searchUser(id);
    
     req.user = user;

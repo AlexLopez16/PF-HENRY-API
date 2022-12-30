@@ -20,7 +20,7 @@ export const studentRole: RequestHandler = async (req, res, next) => {
     }
 
     const { name, rol } = req.user;
-    if (rol != 'STUDENT_ROL') {
+    if (rol !== 'STUDENT_ROL' &&  rol !== 'ADMIN_ROL') {
         return res.status(401).json({
             error: `Unauthorized - ${name} has invalid role`,
         });

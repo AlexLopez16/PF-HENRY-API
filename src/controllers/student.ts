@@ -4,6 +4,7 @@ import { hash } from '../helpers/hash';
 import { formatError } from '../utils/formatErros';
 import { jwtGenerator } from '../helpers/jwt';
 import { sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
+import { on } from 'events';
 require('dotenv').config();
 
 interface InitialIgnore {
@@ -24,6 +25,7 @@ export const createStudent: RequestHandler = async (req, res) => {
             lastName,
             email,
             password: hashPassword,
+            admission: Date.now()
         });
         user = await user.save();
         // Aca llamamos a la funcion de confirmationEmail.
@@ -32,7 +34,7 @@ export const createStudent: RequestHandler = async (req, res) => {
         let rol = user.rol;
         let verify = user.verify;
         let id = user._id;
-        let obj={id:user._id,name:user.name}
+        let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.status(201).json({
             data: 'Sucessful singup',
@@ -51,7 +53,7 @@ export const getStudent: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
 
-        if(req.user.id !== id) {
+        if((<any>req).user.rol !== 'ADMIN_ROL' && (<any>req).user.id !== id) {
             return res.status(401).json(formatError("Access denied"));
         }
         const {
@@ -65,6 +67,8 @@ export const getStudent: RequestHandler = async (req, res) => {
             project,
             company,
             country,
+            working,
+            admission
         } = await Student.findById(id)
             .populate({
                 path: 'project',
@@ -91,6 +95,8 @@ export const getStudent: RequestHandler = async (req, res) => {
             tecnologies,
             project,
             company,
+            working,
+            admission
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
@@ -100,10 +106,14 @@ export const getStudent: RequestHandler = async (req, res) => {
 // Traemos todos los estudiantes de la db.
 export const getStudents: RequestHandler = async (req, res) => {
     try {
-        const { limit = 10, init = 0, name, tecnologies } = req.query;
+        const { limit = 15, init = 0, name, tecnologies, onlyActive = 'true' } = req.query;        
 
         // Estado inicial de nuestro query.
-        let query: any = { state: true };
+        let query: any = { };
+
+        if(onlyActive === 'true') {
+            query.state = true;
+        }
 
         // Agegramos si quiere filtrar por nombre.
         if (name) query.name = { $regex: name, $options: 'i' };
@@ -117,9 +127,9 @@ export const getStudents: RequestHandler = async (req, res) => {
 
         // Ignora estos campos al momento de generarnos una respuesta, es decir, no nos muestra esa info.
 
-        const ignore: InitialIgnore = {
+        const ignore = {
             password: false,
-            state: false,
+            //state: false,
             gmail: false,
             github: false,
             rol: false,

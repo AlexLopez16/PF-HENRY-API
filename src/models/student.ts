@@ -57,6 +57,13 @@ const StudentSchema = new Schema({
     review: {
         type: Schema.Types.ObjectId,
         ref: 'Review',
+    },
+    working: {
+        type: Boolean,
+        default: false
+    },
+    admission: {
+        type: Date
     }
 });
 
