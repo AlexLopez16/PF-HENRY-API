@@ -43,9 +43,9 @@ import { rulesAdmin } from '../helpers/rulesAdmin';
  router.put('/putcompany/:id', rulesAdmin, updateUserCompany);
  router.put('/putproject/:id', rulesAdmin, addStudentToProject);
  
- router.delete('/:id', rulesAdmin, deleteStudent);
- router.delete('/:id', rulesAdmin, deleteUserCompany);
- router.delete("/:id", rulesAdmin, deleteProject);
+ router.delete('/student/:id', rulesAdmin, deleteStudent);
+ router.delete('/company/:id', rulesAdmin, deleteUserCompany);
+ router.delete("/project/:id", rulesAdmin, deleteProject);
  
  module.exports = router;
  
