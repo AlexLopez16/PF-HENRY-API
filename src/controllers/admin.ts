@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 const Admin = require('../models/admin');
+const Student = require('../models/student');
 import { hash } from '../helpers/hash';
 import { jwtGenerator } from '../helpers/jwt';
 import { formatError } from '../utils/formatErros';
