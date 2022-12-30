@@ -136,7 +136,11 @@ export const github: RequestHandler = async (req, res) => {
         let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.redirect(
-            `${process.env.URL_FRONT}/dashboard?token=${token}&rol=${user.rol}&verify=${user.verify}&id=${user.id}`
+            `${
+                process.env.URL_FRONT || 'http://localhost:5173'
+            }/dashboard?token=${token}&rol=${user.rol}&verify=${
+                user.verify
+            }&id=${user.id}`
         );
         // return res.status(200).json({
         //   data: "Sucessful login",
