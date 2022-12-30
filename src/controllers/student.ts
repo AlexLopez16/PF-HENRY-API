@@ -58,15 +58,37 @@ export const getStudent: RequestHandler = async (req, res) => {
             country,
             working,
         } = await Student.findById(id)
+            // .populate({
+            //     path: 'project',
+            //     populate: {
+            //         path: 'students',
+            //         select: 'name lastName',
+            //     },
+            // })
+            // .populate({
+            //     path: 'project',
+            //     populate: {
+            //         path: 'company',
+            //         select: 'name',
+            //     },
+            // })
+            // .populate({
+            //     path: 'project',
+            //     populate: {
+            //         path: 'accepts',
+            //         select: 'name lastName',
+            //     },
+            // })
             .populate({
-                path: 'project',
+                path: 'working',
+                select: '-students',
                 populate: {
-                    path: 'students',
+                    path: 'accepts',
                     select: 'name lastName',
                 },
             })
             .populate({
-                path: 'project',
+                path: 'working',
                 populate: {
                     path: 'company',
                     select: 'name',
@@ -74,10 +96,7 @@ export const getStudent: RequestHandler = async (req, res) => {
             })
             .populate({
                 path: 'project',
-                populate: {
-                    path: 'accepts',
-                    select: 'name lastName',
-                },
+                select: 'name description',
             });
         res.status(200).json({
             id: _id,
