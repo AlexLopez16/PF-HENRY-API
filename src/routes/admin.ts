@@ -3,14 +3,14 @@
  * Nota: El flujo es, ruta -> middelware (reglas) -> controller
  * Example: router.post('/', rulesCreateStudent, createStudent);
  */
- import { Router } from 'express';
- import {
-    
-     getStudent,
-     updateStudent,
-     deleteStudent,
-     getStudents,
- } from '../controllers/student';
+import { Router } from 'express';
+import {
+
+    getStudent,
+    updateStudent,
+    deleteStudent,
+    getStudents,
+} from '../controllers/student';
 
 
 import { deleteUserCompany, getUserCompany, getUsersCompany, updateUserCompany } from '../controllers/company';
@@ -18,31 +18,31 @@ import { addStudentToProject, deleteProject, getProject, getProjects } from '../
 import { createAdmin, deleteAdmin, getAdmin, getAdminById, updateAdmin } from '../controllers/admin';
 
 import { rulesAdmin } from '../helpers/rulesAdmin';
- 
- const router = Router();
- //url/api/admin
- router.post('/', createAdmin);
- 
- router.get('/getAdmin' ,   rulesAdmin, getAdmin);
- router.get('/admin/:id',   rulesAdmin, getAdminById);//funciona
- router.put('/:id',         rulesAdmin, updateAdmin);       //funciona
- router.delete('/:id',      rulesAdmin, deleteAdmin);     //funciona
 
- router.get('/getstudent', rulesAdmin, getStudents);
- router.get('/getcompany', rulesAdmin, getUsersCompany);
- router.get('/getproject', rulesAdmin, getProjects);
+const router = Router();
+//url/api/admin
+router.post('/', createAdmin);
 
- router.get('/student/:id', rulesAdmin, getStudent);
- router.get('/company/:id', rulesAdmin, getUserCompany);
- router.get('/project/:id', rulesAdmin, getProject);
- 
- router.put('/putstudent/:id', rulesAdmin, updateStudent);
- router.put('/putcompany/:id', rulesAdmin, updateUserCompany);
- router.put('/putproject/:id', rulesAdmin, addStudentToProject);
+router.get('/getAdmin', rulesAdmin, getAdmin);
+router.get('/admin/:id', rulesAdmin, getAdminById);//funciona
+router.put('/edit/:id', rulesAdmin, updateAdmin);       //funciona
 
- router.delete('/deletestudent/:id', rulesAdmin, deleteStudent);
- router.delete('/deletecompany/:id', rulesAdmin, deleteUserCompany);
- router.delete('/deleteproject/:id', rulesAdmin, deleteProject);
- 
- module.exports = router;
- 
+router.get('/getstudent', rulesAdmin, getStudents);
+router.get('/getcompany', rulesAdmin, getUsersCompany);
+router.get('/getproject', rulesAdmin, getProjects);
+
+router.get('/student/:id', rulesAdmin, getStudent);
+router.get('/company/:id', rulesAdmin, getUserCompany);
+router.get('/project/:id', rulesAdmin, getProject);
+
+router.put('/stateuser', rulesAdmin, deleteAdmin);
+
+router.put('/putstudent/:id', rulesAdmin, updateStudent);
+router.put('/putcompany/:id', rulesAdmin, updateUserCompany);
+router.put('/putproject/:id', rulesAdmin, addStudentToProject);
+
+
+// router.delete('/statecompany/:id', rulesAdmin, deleteUserCompany);
+// router.delete('/stateproject/:id', rulesAdmin, deleteProject);
+
+module.exports = router;
