@@ -25,7 +25,7 @@ export const confirmEmail: RequestHandler = async (req, res) => {
             let company = await Company.findOne({ email: email });
             if (!company) throw new Error('Company not found');
             if (company.verify) throw new Error('Company already verifid');
-            company.verifid = true;
+            company.verify = true;
             await company.save();
             //return res.sendStatus(200);
         }
