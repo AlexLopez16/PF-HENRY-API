@@ -108,42 +108,44 @@ export const createProject: RequestHandler = async (req, res) => {
 export const addStudentToProject: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
-        const userId = req.user._id;
-
+        const studentId = req.user._id;
         const query = { state: true, _id: projectId };
-
         const studentIsWorking = await Student.find({
+            state: true,
             // Buscamos al usuario por id.
-            _id: userId,
-            // Buscamos que tenga en el wordkin un proyecto.
+            _id: studentId,
+            // Buscamos que tenga en el working un proyecto.
             working: { $exists: true, $not: { $size: 0 } },
         });
-
-        // Si el estudiante esta trabajando.
+        // Error si el estudiante esta trabajando.
         if (studentIsWorking.length) throw new Error('Currently working');
-
-        // Verificamos que el proyecto exista.
+        // Accedemos proyecto.
         const projects = await Project.find(query);
-        if (!projects.length) throw new Error('project no found');
-
+        // Verificamos que el proyecto exista.
+        if (!projects.length) throw new Error('Project no found');
         // Seleccionamos el proyecto.
         let project = projects[0];
         if (
-            !project.students.filter((s: any) => s.toString() == userId).length
+            // Vemos si el estudiante ya no esta en la lista.
+            !project.students.filter((s: any) => s.toString() == studentId)
+                .length
         ) {
-            project.students = [...project.students, userId];
+            // Asociamos al proyecto, el nuevo id del estudiante.
+            project.students = [...project.students, studentId];
             await project.save();
-            const students = await Student.findById(userId);
+            // Accedemos al estudiante.
+            const students = await Student.findById(studentId);
+            // Asociamos el estudiante al proyecto.
             students.project = [...students.project, projectId];
             await students.save();
+            // Preparamos la info para retornar.
             const infoProject = await project.populate({
                 path: 'students',
                 select: '-password',
             });
-
             return res.status(200).json(infoProject);
         } else {
-            throw new Error('student is in the project');
+            throw new Error('Student is in the project');
         }
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
@@ -225,17 +227,17 @@ export const getCategory: RequestHandler = async (req, res) => {
 
 export const acceptStudentToProject: RequestHandler = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { idstudent } = req.body;
+        const { id: projectId } = req.params;
+        const { studentId: studentId } = req.body;
+        // Buscamos el proyecto.
+        let project = await Project.findById(projectId);
 
-        let project = await Project.findById(id);
-
-        if (!project.students.includes(idstudent)) {
+        if (!project.students.includes(studentId)) {
             throw new Error('no esta asociado');
         } else {
-            project.accepts = [...project.accepts, idstudent]; //lo agrego a accept
+            project.accepts = [...project.accepts, studentId]; //lo agrego a accept
             project.students = project.students.filter(
-                (e: String) => e != idstudent
+                (e: String) => e != studentId
             ); //lo elimino de students
             project.save();
             const infoProject = await project.populate({
@@ -243,7 +245,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
                 select: '-password',
             });
 
-            const studentSearch = await Student.findById(idstudent); //lo pone en working
+            const studentSearch = await Student.findById(studentId); //lo pone en working
             studentSearch.working = true;
             studentSearch.save();
 
