@@ -60,12 +60,13 @@ const StudentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Review',
     },
-    working: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Project',
-        },
-    ],
+    working: {
+        type: Boolean,
+        default: false
+    },
+    admission: {
+        type: Date
+    }
 });
 
 StudentSchema.methods.toJSON = function () {
