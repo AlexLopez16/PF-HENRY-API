@@ -9,7 +9,6 @@ import axios from 'axios';
 import querystring from 'querystring';
 import { jwtGenerator } from '../helpers/jwt';
 
-
 const authenticateWithGoogle = async (userType: string, token: string) => {
     let payload: any;
     let email;
@@ -138,7 +137,7 @@ export const github: RequestHandler = async (req, res) => {
         res.redirect(
             `${
                 process.env.URL_FRONT || 'http://localhost:5173'
-            }/dashboard?token=${token}&rol=${user.rol}&verify=${
+            }/projects?token=${token}&rol=${user.rol}&verify=${
                 user.verify
             }&id=${user.id}`
         );
