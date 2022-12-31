@@ -58,27 +58,6 @@ export const getStudent: RequestHandler = async (req, res) => {
             country,
             working,
         } = await Student.findById(id)
-            // .populate({
-            //     path: 'project',
-            //     populate: {
-            //         path: 'students',
-            //         select: 'name lastName',
-            //     },
-            // })
-            // .populate({
-            //     path: 'project',
-            //     populate: {
-            //         path: 'company',
-            //         select: 'name',
-            //     },
-            // })
-            // .populate({
-            //     path: 'project',
-            //     populate: {
-            //         path: 'accepts',
-            //         select: 'name lastName',
-            //     },
-            // })
             .populate({
                 path: 'working',
                 select: '-students',
