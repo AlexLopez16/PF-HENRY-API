@@ -20,7 +20,7 @@ export const createStudent: RequestHandler = async (req, res) => {
     try {
         let { name, lastName, email, password } = req.body;
         let emailSearch = await Student.find({ email });
-        if (!emailSearch) {
+        if (emailSearch) {
             throw new Error('Email already in database');
         }
         let hashPassword = await hash(password);
