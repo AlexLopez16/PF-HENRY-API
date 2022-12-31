@@ -28,7 +28,10 @@ export const getProjects: RequestHandler = async (req, res) => {
             throw new Error('typeOfOrder is not valid.');
         }
 
-        let initialQuery: InitialQuery = { state: true };
+        let initialQuery: InitialQuery = {
+            state: true,
+            stateOfProject: { $ne: 'En revision' },
+        };
 
         if (name) {
             initialQuery.name = { $regex: name, $options: 'i' };
@@ -43,7 +46,10 @@ export const getProjects: RequestHandler = async (req, res) => {
         }
         if (stateProject) {
             const stateOfProject = stateProject.split(',');
-            initialQuery.stateOfProject = { $all: stateOfProject };
+            initialQuery.stateOfProject = {
+                $all: stateOfProject,
+                $ne: 'En revision',
+            };
         }
         let sort: any = {};
         if (orderBy) {
@@ -63,7 +69,7 @@ export const getProjects: RequestHandler = async (req, res) => {
                     }),
             ]
         );
-
+        console.log(projects);
         return res.status(200).json({
             total,
             projects,
