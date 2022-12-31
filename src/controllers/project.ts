@@ -69,7 +69,7 @@ export const getProjects: RequestHandler = async (req, res) => {
                     }),
             ]
         );
-        console.log(projects);
+
         return res.status(200).json({
             total,
             projects,
