@@ -10,6 +10,7 @@ import {
   acceptStudentToProject,
   DeleteAccepts,
   UnapplyStudent,
+  getAllProjects,
 
 } from "../controllers/project";
 
@@ -20,7 +21,8 @@ import {
 import { verifyToken } from "../middlewares/authValidator";
 const router = Router();
 
-router.get("/", verifyToken, getProjects);
+router.get("/all",verifyToken, getAllProjects)//trues and falses
+router.get("/", verifyToken, getProjects);//only true 
 router.get("/category", verifyToken,getCategory);
 router.get("/:id", verifyToken, getProject);
 

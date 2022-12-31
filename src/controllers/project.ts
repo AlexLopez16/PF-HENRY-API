@@ -259,11 +259,11 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
             const infoProject = await Project.findById(projectId)
                 .populate({
                     path: 'accepts',
-                    select: 'name lastName',
+                    select: '-password',
                 })
                 .populate({
                     path: 'students',
-                    select: 'name lastName',
+                    select: '-password',
                 });
 
             return res.status(200).json(infoProject);
@@ -335,5 +335,73 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
         return res.status(200).json(project);
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
+    }
+};
+
+
+export const getAllProjects: RequestHandler = async (req, res) => {
+    try {
+        const {
+            limit = 6,
+            init = 0,
+            name,
+            tecnologies,
+            orderBy,
+            typeOfOrder = 'asc',
+            categories,
+            stateProject,
+        }: Query = req.query;
+
+        // validar que el orderBy sea un campo valido
+        if (orderBy && orderBy !== 'participants') {
+            throw new Error('Orderby is not valid.');
+        }
+
+        if (typeOfOrder !== 'asc' && typeOfOrder !== 'desc') {
+            throw new Error('typeOfOrder is not valid.');
+        }
+
+        let initialQuery: InitialQuery = { state: true };
+        if (name) {
+            initialQuery.name = { $regex: name, $options: 'i' };
+        }
+        if (tecnologies) {
+            const requirements: string[] = tecnologies.split(',');
+            initialQuery.requirements = { $all: requirements };
+        }
+        if (categories) {
+            const category = categories.split(',');
+            initialQuery.category = { $all: category };
+        }
+        if (stateProject) {
+            const stateOfProject = stateProject.split(',');
+            initialQuery.stateOfProject = { $all: stateOfProject };
+        }
+        let sort: any = {};
+        if (orderBy) {
+            sort[orderBy] = typeOfOrder;
+        }
+
+        const [total, projects]: [number, InitialProject[]] = await Promise.all(
+            [
+                Project.countDocuments(initialQuery),
+                Project.find(initialQuery)
+                    .sort(sort)
+                    .limit(limit)
+                    .skip(init)
+                    .populate({
+                        path: 'company',
+                        select: 'name',
+                    }),
+            ]
+        );
+
+        return res.status(200).json({
+            total,
+            projects,
+        });
+    } catch (error: any) {
+        //use any because type of error can be undefined
+        return res.status(500).json(formatError(error.message));
     }
 };
