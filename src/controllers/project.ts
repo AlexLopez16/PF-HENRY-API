@@ -108,9 +108,7 @@ export const createProject: RequestHandler = async (req, res) => {
 export const addStudentToProject: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
-        console.log('idp', projectId);
         const studentId = req.user._id;
-        console.log(studentId);
         const query = { state: true, _id: projectId };
         const studentIsWorking = await Student.find({
             state: true,
@@ -119,7 +117,6 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             // Buscamos que tenga en el working un proyecto.
             working: { $exists: true, $not: { $size: 0 } },
         });
-        console.log('studentIsWorking', studentIsWorking);
         // Error si el estudiante esta trabajando.
         if (studentIsWorking.length) throw new Error('Currently working');
         // Accedemos proyecto.
@@ -140,20 +137,17 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             const students = await Student.findById(studentId);
             // Asociamos el estudiante al proyecto.
             students.project = [...students.project, projectId];
-            console.log('students', students);
             await students.save();
             // Preparamos la info para retornar.
             const infoProject = await project.populate({
                 path: 'students',
                 select: 'name lastName',
             });
-            console.log('infoProject', infoProject);
             return res.status(200).json(infoProject);
         } else {
             throw new Error('Student is in the project');
         }
     } catch (error: any) {
-        console.log(error);
         return res.status(400).send(formatError(error.message));
     }
 };
@@ -234,14 +228,12 @@ export const getCategory: RequestHandler = async (req, res) => {
 export const addStudentToAccepts: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
-        const { idstudent } = req.body;
-        console.log('idp', projectId);
-        console.log('ids', idstudent);
+        const { studentId } = req.body;
         // Buscamos al estudiante.
         const student = await Student.find({
             state: true,
             // Buscamos al usuario por id.
-            _id: idstudent,
+            _id: studentId,
             // Buscamos que tenga en el working un proyecto.
             working: { $exists: true, $not: { $size: 0 } },
         });
@@ -250,15 +242,15 @@ export const addStudentToAccepts: RequestHandler = async (req, res) => {
         // Buscamos el proyecto.
         let project = await Project.findById(projectId);
         // Rechazamos si se quiere asociar un estudiante que no esta en la lista.
-        if (!project.students.includes(idstudent)) {
+        if (!project.students.includes(studentId)) {
             throw new Error('Student not found');
         } else {
             // Verificamos si ya no esta en la lista de asociados.
-            if (project.accepts.includes(idstudent)) {
+            if (project.accepts.includes(studentId)) {
                 throw new Error('Is already accepted');
             }
             // Agregamos el estudiante a la lista de aceptados.
-            project.accepts = [...project.accepts, idstudent];
+            project.accepts = [...project.accepts, studentId];
             // project.students = project.students.filter(
             //     (e: String) => e != studentId
             // );
@@ -266,14 +258,14 @@ export const addStudentToAccepts: RequestHandler = async (req, res) => {
             const infoProject = await Project.findById(projectId)
                 .populate({
                     path: 'accepts',
-                    select: '-password',
+                    select: 'name lastName',
                 })
                 .populate({
                     path: 'students',
-                    select: '-password',
+                    select: 'name lastName',
                 });
             // Ahora asociamos el working del estuaiante al proyecto.
-            const studentWorking = await Student.findById(idstudent);
+            const studentWorking = await Student.findById(studentId);
             studentWorking.working = [projectId];
             await studentWorking.save();
             return res.status(200).json(infoProject);

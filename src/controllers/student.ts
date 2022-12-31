@@ -84,7 +84,7 @@ export const getStudent: RequestHandler = async (req, res) => {
                 select: '-students',
                 populate: {
                     path: 'accepts',
-                    select: 'name lastName',
+                    select: 'name lastName image',
                 },
             })
             .populate({
