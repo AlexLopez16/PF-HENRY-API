@@ -66,6 +66,9 @@ const StudentSchema = new Schema({
             ref: 'Project',
         },
     ],
+    admission: {
+        type: Date,
+    },
 });
 
 StudentSchema.methods.toJSON = function () {

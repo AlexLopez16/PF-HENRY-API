@@ -110,42 +110,39 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
         const { id: projectId } = req.params;
         const studentId = req.user._id;
         const query = { state: true, _id: projectId };
+
         const studentIsWorking = await Student.find({
             state: true,
             // Buscamos al usuario por id.
             _id: studentId,
-            // Buscamos que tenga en el working un proyecto.
+            // Buscamos que tenga en el wordkin un proyecto.
             working: { $exists: true, $not: { $size: 0 } },
         });
         // Error si el estudiante esta trabajando.
         if (studentIsWorking.length) throw new Error('Currently working');
-        // Accedemos proyecto.
-        const projects = await Project.find(query);
+
         // Verificamos que el proyecto exista.
-        if (!projects.length) throw new Error('Project no found');
+        const projects = await Project.find(query);
+        if (!projects.length) throw new Error('project no found');
+
         // Seleccionamos el proyecto.
         let project = projects[0];
         if (
-            // Vemos si el estudiante ya no esta en la lista.
             !project.students.filter((s: any) => s.toString() == studentId)
                 .length
         ) {
-            // Asociamos al proyecto, el nuevo id del estudiante.
             project.students = [...project.students, studentId];
             await project.save();
-            // Accedemos al estudiante.
             const students = await Student.findById(studentId);
-            // Asociamos el estudiante al proyecto.
             students.project = [...students.project, projectId];
             await students.save();
-            // Preparamos la info para retornar.
             const infoProject = await project.populate({
                 path: 'students',
-                select: 'name lastName',
+                select: '-password',
             });
             return res.status(200).json(infoProject);
         } else {
-            throw new Error('Student is in the project');
+            throw new Error('student is in the project');
         }
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
@@ -225,7 +222,7 @@ export const getCategory: RequestHandler = async (req, res) => {
     }
 };
 
-export const addStudentToAccepts: RequestHandler = async (req, res) => {
+export const acceptStudentToProject: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
         const { studentId } = req.body;
@@ -255,19 +252,20 @@ export const addStudentToAccepts: RequestHandler = async (req, res) => {
             //     (e: String) => e != studentId
             // );
             await project.save();
-            const infoProject = await Project.findById(projectId)
-                .populate({
-                    path: 'accepts',
-                    select: 'name lastName',
-                })
-                .populate({
-                    path: 'students',
-                    select: 'name lastName',
-                });
             // Ahora asociamos el working del estuaiante al proyecto.
             const studentWorking = await Student.findById(studentId);
             studentWorking.working = [projectId];
             await studentWorking.save();
+            const infoProject = await Project.findById(projectId)
+                .populate({
+                    path: 'accepts',
+                    select: '-password',
+                })
+                .populate({
+                    path: 'students',
+                    select: '-password',
+                });
+
             return res.status(200).json(infoProject);
         }
     } catch (error: any) {
@@ -275,7 +273,7 @@ export const addStudentToAccepts: RequestHandler = async (req, res) => {
     }
 };
 
-export const removeStudentToAccepts: RequestHandler = async (req, res) => {
+export const DeleteAccepts: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
         const { studentId } = req.body;
@@ -298,11 +296,11 @@ export const removeStudentToAccepts: RequestHandler = async (req, res) => {
         const infoProject = await Project.findById(projectId)
             .populate({
                 path: 'accepts',
-                select: 'name lastName',
+                select: '-password',
             })
             .populate({
                 path: 'students',
-                select: 'name lastName',
+                select: '-password',
             });
         return res.status(200).json(infoProject);
     } catch (error: any) {
@@ -310,7 +308,7 @@ export const removeStudentToAccepts: RequestHandler = async (req, res) => {
     }
 };
 
-export const unApplyStudent: RequestHandler = async (req, res) => {
+export const UnapplyStudent: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
         const { studentId } = req.body;

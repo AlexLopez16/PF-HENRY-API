@@ -9,6 +9,7 @@ import axios from 'axios';
 import querystring from 'querystring';
 import { jwtGenerator } from '../helpers/jwt';
 
+
 const authenticateWithGoogle = async (userType: string, token: string) => {
     let payload: any;
     let email;
