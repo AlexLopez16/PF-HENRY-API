@@ -234,14 +234,14 @@ export const getCategory: RequestHandler = async (req, res) => {
 export const addStudentToAccepts: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
-        const { idstudent } = req.body;
+        const { studentId } = req.body;
         console.log('idp', projectId);
-        console.log('ids', idstudent);
+        console.log('ids', studentId);
         // Buscamos al estudiante.
         const student = await Student.find({
             state: true,
             // Buscamos al usuario por id.
-            _id: idstudent,
+            _id: studentId,
             // Buscamos que tenga en el working un proyecto.
             working: { $exists: true, $not: { $size: 0 } },
         });
@@ -250,19 +250,23 @@ export const addStudentToAccepts: RequestHandler = async (req, res) => {
         // Buscamos el proyecto.
         let project = await Project.findById(projectId);
         // Rechazamos si se quiere asociar un estudiante que no esta en la lista.
-        if (!project.students.includes(idstudent)) {
+        if (!project.students.includes(studentId)) {
             throw new Error('Student not found');
         } else {
             // Verificamos si ya no esta en la lista de asociados.
-            if (project.accepts.includes(idstudent)) {
+            if (project.accepts.includes(studentId)) {
                 throw new Error('Is already accepted');
             }
             // Agregamos el estudiante a la lista de aceptados.
-            project.accepts = [...project.accepts, idstudent];
+            project.accepts = [...project.accepts, studentId];
             // project.students = project.students.filter(
             //     (e: String) => e != studentId
             // );
             await project.save();
+            // Ahora asociamos el working del estuaiante al proyecto.
+            const studentWorking = await Student.findById(studentId);
+            studentWorking.working = [projectId];
+            await studentWorking.save();
             const infoProject = await Project.findById(projectId)
                 .populate({
                     path: 'accepts',
@@ -272,10 +276,7 @@ export const addStudentToAccepts: RequestHandler = async (req, res) => {
                     path: 'students',
                     select: '-password',
                 });
-            // Ahora asociamos el working del estuaiante al proyecto.
-            const studentWorking = await Student.findById(idstudent);
-            studentWorking.working = [projectId];
-            await studentWorking.save();
+
             return res.status(200).json(infoProject);
         }
     } catch (error: any) {
@@ -306,11 +307,11 @@ export const removeStudentToAccepts: RequestHandler = async (req, res) => {
         const infoProject = await Project.findById(projectId)
             .populate({
                 path: 'accepts',
-                select: 'name lastName',
+                select: '-password',
             })
             .populate({
                 path: 'students',
-                select: 'name lastName',
+                select: '-password',
             });
         return res.status(200).json(infoProject);
     } catch (error: any) {
