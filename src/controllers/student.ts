@@ -8,11 +8,11 @@ import { on } from 'events';
 require('dotenv').config();
 
 interface InitialIgnore {
-    password: boolean,
-    state: boolean,
-    gmail: boolean,
-    github: boolean,
-    rol: boolean,
+    password: boolean;
+    state: boolean;
+    gmail: boolean;
+    github: boolean;
+    rol: boolean;
 }
 
 // Creamos el estudiante de la db y hasheamos el password.
@@ -29,7 +29,7 @@ export const createStudent: RequestHandler = async (req, res) => {
             lastName,
             email,
             password: hashPassword,
-            admission: Date.now()
+            admission: Date.now(),
         });
         user = await user.save();
         // Aca llamamos a la funcion de confirmationEmail.
@@ -57,8 +57,8 @@ export const getStudent: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
 
-        if((<any>req).user.rol !== 'ADMIN_ROL' && (<any>req).user.id !== id) {
-            return res.status(401).json(formatError("Access denied"));
+        if ((<any>req).user.rol !== 'ADMIN_ROL' && (<any>req).user.id !== id) {
+            return res.status(401).json(formatError('Access denied'));
         }
         const {
             name,
@@ -72,17 +72,18 @@ export const getStudent: RequestHandler = async (req, res) => {
             company,
             country,
             working,
-            admission
+            admission,
         } = await Student.findById(id)
             .populate({
-                path: 'project',
+                path: 'working',
+                select: '-students',
                 populate: {
-                    path: 'students',
-                    select: 'name lastName',
+                    path: 'accepts',
+                    select: 'name lastName image',
                 },
             })
             .populate({
-                path: 'project',
+                path: 'working',
                 populate: {
                     path: 'company',
                     select: 'name',
@@ -91,8 +92,8 @@ export const getStudent: RequestHandler = async (req, res) => {
             .populate({
                 path: 'project',
                 populate: {
-                    path: 'accepts',
-                    select: 'name lastName',
+                    path: 'company',
+                    select: 'name',
                 },
             });
         res.status(200).json({
@@ -107,7 +108,7 @@ export const getStudent: RequestHandler = async (req, res) => {
             project,
             company,
             working,
-            admission
+            admission,
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
@@ -117,12 +118,18 @@ export const getStudent: RequestHandler = async (req, res) => {
 // Traemos todos los estudiantes de la db.
 export const getStudents: RequestHandler = async (req, res) => {
     try {
-        const { limit = 15, init = 0, name, tecnologies, onlyActive = 'true' } = req.query;        
+        const {
+            limit = 15,
+            init = 0,
+            name,
+            tecnologies,
+            onlyActive = 'true',
+        } = req.query;
 
         // Estado inicial de nuestro query.
-        let query: any = { };
+        let query: any = {};
 
-        if(onlyActive === 'true') {
+        if (onlyActive === 'true') {
             query.state = true;
         }
 
