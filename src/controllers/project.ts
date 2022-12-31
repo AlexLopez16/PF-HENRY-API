@@ -108,20 +108,17 @@ export const createProject: RequestHandler = async (req, res) => {
 export const addStudentToProject: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
-
-        const userId = req.user._id;
-
+        const studentId = req.user._id;
         const query = { state: true, _id: projectId };
 
         const studentIsWorking = await Student.find({
             state: true,
             // Buscamos al usuario por id.
-            _id: userId,
+            _id: studentId,
             // Buscamos que tenga en el wordkin un proyecto.
             working: { $exists: true, $not: { $size: 0 } },
         });
-
-        // Si el estudiante esta trabajando.
+        // Error si el estudiante esta trabajando.
         if (studentIsWorking.length) throw new Error('Currently working');
 
         // Verificamos que el proyecto exista.
@@ -131,25 +128,23 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
         // Seleccionamos el proyecto.
         let project = projects[0];
         if (
-            !project.students.filter((s: any) => s.toString() == userId).length
+            !project.students.filter((s: any) => s.toString() == studentId)
+                .length
         ) {
-            project.students = [...project.students, userId];
+            project.students = [...project.students, studentId];
             await project.save();
-            const students = await Student.findById(userId);
+            const students = await Student.findById(studentId);
             students.project = [...students.project, projectId];
-            console.log('students', students);
             await students.save();
             const infoProject = await project.populate({
                 path: 'students',
                 select: '-password',
             });
-
             return res.status(200).json(infoProject);
         } else {
             throw new Error('student is in the project');
         }
     } catch (error: any) {
-        console.log(error);
         return res.status(400).send(formatError(error.message));
     }
 };
@@ -231,8 +226,6 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
         const { studentId } = req.body;
-        console.log('idp', projectId);
-        console.log('ids', studentId);
         // Buscamos al estudiante.
         const student = await Student.find({
             state: true,
@@ -266,11 +259,11 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
             const infoProject = await Project.findById(projectId)
                 .populate({
                     path: 'accepts',
-                    select: '-password',
+                    select: 'name lastName',
                 })
                 .populate({
                     path: 'students',
-                    select: '-password',
+                    select: 'name lastName',
                 });
 
             return res.status(200).json(infoProject);
@@ -317,22 +310,29 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
 
 export const UnapplyStudent: RequestHandler = async (req, res) => {
     try {
-        const { id } = req.params;
-        const idStudent = req.body;
-
-        let project = await Project.findById(id);
-
-        if (!project.students.includes(idStudent)) {
-            throw new Error('no esta asociado');
-        } else {
-            project.students = project.students.filter(
-                (e: String) => e != idStudent
-            ); //lo elimino de students
-            project.save();
-            console.log(project);
-
-            // res.status(200).json(user);
+        const { id: projectId } = req.params;
+        const { studentId } = req.body;
+        // Buscamos el proyecto.
+        let project = await Project.findById(projectId);
+        // Si no esta en la lista de estudiantes.
+        if (!project.students.includes(studentId)) {
+            throw new Error("Student not found in the list 'Students'");
         }
+        // En caso de que este en la lista de estudiantes, lo eliminamos.
+        project.students = project.students.filter(
+            (e: string) => e != studentId
+        );
+        // En caso de que este en la lista de accepts, lo eliminamos.
+        project.accepts = project.accepts.filter((e: String) => e != studentId);
+        // Guardamos los cambios nuevos.
+        await project.save();
+        const student = await Student.findById(studentId);
+        // Eliminamos la asociacion del estudiante al proyecto.
+        student.project = student.project.filter((e: string) => e != projectId);
+        // Si no queremos que aplique, entonces no queremos aceptarlo.
+        student.working = [];
+        await student.save();
+        return res.status(200).json(project);
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
     }
