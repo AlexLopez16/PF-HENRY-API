@@ -10,6 +10,8 @@ interface InitialBody {
 
 export const getReview: RequestHandler = async (req, res) => {
   try {
+
+
     const { id } = req.params;
     let findReview = await Review.findById(id)
       .populate({
@@ -34,8 +36,6 @@ export const createReview: RequestHandler = async (req, res) => {
 
     const verifyStudent = await Project.find({ state: true, students: _id });
 
-    console.log(verifyStudent);
-
     if (!verifyStudent.length)
       throw new Error('No se encuentra registrado en el proyecto');
 
@@ -48,8 +48,6 @@ export const createReview: RequestHandler = async (req, res) => {
       student: _id,
       project: idProject,
     });
-
-    console.log(review);
 
     await review.save();
 

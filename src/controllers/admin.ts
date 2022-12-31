@@ -1,5 +1,8 @@
 import { RequestHandler } from 'express';
 const Admin = require('../models/admin');
+const Student = require('../models/student');
+const Company = require('../models/company');
+const Project = require('../models/project');
 import { hash } from '../helpers/hash';
 import { jwtGenerator } from '../helpers/jwt';
 import { formatError } from '../utils/formatErros';
@@ -113,16 +116,20 @@ export const updateAdmin: RequestHandler = async (req, res) => {
 // Damos la opcion de borrar (cambiar su estatus a false) al admin.
 export const deleteAdmin: RequestHandler = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
 
-    const user = await Admin.findByIdAndUpdate(
-      id,
-      { state: false },
-      { new: true },
-    );
+    let searchId = await Student.findById(id)
+    if (!searchId) { searchId = await Company.findById(id) }
+    if (!searchId) { searchId = await Admin.findById(id) }
+    if (!searchId) { searchId = await Project.findById(id) }
 
-    res.status(200).json(user);
+    searchId.state === false
+      ? searchId.state = true
+      : searchId.state = false
+
+    searchId.save()
+    res.status(200).json(searchId);
   } catch (error: any) {
-    res.status(500).json(formatError(error.message));
+    res.status(404).json(formatError(error.message));
   }
 };
