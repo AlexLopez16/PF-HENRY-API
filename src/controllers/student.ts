@@ -91,7 +91,10 @@ export const getStudent: RequestHandler = async (req, res) => {
             })
             .populate({
                 path: 'project',
-                select: 'name description participants stateOfProject',
+                populate: {
+                    path: 'company',
+                    select: 'name',
+                },
             });
         res.status(200).json({
             id: _id,
