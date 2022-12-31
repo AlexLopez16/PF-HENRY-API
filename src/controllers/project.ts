@@ -259,11 +259,11 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
             const infoProject = await Project.findById(projectId)
                 .populate({
                     path: 'accepts',
-                    select: 'name lastName',
+                    select: '-password',
                 })
                 .populate({
                     path: 'students',
-                    select: 'name lastName',
+                    select: '-password',
                 });
 
             return res.status(200).json(infoProject);
