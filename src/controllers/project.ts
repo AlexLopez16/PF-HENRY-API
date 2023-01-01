@@ -29,6 +29,7 @@ export const getProjects: RequestHandler = async (req, res) => {
         }
 
         let initialQuery: InitialQuery = { state: true };
+      
 
         if (name) {
             initialQuery.name = { $regex: name, $options: 'i' };
@@ -342,7 +343,7 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
 export const getAllProjects: RequestHandler = async (req, res) => {
     try {
         const {
-            limit = 6,
+            limit = 10,
             init = 0,
             name,
             tecnologies,
@@ -362,6 +363,9 @@ export const getAllProjects: RequestHandler = async (req, res) => {
         }
 
         let initialQuery: InitialQuery = { state: true };
+        let initialAllQuery: InitialQuery = { state: false};
+
+
         if (name) {
             initialQuery.name = { $regex: name, $options: 'i' };
         }

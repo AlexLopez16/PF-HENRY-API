@@ -10,12 +10,12 @@ export interface Query {
 }
 
 export interface InitialQuery {
-  state: boolean;
+  state?: boolean;
   name?: {};
   requirements?: {};
   category?: {};
   stateOfProject?: {};
-  AllState?: boolean;
+  // AllState?: boolean;
 
 }
 
