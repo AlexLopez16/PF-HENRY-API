@@ -1,10 +1,9 @@
-import e, { RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 const Student = require('../models/student');
 import { hash } from '../helpers/hash';
 import { formatError } from '../utils/formatErros';
 import { jwtGenerator } from '../helpers/jwt';
 import { sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
-import { on } from 'events';
 require('dotenv').config();
 
 interface InitialIgnore {

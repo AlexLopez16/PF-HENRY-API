@@ -30,28 +30,27 @@ export const password: RequestHandler = async (req, res) => {
 };
 
 export const redirectPassword: RequestHandler = async (req, res) => {
-    try {
-        const { token } = req.params;
-        console.log(token);
-        const { email } = verifyJwt(token);
-        let user = await Student.findOne({ email: email });
-        if (!user) {
-            user = await Company.findOne({ email: email });
-        }
-        if (!user) throw new Error('Email invalid');
-        let obj = { id: user._id, email: user.email };
-        const tok = jwtGenerator(obj);
-        res.redirect(
-            `${
-                process.env.URL_FRONT || 'http://localhost:5173'
-            }/recoverPassword?token=${tok}&rol=${user.rol}&verify=${
-                user.verify
-            }&id=${user.id}`
-        );
-    } catch (error: any) {
-        console.log(error.message);
+
+  const URL = process.env.URL_FRONT || 'http://localhost:5173'
+
+  try {
+    console.log('hola')
+    const { token } = req.params
+    console.log(token)
+    const { email } = verifyJwt(token);
+    let user = await Student.findOne({ email: email });
+    if (!user) {
+      user = await Company.findOne({ email: email });
     }
-};
+    if (!user) throw new Error("Email invalid");
+    let obj = { id: user._id, email: user.email }
+    const tok = jwtGenerator(obj);
+    res.redirect(`${URL}/recoverPassword?token=${tok}&rol=${user.rol}&verify=${user.verify}&id=${user.id}`)
+  } catch (error: any) {
+    console.log(error.message)
+  }
+
+}
 
 export const modifyPassword: RequestHandler = async (req, res) => {
     try {
