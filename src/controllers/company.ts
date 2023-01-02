@@ -10,7 +10,7 @@ export const createUserCompany: RequestHandler = async (req, res) => {
     try {
         const { name, email, country, password } = req.body;
         // let emailSearch = await User.find(email)
-        // if(emailSearch){
+        // if(emailSearch.length){
         //     throw new Error("Email already in database");
         // }
 
