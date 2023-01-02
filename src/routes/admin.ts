@@ -42,7 +42,6 @@ router.put('/putcompany/:id', rulesAdmin, updateUserCompany);
 router.put('/putproject/:id', rulesAdmin, addStudentToProject);
 
 
-// router.delete('/statecompany/:id', rulesAdmin, deleteUserCompany);
 // router.delete('/stateproject/:id', rulesAdmin, deleteProject);
 
 module.exports = router;

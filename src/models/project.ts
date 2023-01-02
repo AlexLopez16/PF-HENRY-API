@@ -32,14 +32,12 @@ const ProjectSchema = new Schema({
             ref: 'Student',
         },
     ],
-
     accepts: [
         {
             type: Schema.Types.ObjectId,
             ref: 'Student',
         },
     ],
-
     company: {
         type: Schema.Types.ObjectId,
         ref: 'Company',
@@ -58,6 +56,9 @@ const ProjectSchema = new Schema({
         emun: ['Reclutamiento', 'En desarrollo', 'Terminado', 'En revision'],
         default: 'En revision',
     },
+    admission: {
+        type: Date
+    }
 });
 
 ProjectSchema.index({ name: 'text' });

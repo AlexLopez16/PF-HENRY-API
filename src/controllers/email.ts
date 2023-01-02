@@ -30,7 +30,9 @@ export const confirmEmail: RequestHandler = async (req, res) => {
             //return res.sendStatus(200);
         }
 
-        return res.redirect('http://localhost:5173/dashboard');
+        return res.redirect(
+            `${process.env.URL_FRONT || 'http://localhost:5173'}/projects`
+        );
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
     }
