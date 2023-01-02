@@ -10,7 +10,7 @@ const CompanySchema = new Schema({
   },
   email: {
     type: String,
-    unique: true,
+  
     required: [true, 'Email is required'],
   },
   password: {
@@ -52,6 +52,10 @@ const CompanySchema = new Schema({
     default: 'COMPANY_ROL',
     emun: ['COMPANY_ROL'],
   },
+  state: {
+    type: Boolean,
+    default: true
+  }
 });
 
 CompanySchema.methods.toJSON = function () {

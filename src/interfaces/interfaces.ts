@@ -5,8 +5,8 @@ export interface Query {
   tecnologies?: string;
   orderBy?: string;
   typeOfOrder?: string;
-  categories?:string;
-  stateProject?:string;
+  categories?: string;
+  stateProject?: string;
 }
 
 export interface InitialQuery {
@@ -15,6 +15,8 @@ export interface InitialQuery {
   requirements?: {};
   category?: {};
   stateOfProject?: {};
+  AllState?: boolean;
+
 }
 
 interface Company {
@@ -35,4 +37,24 @@ export interface InitialProject {
   stateOfProject: string;
   accepts: any[];
   uid: string;
+}
+
+export interface Error {
+  msg: string;
+}
+
+export interface InitialError {
+  errors: Error[];
+}
+
+
+export interface InitialCreateProject {
+  name: string,
+  description: string,
+  participants: number,
+  image: string,
+  requirements: string[],
+  category?: string,
+  stateOfProject?: string[]
+
 }

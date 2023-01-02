@@ -17,7 +17,7 @@ const StudentSchema = new Schema({
         type: String,
     },
     password: {
-        type: String
+        type: String,
     },
     image: {
         type: String,
@@ -27,15 +27,15 @@ const StudentSchema = new Schema({
     },
     state: {
         type: Boolean,
-        default: true
+        default: true,
     },
     gmail: {
         type: Boolean,
-        default: false
+        default: false,
     },
     github: {
         type: Boolean,
-        default: false
+        default: false,
     },
     verify: {
         type: Boolean,
@@ -50,14 +50,25 @@ const StudentSchema = new Schema({
         default: 'STUDENT_ROL',
         emun: ['STUDENT_ROL'],
     },
-    project: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Project',
-    }],
+    project: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Project',
+        },
+    ],
     review: {
         type: Schema.Types.ObjectId,
         ref: 'Review',
-    }
+    },
+    working: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Project',
+        },
+    ],
+    admission: {
+        type: Date,
+    },
 });
 
 StudentSchema.methods.toJSON = function () {
