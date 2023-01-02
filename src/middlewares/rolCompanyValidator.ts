@@ -20,7 +20,7 @@ export const companyRole: RequestHandler = async (req, res, next) => {
   }
 
   const { rol } = req.user;
-  if (rol != 'COMPANY_ROL') {
+  if (rol !== 'COMPANY_ROL' || rol !== 'ADMIN_ROL') {
     return res.status(401).json({
       error: `Unauthorized`,
     });
