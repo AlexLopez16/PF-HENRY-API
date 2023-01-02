@@ -7,9 +7,9 @@ const {
     USER_EMAIL,
     PASS_EMAIL,
     FROM_EMAIL,
-    URL,
-    PORT,
 } = process.env;
+
+const URL = process.env.URL_DEPLOY || 'http://localhost:3001'
 
 const transport = nodemailer.createTransport({
     host: HOST_EMAIL,
@@ -27,7 +27,7 @@ export const sendConfirmationEmail = async (user: any) => {
 
         // Creamos la url con un jwt.
         const token = jwtGenerator(obj);
-        const urlConfirm = `${URL}:${PORT}/account/confirm/${token}`;
+        const urlConfirm = `${URL}/account/confirm/${token}`;
 
         // send mail with defined transport object
         const sendEmail = await transport.sendMail({
@@ -43,12 +43,15 @@ export const sendConfirmationEmail = async (user: any) => {
     }
 };
 export const recuperatePassword = async (user: any) => {
+
+    
+
     try {
         let obj = { email: user.email };
 
         // Creamos la url con un jwt.
         const token = jwtGenerator(obj);
-        const urlmodifyPassword = `${URL}:${PORT}/api/recover/password/redirect/${token}`;
+        const urlmodifyPassword = `${URL}/api/recover/password/redirect/${token}`;
         // send mail with defined transport object
         const sendEmail = await transport.sendMail({
             from: FROM_EMAIL, // sender address
