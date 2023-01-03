@@ -15,7 +15,7 @@ import {
 
 import { deleteUserCompany, getUserCompany, getUsersCompany, updateUserCompany } from '../controllers/company';
 import { addStudentToProject, deleteProject, getProject, getProjects } from '../controllers/project';
-import { createAdmin, deleteAdmin, getAdmin, getAdminById, updateAdmin } from '../controllers/admin';
+import { AprovedProject, createAdmin, deleteAdmin, getAdmin, getAdminById, updateAdmin } from '../controllers/admin';
 
 import { rulesAdmin } from '../helpers/rulesAdmin';
 
@@ -36,6 +36,7 @@ router.get('/company/:id', rulesAdmin, getUserCompany);
 router.get('/project/:id', rulesAdmin, getProject);
 
 router.put('/stateuser', rulesAdmin, deleteAdmin);
+router.put('/aprovedproject', rulesAdmin, AprovedProject);
 
 router.put('/putstudent/:id', rulesAdmin, updateStudent);
 router.put('/putcompany/:id', rulesAdmin, updateUserCompany);
