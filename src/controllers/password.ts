@@ -34,9 +34,7 @@ export const redirectPassword: RequestHandler = async (req, res) => {
   const URL = process.env.URL_FRONT || 'http://localhost:5173'
 
   try {
-    console.log('hola')
     const { token } = req.params
-    console.log(token)
     const { email } = verifyJwt(token);
     let user = await Student.findOne({ email: email });
     if (!user) {

@@ -43,9 +43,6 @@ export const sendConfirmationEmail = async (user: any) => {
     }
 };
 export const recuperatePassword = async (user: any) => {
-
-    
-
     try {
         let obj = { email: user.email };
 

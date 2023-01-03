@@ -175,8 +175,6 @@ export const getProject: RequestHandler = async (req, res) => {
             });
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
-        console.log(project);
-
         return res.status(200).json(project);
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
