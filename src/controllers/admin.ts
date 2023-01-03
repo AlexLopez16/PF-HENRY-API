@@ -130,3 +130,44 @@ export const deleteAdmin: RequestHandler = async (req, res) => {
     res.status(404).json(formatError(error.message));
   }
 };
+
+
+export const AprovedProject: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    let searchId = await Project.findById(id)
+    searchId.stateOfProject ==="En revision"
+    ? searchId.stateOfProject = "Reclutamiento"
+    // :searchId.stateOfProject === "Reclutamiento"
+    // ?searchId.stateOfProject = "En revision"
+    :"";
+    await searchId.save();
+    console.log(searchId);
+    
+    res.status(200).json(searchId);
+  } catch (error: any) {
+    res.status(404).json(formatError(error.message));
+  }
+};
+
+export const deniedProject: RequestHandler = async (req, res) => {
+
+
+  try {
+    const { id } = req.body;
+
+    let searchId = await Project.findById(id)
+    console.log(searchId);
+    
+    // searchId.remove()
+   
+   
+    await searchId.save();
+    console.log(searchId);
+    
+    res.status(200).json(searchId);
+  } catch (error: any) {
+    res.status(404).json(formatError(error.message));
+  }
+};

@@ -62,3 +62,25 @@ export const recuperatePassword = async (user: any) => {
         console.log(error.message);
     }
 };
+
+
+export const mailprojectCancel = async (user: any) => {
+    try {
+        let obj = { email: user.email };
+
+        // Creamos la url con un jwt.
+        const token = jwtGenerator(obj);
+        const urlmodifyPassword = `${URL}/api/recover/password/redirect/${token}`;
+        // send mail with defined transport object
+        const sendEmail = await transport.sendMail({
+            from: FROM_EMAIL, // sender address
+            to: user.email, // list of receivers
+            subject: 'Please,ingrese al link', // Subject line
+            //text: 'Hello world', // plain text body
+            html: `<p>ingrese al link: <a href="${urlmodifyPassword}">Recuperar contraseña</a></p>`, // html body
+        });
+        console.log(sendEmail);
+    } catch (error: any) {
+        console.log(error.message);
+    }
+};
