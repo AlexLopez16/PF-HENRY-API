@@ -9,10 +9,11 @@ import { sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
 export const createUserCompany: RequestHandler = async (req, res) => {
     try {
         const { name, email, country, password } = req.body;
-        // let emailSearch = await User.find(email)
-        // if(emailSearch){
-        //     throw new Error("Email already in database");
-        // }
+        let emailSearch = await User.find({ email })
+
+        if (emailSearch.length) {
+            throw new Error("Email already in database");
+        }
 
         let hashPassword = await hash(password);
         let user = new User({ name, email, country, password: hashPassword });
@@ -84,18 +85,18 @@ export const getUserCompany: RequestHandler = async (req, res) => {
 
 //PUT
 export const updateUserCompany: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { email, premium, password, ...user } = req.body;
-    if (password) {
-      let hashPassword = await hash(password);//modificacion
-      user.password = hashPassword;
+    try {
+        const { id } = req.params;
+        const { email, premium, password, ...user } = req.body;
+        if (password) {
+            let hashPassword = await hash(password);//modificacion
+            user.password = hashPassword;
+        }
+        const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
+        res.status(200).json(userUpdated);
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
     }
-    const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
-    res.status(200).json(userUpdated);
-  } catch (error: any) {
-    res.status(500).send(formatError(error.message));
-  }
 };
 
 // DELETE
