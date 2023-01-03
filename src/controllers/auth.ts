@@ -63,10 +63,11 @@ export const loginUser: RequestHandler = async (req, res) => {
         const { email, password, from, tok, userType } = req.body;
         let user;
         let validPassword;
+        let query = { email, state: true };
         if (email && password) {
-            user = await Student.findOne({ email });
+            user = await Student.findOne(query);
             if (!user) {
-                user = await Company.findOne({ email });
+                user = await Company.findOne(query);
                 if (!user) {
                     user = await Admin.findOne({ email });
                 }
