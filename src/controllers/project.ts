@@ -231,6 +231,7 @@ export const getCategory: RequestHandler = async (req, res) => {
 export const acceptStudentToProject: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
+        const companyId = req.user._id;
         const { studentId } = req.body;
         // Buscamos al estudiante.
         const student = await Student.find({
@@ -242,8 +243,17 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
         });
         // Error si el estudiante esta trabajando.
         if (student.length) throw new Error('Currently working');
-        // Buscamos el proyecto.
-        let project = await Project.findById(projectId);
+        // Buscamos el proyecto que este en state en true donde su compania concuerde con la compania logueada.
+        let projectById = await Project.find({
+            _id: projectId,
+            company: companyId,
+            state: true,
+        });
+        // Si la consulta no devuelve nada, significa que una compania que no es la que esta logueada, esta intentando aceptar a un estudiante de un proyecto que no es de el,por tal motivo se lanza error
+        if (!projectById.length) {
+            throw new Error('You can`t accept a student');
+        }
+        let project = projectById[0];
         // Rechazamos si se quiere asociar un estudiante que no esta en la lista.
         if (!project.students.includes(studentId)) {
             throw new Error('Student not found');
@@ -283,8 +293,19 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
         const { studentId } = req.body;
-        // Buscamos el proyecto.
-        let project = await Project.findById(projectId);
+        const companyId = req.user._id;
+        // Buscamos el proyecto que este en state en true donde su compania concuerde con la compania logueada.
+        let projectById = await Project.find({
+            _id: projectId,
+            company: companyId,
+            state: true,
+        });
+        // Si la consulta no devuelve nada, significa que una compania que no es la que esta logueada, esta intentando borrar a un estudiante de un proyecto que no es de el,por tal motivo se lanza error
+
+        if (!projectById.length) {
+            throw new Error('You can`t delete a student');
+        }
+        let project = projectById[0];
         // Si no esta en la lista de estudiantes.
         if (!project.students.includes(studentId))
             throw new Error("Student not found in the list 'Students'");
@@ -343,7 +364,6 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
         res.status(500).json(formatError(error.message));
     }
 };
-
 
 export const getAllProjects: RequestHandler = async (req, res) => {
     try {
