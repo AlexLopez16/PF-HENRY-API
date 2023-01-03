@@ -69,13 +69,15 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
 export const getUserCompany: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, _id, email, country } = await User.findById(id);
-
+        const { name, _id, email, country,image,website } = await User.findById(id);
+console.log(image)
         res.status(200).json({
             id: _id,
             name,
             country,
             email,
+            image,
+            website
         });
     } catch (error: any) {
         res.status(500).send(formatError(error.message));
@@ -88,7 +90,7 @@ export const updateUserCompany: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const { email, premium, password, ...user } = req.body;
     if (password) {
-      let hashPassword = await hash(password);//modificacion
+        let hashPassword = await hash(password);//modificacion
       user.password = hashPassword;
     }
     const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });

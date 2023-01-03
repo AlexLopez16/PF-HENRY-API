@@ -123,11 +123,8 @@ export const deleteAdmin: RequestHandler = async (req, res) => {
     if (!searchId) { searchId = await Admin.findById(id) }
     if (!searchId) { searchId = await Project.findById(id) }
 
-    searchId.state === false
-      ? searchId.state = true
-      : searchId.state = false
-
-    searchId.save()
+    searchId.state = !searchId.state;
+    await searchId.save();
     res.status(200).json(searchId);
   } catch (error: any) {
     res.status(404).json(formatError(error.message));
