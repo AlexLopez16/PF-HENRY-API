@@ -55,7 +55,10 @@ const CompanySchema = new Schema({
   state: {
     type: Boolean,
     default: true
-  }
+  },
+  admission: {
+    type: Date,
+},
 });
 
 CompanySchema.methods.toJSON = function () {

@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import { formatError } from '../utils/formatErros';
-import { Query, InitialQuery, InitialProject } from '../interfaces/interfaces';
+import { Query, InitialQuery, InitialProject, InitialQuery2 } from '../interfaces/interfaces';
 import { portalSession } from './checkout';
 const Project = require('../models/project');
 const Student = require('../models/student');
@@ -175,8 +175,6 @@ export const getProject: RequestHandler = async (req, res) => {
             });
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
-        console.log(project);
-
         return res.status(200).json(project);
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
@@ -387,9 +385,13 @@ export const getAllProjects: RequestHandler = async (req, res) => {
             throw new Error('typeOfOrder is not valid.');
         }
 
+<<<<<<< HEAD
         let initialQuery: InitialQuery = { state: true };
 
 
+=======
+        let initialQuery: InitialQuery2 = { };
+>>>>>>> desarrollo
         if (name) {
             initialQuery.name = { $regex: name, $options: 'i' };
         }
@@ -422,11 +424,10 @@ export const getAllProjects: RequestHandler = async (req, res) => {
                         select: 'name',
                     }),
             ]
-        );
-
+        ); 
         return res.status(200).json({
-            total,
             projects,
+           total
         });
     } catch (error: any) {
         //use any because type of error can be undefined

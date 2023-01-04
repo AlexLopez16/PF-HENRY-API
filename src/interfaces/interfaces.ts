@@ -15,7 +15,14 @@ export interface InitialQuery {
   requirements?: {};
   category?: {};
   stateOfProject?: {};
-  // AllState?: boolean;
+
+}
+
+export interface InitialQuery2 {
+  name?: {};
+  requirements?: {};
+  category?: {};
+  stateOfProject?: {};
 
 }
 
