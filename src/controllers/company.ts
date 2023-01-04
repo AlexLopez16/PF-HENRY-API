@@ -71,7 +71,6 @@ export const getUserCompany: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, _id, email, country,image,website } = await User.findById(id);
-console.log(image)
         res.status(200).json({
             id: _id,
             name,
@@ -87,14 +86,6 @@ console.log(image)
 
 //PUT
 export const updateUserCompany: RequestHandler = async (req, res) => {
-<<<<<<< HEAD
-  try {
-    const { id } = req.params;
-    const { email, premium, password, ...user } = req.body;
-    if (password) {
-        let hashPassword = await hash(password);//modificacion
-      user.password = hashPassword;
-=======
     try {
         const { id } = req.params;
         const { email, premium, password, ...user } = req.body;
@@ -106,7 +97,6 @@ export const updateUserCompany: RequestHandler = async (req, res) => {
         res.status(200).json(userUpdated);
     } catch (error: any) {
         res.status(500).send(formatError(error.message));
->>>>>>> desarrollo
     }
 };
 

@@ -385,13 +385,7 @@ export const getAllProjects: RequestHandler = async (req, res) => {
             throw new Error('typeOfOrder is not valid.');
         }
 
-<<<<<<< HEAD
-        let initialQuery: InitialQuery = { state: true };
-
-
-=======
         let initialQuery: InitialQuery2 = { };
->>>>>>> desarrollo
         if (name) {
             initialQuery.name = { $regex: name, $options: 'i' };
         }
