@@ -366,7 +366,7 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
 export const getAllProjects: RequestHandler = async (req, res) => {
     try {
         const {
-            limit = 6,
+            limit = 10,
             init = 0,
             name,
             tecnologies,
