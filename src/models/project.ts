@@ -6,17 +6,21 @@ const ProjectSchema = new Schema({
         required: [true, 'Name is required'],
         unique: true,
     },
+
     description: {
         type: String,
         required: [true, 'Requires a description'],
     },
+
     participants: {
         type: Number,
         required: [true, 'Number of employees is required'],
     },
+
     images: {
         type: Array,
     },
+
     requirements: {
         type: Array,
         required: [true, 'Language is required'],
@@ -26,36 +30,43 @@ const ProjectSchema = new Schema({
         type: Boolean,
         default: true,
     },
+
     students: [
         {
             type: Schema.Types.ObjectId,
             ref: 'Student',
         },
     ],
+
     accepts: [
         {
             type: Schema.Types.ObjectId,
             ref: 'Student',
         },
     ],
+
     company: {
         type: Schema.Types.ObjectId,
         ref: 'Company',
     },
+
     reviews: [
         {
             type: Schema.Types.ObjectId,
             ref: 'Review',
         },
     ],
+
     category: {
         type: String,
     },
+
     stateOfProject: {
         type: String,
         emun: ['Reclutamiento', 'En desarrollo', 'Terminado', 'En revision'],
         default: 'En revision',
     },
+    
     admission: {
         type: Date
     }

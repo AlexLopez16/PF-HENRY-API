@@ -43,9 +43,6 @@ export const sendConfirmationEmail = async (user: any) => {
     }
 };
 export const recuperatePassword = async (user: any) => {
-
-    
-
     try {
         let obj = { email: user.email };
 
@@ -59,6 +56,34 @@ export const recuperatePassword = async (user: any) => {
             subject: 'Please,ingrese al link', // Subject line
             //text: 'Hello world', // plain text body
             html: `<p>ingrese al link: <a href="${urlmodifyPassword}">Recuperar contraseña</a></p>`, // html body
+        });
+        console.log(sendEmail);
+    } catch (error: any) {
+        console.log(error.message);
+    }
+};
+
+
+export const mailprojectCancel = async (compania:object | any,values:object | any ,proyecto:object | any) => {
+    try {
+       
+        const sendEmail = await transport.sendMail({
+            from: FROM_EMAIL, // sender address
+            to: compania.email, // list of receivers
+            subject: 'Rechazo de su proyecto', // Subject line
+            //text: 'Hello world', // plain text body
+            html: `<div>
+            <p>Su proyecto: 
+            <p>Empresa: ${compania.name}</p>
+            <p>Descripcion: ${proyecto.description} </p>
+            <p>Participantes: ${proyecto.participants} </p>
+            <p>Requerimientos: ${proyecto.requirements} </p>
+            <p>Categoria: ${proyecto.category} </p> 
+            <h2>${values.respuesta}</h2>
+            </div>`
+
+
+            , // html body
         });
         console.log(sendEmail);
     } catch (error: any) {

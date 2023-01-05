@@ -10,12 +10,19 @@ export interface Query {
 }
 
 export interface InitialQuery {
-  state: boolean;
+  state?: boolean;
   name?: {};
   requirements?: {};
   category?: {};
   stateOfProject?: {};
-  AllState?: boolean;
+
+}
+
+export interface InitialQuery2 {
+  name?: {};
+  requirements?: {};
+  category?: {};
+  stateOfProject?: {};
 
 }
 
