@@ -21,7 +21,7 @@ export interface Query1 {
 }
 
 export interface InitialQuery {
-    state: boolean;
+    state?: boolean;
     name?: {};
     requirements?: {};
     category?: {};
