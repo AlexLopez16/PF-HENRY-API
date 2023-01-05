@@ -1,15 +1,10 @@
 const nodemailer = require('nodemailer');
 import { jwtGenerator } from './jwt';
 require('dotenv').config();
-const {
-    HOST_EMAIL,
-    PORT_EMAIL,
-    USER_EMAIL,
-    PASS_EMAIL,
-    FROM_EMAIL,
-} = process.env;
+const { HOST_EMAIL, PORT_EMAIL, USER_EMAIL, PASS_EMAIL, FROM_EMAIL } =
+    process.env;
 
-const URL = process.env.URL_DEPLOY || 'http://localhost:3001'
+const URL = process.env.URL_DEPLOY || 'http://localhost:3001';
 
 const transport = nodemailer.createTransport({
     host: HOST_EMAIL,
@@ -27,7 +22,7 @@ export const sendConfirmationEmail = async (user: any) => {
 
         // Creamos la url con un jwt.
         const token = jwtGenerator(obj);
-        const urlConfirm = `${URL}/account/confirm/${token}`;
+        const urlConfirm = `${URL}/api/account/confirm/${token}`;
 
         // send mail with defined transport object
         const sendEmail = await transport.sendMail({
@@ -62,7 +57,6 @@ export const recuperatePassword = async (user: any) => {
         console.log(error.message);
     }
 };
-
 
 export const mailprojectCancel = async (user: any) => {
     try {
