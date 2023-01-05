@@ -1,6 +1,12 @@
 import { RequestHandler } from 'express';
 import { formatError } from '../utils/formatErros';
-import { Query, InitialQuery, InitialProject, InitialQuery2 } from '../interfaces/interfaces';
+import {
+    Query,
+    InitialQuery,
+    InitialProject,
+    InitialQuery2,
+    Query1,
+} from '../interfaces/interfaces';
 import { portalSession } from './checkout';
 const Project = require('../models/project');
 const Student = require('../models/student');
@@ -17,7 +23,7 @@ export const getProjects: RequestHandler = async (req, res) => {
             typeOfOrder = 'asc',
             categories,
             stateProject,
-        }: Query = req.query;
+        }: Query1 = req.query;
 
         // validar que el orderBy sea un campo valido
         if (orderBy && orderBy !== 'participants') {
@@ -366,8 +372,8 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
 export const getAllProjects: RequestHandler = async (req, res) => {
     try {
         const {
-            limit = 26,
-            init = 0,
+            limit = '6',
+            init = '0',
             name,
             tecnologies,
             orderBy,
@@ -376,6 +382,8 @@ export const getAllProjects: RequestHandler = async (req, res) => {
             stateProject,
         }: Query = req.query;
 
+        let Limit = parseInt(limit);
+        let Init = parseInt(init);
         // validar que el orderBy sea un campo valido
         if (orderBy && orderBy !== 'participants') {
             throw new Error('Orderby is not valid.');
@@ -385,25 +393,126 @@ export const getAllProjects: RequestHandler = async (req, res) => {
             throw new Error('typeOfOrder is not valid.');
         }
 
-        let initialQuery: InitialQuery2 = { };
-        if (name) {
-            initialQuery.name = { $regex: name, $options: 'i' };
-        }
+        let initialQuery: InitialQuery2 = {};
+        let companyquery: InitialQuery2 = {};
+
         if (tecnologies) {
             const requirements: string[] = tecnologies.split(',');
             initialQuery.requirements = { $all: requirements };
+            companyquery.requirements = { $all: requirements };
         }
         if (categories) {
             const category = categories.split(',');
             initialQuery.category = { $all: category };
+            companyquery.category = { $all: category };
         }
+        let stateOfProject;
         if (stateProject) {
-            const stateOfProject = stateProject.split(',');
+            stateOfProject = stateProject.split(',');
             initialQuery.stateOfProject = { $all: stateOfProject };
+            companyquery.stateOfProject = { $all: stateOfProject };
         }
         let sort: any = {};
         if (orderBy) {
             sort[orderBy] = typeOfOrder;
+        }
+
+        if (name) {
+            let queryWithCount = [
+                {
+                    $lookup: {
+                        from: 'companies',
+                        localField: 'company',
+                        foreignField: '_id',
+                        let: { name: '$name' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    name: { $regex: name, $options: 'i' },
+                                },
+                            },
+                        ],
+                        as: 'company',
+                    },
+                },
+                {
+                    $match: companyquery,
+                },
+                {
+                    $unionWith: {
+                        coll: 'projects',
+                        pipeline: [
+                            {
+                                $match: initialQuery,
+                            },
+                            {
+                                $lookup: {
+                                    from: 'companies',
+                                    localField: 'company',
+                                    foreignField: '_id',
+                                    as: 'company',
+                                },
+                            },
+                        ],
+                    },
+                },
+                {
+                    $count: 'count',
+                },
+            ];
+            let queryWithoutCount = [
+                {
+                    $lookup: {
+                        from: 'companies',
+                        localField: 'company',
+                        foreignField: '_id',
+                        let: { name: '$name' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    name: { $regex: name, $options: 'i' },
+                                },
+                            },
+                        ],
+                        as: 'company',
+                    },
+                },
+                {
+                    $match: companyquery,
+                },
+                {
+                    $unionWith: {
+                        coll: 'projects',
+                        pipeline: [
+                            {
+                                $match: initialQuery,
+                            },
+                            {
+                                $lookup: {
+                                    from: 'companies',
+                                    localField: 'company',
+                                    foreignField: '_id',
+                                    as: 'company',
+                                },
+                            },
+                        ],
+                    },
+                },
+            ];
+            companyquery.company = { $size: 1 };
+            initialQuery.name = { $regex: name, $options: 'i' };
+            const [total, projects]: [any, InitialProject[]] =
+                await Promise.all([
+                    Project.aggregate(queryWithCount),
+                    Project.aggregate(queryWithoutCount)
+                        .limit(Limit)
+                        .skip(Init),
+                ]);
+            console.log(projects[0]);
+            return res.status(200).json({
+                projects,
+                total: total[0].count,
+            });
         }
 
         const [total, projects]: [number, InitialProject[]] = await Promise.all(
@@ -418,13 +527,14 @@ export const getAllProjects: RequestHandler = async (req, res) => {
                         select: 'name',
                     }),
             ]
-        ); 
+        );
         return res.status(200).json({
             projects,
-           total
+            total,
         });
     } catch (error: any) {
         //use any because type of error can be undefined
+        console.log(error);
         return res.status(500).json(formatError(error.message));
     }
 };
