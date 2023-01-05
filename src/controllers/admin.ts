@@ -5,6 +5,8 @@ const Company = require('../models/company');
 const Project = require('../models/project');
 import { hash } from '../helpers/hash';
 import { jwtGenerator } from '../helpers/jwt';
+import { mailprojectCancel } from '../helpers/sendConfirmationEmail';
+
 import { formatError } from '../utils/formatErros';
 
 // CREATE
@@ -126,6 +128,68 @@ export const deleteAdmin: RequestHandler = async (req, res) => {
     searchId.state = !searchId.state;
     await searchId.save();
     res.status(200).json(searchId);
+  } catch (error: any) {
+    res.status(404).json(formatError(error.message));
+  }
+};
+
+
+export const AprovedProject: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    let searchId = await Project.findById(id)
+    searchId.stateOfProject === "En revision"
+      ? searchId.stateOfProject = "Reclutamiento"
+      // :searchId.stateOfProject === "Reclutamiento"
+      // ?searchId.stateOfProject = "En revision"
+      : "";
+    await searchId.save();
+    console.log(searchId);
+
+    res.status(200).json(searchId);
+  } catch (error: any) {
+    res.status(404).json(formatError(error.message));
+  }
+};
+
+export const deniedProject: RequestHandler = async (req, res) => {
+
+
+  try {
+    const { id } = req.body;
+
+    let searchId = await Project.findById(id)
+    console.log(searchId);
+
+    // searchId.remove()
+
+
+    await searchId.save();
+    console.log(searchId);
+
+    res.status(200).json(searchId);
+  } catch (error: any) {
+    res.status(404).json(formatError(error.message));
+  }
+};
+
+
+export const sendEmailCompanyforProjectDenied: RequestHandler = async (req, res) => {
+  try {
+    const { idPrj, values } = req.body;
+    
+
+    let proyecto= await Project.findById(idPrj)
+    let compania = await Company.findById(proyecto.company)
+   
+
+     proyecto.remove() // elimino el proyecto de la base
+     await proyecto.save();
+    mailprojectCancel(compania,values,proyecto)
+
+
+    res.status(200).json("Proyecto removido");
   } catch (error: any) {
     res.status(404).json(formatError(error.message));
   }
