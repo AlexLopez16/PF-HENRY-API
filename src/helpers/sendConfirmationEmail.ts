@@ -66,7 +66,6 @@ export const recuperatePassword = async (user: any) => {
 
 export const mailprojectCancel = async (compania:object | any,values:object | any ,proyecto:object | any) => {
     try {
-       console.log(values);
        
         const sendEmail = await transport.sendMail({
             from: FROM_EMAIL, // sender address
@@ -87,8 +86,6 @@ export const mailprojectCancel = async (compania:object | any,values:object | an
             , // html body
         });
         console.log(sendEmail);
-        console.log(values);
-        
     } catch (error: any) {
         console.log(error.message);
     }

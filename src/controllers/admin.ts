@@ -6,6 +6,7 @@ const Project = require('../models/project');
 import { hash } from '../helpers/hash';
 import { jwtGenerator } from '../helpers/jwt';
 import { mailprojectCancel } from '../helpers/sendConfirmationEmail';
+
 import { formatError } from '../utils/formatErros';
 
 // CREATE
@@ -177,7 +178,7 @@ export const deniedProject: RequestHandler = async (req, res) => {
 export const sendEmailCompanyforProjectDenied: RequestHandler = async (req, res) => {
   try {
     const { idPrj, values } = req.body;
-    console.log(idPrj, values);
+    
 
     let proyecto= await Project.findById(idPrj)
     let compania = await Company.findById(proyecto.company)
