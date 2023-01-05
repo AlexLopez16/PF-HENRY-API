@@ -1,6 +1,6 @@
 const Company = require('../models/company');
 const Student = require('../models/student');
-const Admin   = require('../models/admin');
+const Admin = require('../models/admin');
 
 export const searchUser = async (id: string) => {
     let user = await Student.findById(id);
