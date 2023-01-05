@@ -58,20 +58,26 @@ export const recuperatePassword = async (user: any) => {
     }
 };
 
-export const mailprojectCancel = async (user: any) => {
+export const mailprojectCancel = async (
+    compania: object | any,
+    values: object | any,
+    proyecto: object | any
+) => {
     try {
-        let obj = { email: user.email };
-
-        // Creamos la url con un jwt.
-        const token = jwtGenerator(obj);
-        const urlmodifyPassword = `${URL}/api/recover/password/redirect/${token}`;
-        // send mail with defined transport object
         const sendEmail = await transport.sendMail({
             from: FROM_EMAIL, // sender address
-            to: user.email, // list of receivers
-            subject: 'Please,ingrese al link', // Subject line
+            to: compania.email, // list of receivers
+            subject: 'Rechazo de su proyecto', // Subject line
             //text: 'Hello world', // plain text body
-            html: `<p>ingrese al link: <a href="${urlmodifyPassword}">Recuperar contraseña</a></p>`, // html body
+            html: `<div>
+            <p>Su proyecto: 
+            <p>Empresa: ${compania.name}</p>
+            <p>Descripcion: ${proyecto.description} </p>
+            <p>Participantes: ${proyecto.participants} </p>
+            <p>Requerimientos: ${proyecto.requirements} </p>
+            <p>Categoria: ${proyecto.category} </p> 
+            <h2>${values.respuesta}</h2>
+            </div>`, // html body
         });
         console.log(sendEmail);
     } catch (error: any) {
