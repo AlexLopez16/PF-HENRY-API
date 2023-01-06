@@ -30,6 +30,7 @@ export const createUserCompany: RequestHandler = async (req, res) => {
             rol,
             verify,
             id,
+            email,
         });
     } catch (error: any) {
         res.status(500).send(formatError(error.message));
