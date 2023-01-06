@@ -84,3 +84,18 @@ export const mailprojectCancel = async (
         console.log(error.message);
     }
 };
+
+export const contactEmail = async (data: any, name: string) => {
+    try {
+        await transport.sendMail({
+            from: '"NABIJASH" nabijash@gmail.com',
+            to: 'nabijash@gmail.com',
+            subject: `${name} quiere ponerse en contacto`,
+            html: data
+        })
+        return 'Email Send'
+    } catch (error) {
+        console.log(error)
+        return 'Email fail to sent'
+    }
+}
