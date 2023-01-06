@@ -45,6 +45,7 @@ export const createStudent: RequestHandler = async (req, res) => {
             id,
             rol,
             verify,
+            email,
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
