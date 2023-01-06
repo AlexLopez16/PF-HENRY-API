@@ -21,6 +21,10 @@ const ProjectSchema = new Schema({
         type: Array,
     },
 
+    questions: {
+        type: Array,
+    },
+
     requirements: {
         type: Array,
         required: [true, 'Language is required'],
