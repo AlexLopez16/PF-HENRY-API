@@ -4,7 +4,7 @@ const ProjectSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name is required'],
-        unique: true,
+        unique: true
     },
     description: {
         type: String,
@@ -20,8 +20,8 @@ const ProjectSchema = new Schema({
     requirements: {
         type: Array,
         required: [true, 'Language is required'],
+        index: true
     },
-
     state: {
         type: Boolean,
         default: true,
@@ -50,11 +50,13 @@ const ProjectSchema = new Schema({
     ],
     category: {
         type: String,
+        index: true
     },
     stateOfProject: {
         type: String,
         emun: ['Reclutamiento', 'En desarrollo', 'Terminado', 'En revision'],
         default: 'En revision',
+        index: true
     },
     admission: {
         type: Date
