@@ -64,9 +64,9 @@ export const recuperatePassword = async (user: any) => {
 };
 
 
-export const mailprojectCancel = async (compania:object | any,values:object | any ,proyecto:object | any) => {
+export const mailprojectCancel = async (compania: object | any, values: object | any, proyecto: object | any) => {
     try {
-       
+
         const sendEmail = await transport.sendMail({
             from: FROM_EMAIL, // sender address
             to: compania.email, // list of receivers
@@ -90,3 +90,18 @@ export const mailprojectCancel = async (compania:object | any,values:object | an
         console.log(error.message);
     }
 };
+
+export const contactEmail = async (data: any, name: string) => {
+    try {
+        await transport.sendMail({
+            from: '"NABIJASH" nabijash@gmail.com',
+            to: 'nabijash@gmail.com',
+            subject: `${name} quiere ponerse en contacto`,
+            html: data
+        })
+        return 'Email Send'
+    } catch (error) {
+        console.log(error)
+        return 'Email fail to sent'
+    }
+}

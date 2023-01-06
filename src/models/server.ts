@@ -28,6 +28,7 @@ const paths = {
     password:'/api/recover/password',  
     review: '/api/review',
     token: '/api/token',
+    contact: '/api/contact'
 };
 
 //Routes
@@ -41,6 +42,7 @@ server.use(paths.password,require('../routes/password'));
 server.use(paths.checkout,require('../routes/checkout'));
 server.use(paths.review,  require('../routes/review'));
 server.use(paths.token,   require('../routes/token'));
+server.use(paths.contact, require('../routes/contactEmail'))
 //DB Connection
 connDB();
 
