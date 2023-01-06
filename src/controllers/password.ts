@@ -22,7 +22,7 @@ export const password: RequestHandler = async (req, res) => {
         recuperatePassword(user);
 
         res.status(200).json({
-            msg: 'Email send',
+            msg: 'Correo Enviado',
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
