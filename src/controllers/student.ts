@@ -119,7 +119,7 @@ export const getStudent: RequestHandler = async (req, res) => {
 export const getStudents: RequestHandler = async (req, res) => {
     try {
         const {
-            limit = 15,
+            limit = 6,
             init = 0,
             name,
             tecnologies,
