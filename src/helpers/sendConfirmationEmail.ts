@@ -1,15 +1,10 @@
 const nodemailer = require('nodemailer');
 import { jwtGenerator } from './jwt';
 require('dotenv').config();
-const {
-    HOST_EMAIL,
-    PORT_EMAIL,
-    USER_EMAIL,
-    PASS_EMAIL,
-    FROM_EMAIL,
-} = process.env;
+const { HOST_EMAIL, PORT_EMAIL, USER_EMAIL, PASS_EMAIL, FROM_EMAIL } =
+    process.env;
 
-const URL = process.env.URL_DEPLOY || 'http://localhost:3001'
+const URL = process.env.URL_DEPLOY || 'http://localhost:3001';
 
 const transport = nodemailer.createTransport({
     host: HOST_EMAIL,
@@ -27,7 +22,7 @@ export const sendConfirmationEmail = async (user: any) => {
 
         // Creamos la url con un jwt.
         const token = jwtGenerator(obj);
-        const urlConfirm = `${URL}/account/confirm/${token}`;
+        const urlConfirm = `${URL}/api/account/confirm/${token}`;
 
         // send mail with defined transport object
         const sendEmail = await transport.sendMail({
@@ -63,10 +58,12 @@ export const recuperatePassword = async (user: any) => {
     }
 };
 
-
-export const mailprojectCancel = async (compania: object | any, values: object | any, proyecto: object | any) => {
+export const mailprojectCancel = async (
+    compania: object | any,
+    values: object | any,
+    proyecto: object | any
+) => {
     try {
-
         const sendEmail = await transport.sendMail({
             from: FROM_EMAIL, // sender address
             to: compania.email, // list of receivers
@@ -80,10 +77,7 @@ export const mailprojectCancel = async (compania: object | any, values: object |
             <p>Requerimientos: ${proyecto.requirements} </p>
             <p>Categoria: ${proyecto.category} </p> 
             <h2>${values.respuesta}</h2>
-            </div>`
-
-
-            , // html body
+            </div>`, // html body
         });
         console.log(sendEmail);
     } catch (error: any) {

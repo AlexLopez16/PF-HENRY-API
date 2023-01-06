@@ -194,3 +194,93 @@ export const sendEmailCompanyforProjectDenied: RequestHandler = async (req, res)
     res.status(404).json(formatError(error.message));
   }
 };
+
+type GraphResponse = {
+  students: {
+    state: GraphData
+  },
+  projects: {
+    state: GraphData
+  },
+  companies: {
+    state: GraphData,
+    premium: GraphData
+  }
+}
+
+type GraphData = {
+  datasets: Dataset[]
+  labels: string[]
+}
+
+type Dataset = {
+  data: number[],
+  backgroundColor: string[]
+}
+
+export const getChart: RequestHandler = async (req, res) => {
+  try {
+    const studentData = await Student
+      .find()
+      .select({ state: 1 })
+      .exec();
+      
+    const projectData = await Project
+      .find()
+      .select({ stateOfProject: 1 })
+      .exec();
+
+    const companiesData = await Company
+      .find()
+      .select({ state: 1, premium: 1 })
+      .exec();
+
+    const response: GraphResponse = {
+        students: {
+          state: getGraphData(studentData.map((i:any) => i.state ? "Activo": "Inactivo"))
+        },                
+        projects: {
+          state: getGraphData(projectData.map((i:any) => i.stateOfProject))
+        },
+        companies: {
+          state: getGraphData(companiesData.map((i:any) => i.state ? "Activo": "Inactivo")),
+          premium: getGraphData(companiesData.map((i:any) => i.premium ? "Premium": "No premium")),
+        }
+    }
+
+    res.status(200).json(response);
+
+  } catch (error: any) {
+    res.status(404).json(formatError(error.message));
+  }
+}
+
+const getGraphData = (items: string[]) : GraphData => {
+  const res: GraphData = {
+    datasets: [
+      {
+        data: [],
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          'rgb(54, 162, 235)',
+          'rgb(255, 205, 86)'
+        ],
+      }
+    ],
+    labels: []
+  }
+
+  for(let item of items) {
+    let ix = res.labels.indexOf(item);
+
+    if(ix === -1) {
+      ix = res.labels.push(item) - 1;
+      res.datasets[0].data.push(1);
+      continue;
+    }
+
+    res.datasets[0].data[ix]++;
+  }
+
+  return res;
+}
