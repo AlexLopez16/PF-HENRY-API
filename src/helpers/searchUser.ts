@@ -22,23 +22,24 @@ export const searchUserForVerify = async (
 ) => {
     try {
         const functions: object | any = {
-            Student: async (_id: object | any) => {
+            'Student': async () => {
                 return await Student.findOne({ _id });
             },
-            Company: async (_id: object | any) => {
+            'Company': async () => {
                 return await Company.findOne({ _id });
             },
-            Admin: async (_id: object | any) => {
+            "Admin": async () => {
                 return await Admin.findOne({ _id });
             },
         };
-        const user = functions[who];
+        const user = await functions[who]()
+        console.log(user);
         if (user) {
-            if (user.email === email) await sendConfirmationEmail(user);
+            if (user.email === email) sendConfirmationEmail(user);
             else {
                 user.email = email;
                 await user.save();
-                await sendConfirmationEmail(user);
+                sendConfirmationEmail(user);
             }
         } else throw new Error('Usuario no encontrado.');
         return user;
