@@ -105,13 +105,27 @@ export const createProject: RequestHandler = async (req, res) => {
             //agregamos la request de user para hacer la relacion.
             company: req.user._id,
             category: category.toLowerCase(),
+            admission: Date.now(),
         };
-        const project = new Project(data);
-        await project.save();
-        const company = await Company.findById(req.user._id);
-        company.project = [...company.project, project._id];
-        await company.save();
-        return res.status(200).send(project);
+        // const id = req.user._id;
+        // console.log(id);
+        console.log('id', req.user._id);
+        const pro = await Project.find({ company: req.user._id, state: true });
+        console.log('pro', pro);
+        const compa = await Company.findById(req.user._id);
+        console.log('compa', compa);
+        if (pro.length === 1 && compa.premium === false) {
+            throw new Error(
+                'You have to be premiun if you want to create more projects'
+            );
+        } else {
+            const project = new Project(data);
+            await project.save();
+            const company = await Company.findById(req.user._id);
+            company.project = [...company.project, project._id];
+            await company.save();
+            return res.status(200).send(project);
+        }
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }
