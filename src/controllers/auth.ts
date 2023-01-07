@@ -64,13 +64,19 @@ export const loginUser: RequestHandler = async (req, res) => {
         const { email, password, from, tok, userType } = req.body;
         let user;
         let validPassword;
-        let query = { email, state: true };
+        let query = { email };
         if (email && password) {
             user = await Student.findOne(query);
             if (!user) {
                 user = await Company.findOne(query);
                 if (!user) {
                     user = await Admin.findOne(query);
+                }
+
+                if (user && user.state === false) {
+                    throw new Error(
+                        'Tu cuenta ha sido inactivada, por favor llena el formulario de contactanos para darte respuesta'
+                    );
                 }
                 if (user) {
                     validPassword = await bcrypt.compare(
@@ -87,6 +93,11 @@ export const loginUser: RequestHandler = async (req, res) => {
                         );
                 }
             } else {
+                if (user && user.state === false) {
+                    throw new Error(
+                        'Tu cuenta ha sido inactivada, por favor llena el formulario de contactanos para darte respuesta'
+                    );
+                }
                 validPassword = await bcrypt.compare(password, user.password);
             }
             if (!validPassword) {
@@ -101,6 +112,11 @@ export const loginUser: RequestHandler = async (req, res) => {
         } else {
             if (from && from === 'gmail') {
                 user = await authenticateWithGoogle(userType, tok);
+            }
+            if (user && user.state === false) {
+                throw new Error(
+                    'Tu cuenta ha sido inactivada, por favor llena el formulario de contactanos para darte respuesta'
+                );
             }
             if (!user) {
                 return res
@@ -135,6 +151,7 @@ export const github: RequestHandler = async (req, res) => {
             username: gitHubUser.login,
             github: true,
         });
+
         if (!user) {
             user = await new Student({
                 name: gitHubUser.name,
