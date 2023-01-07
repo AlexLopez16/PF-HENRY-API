@@ -84,9 +84,11 @@ export const mailprojectCancel = async (
     console.log(error.message);
   }
 };
-export const sendMailRating = async (mail: string,image:string,name:string,idProject:string,projectName:string) => {
+export const sendMailRating = async (mail: string,image:string,name:string,idProject:string,projectName:string,id:string) => {
   try {
-    const urlRating = `http://127.0.0.1:5173/rating?project=${idProject}&student=${name}&image=${image}&projectName=${projectName}`; // falta redirijir
+    let obj = { email: mail,id:id };
+    const token = jwtGenerator(obj);
+    const urlRating = `http://127.0.0.1:5173/rating?project=${idProject}&student=${name}&image=${image}&projectName=${projectName}&id=${id}&token=${token}`; // falta redirijir
     // // send mail with defined transport object
     let sendEmail: any = await transport.sendMail({
       from: FROM_EMAIL, // sender address

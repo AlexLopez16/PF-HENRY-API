@@ -168,7 +168,8 @@ export const finalProject: RequestHandler = async (req, res) => {
         user.image,
         user.name,
         idProject,
-        projectSearch.name
+        projectSearch.name,
+        id
       );
     });
     res.sendStatus(200);
