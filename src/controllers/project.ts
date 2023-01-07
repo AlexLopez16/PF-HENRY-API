@@ -246,7 +246,7 @@ export const editProject: RequestHandler = async (req, res) => {
             select: '-password',
         });
 
-        if (!editUpdate) throw new Error('project no found');
+        if (!editUpdate) throw new Error('proyecto no encontrado');
         return res.status(200).send(editUpdate);
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
@@ -277,7 +277,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
             working: { $exists: true, $not: { $size: 0 } },
         });
         // Error si el estudiante esta trabajando.
-        if (student.length) throw new Error('Currently working');
+        if (student.length) throw new Error('Trabajando actualmente');
         // Buscamos el proyecto que este en state en true donde su compania concuerde con la compania logueada.
         let projectById = await Project.find({
             _id: projectId,
@@ -286,16 +286,16 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
         });
         // Si la consulta no devuelve nada, significa que una compania que no es la que esta logueada, esta intentando aceptar a un estudiante de un proyecto que no es de el,por tal motivo se lanza error
         if (!projectById.length) {
-            throw new Error('You can`t accept a student');
+            throw new Error('No puede aceptar a este estudiante');
         }
         let project = projectById[0];
         // Rechazamos si se quiere asociar un estudiante que no esta en la lista.
         if (!project.students.includes(studentId)) {
-            throw new Error('Student not found');
+            throw new Error('Estudiante no encontrado');
         } else {
             // Verificamos si ya no esta en la lista de asociados.
             if (project.accepts.includes(studentId)) {
-                throw new Error('Is already accepted');
+                throw new Error('Ya esta aceptado');
             }
             // Agregamos el estudiante a la lista de aceptados.
             project.accepts = [...project.accepts, studentId];
@@ -338,15 +338,15 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
         // Si la consulta no devuelve nada, significa que una compania que no es la que esta logueada, esta intentando borrar a un estudiante de un proyecto que no es de el,por tal motivo se lanza error
 
         if (!projectById.length) {
-            throw new Error('You can`t delete a student');
+            throw new Error('No puede borrar a este estudiante');
         }
         let project = projectById[0];
         // Si no esta en la lista de estudiantes.
         if (!project.students.includes(studentId))
-            throw new Error("Student not found in the list 'Students'");
+            throw new Error("Estudiante no encontrado en la lista 'Students'");
         // Si no esta en la lista de aceptados.
         if (!project.accepts.includes(studentId))
-            throw new Error("Student not found in the list 'Accepts'");
+            throw new Error("Estudiante no encontrado en la lista  'Accepts'");
         // En caso de que este en la lista de accepts, lo eliminamos.
         project.accepts = project.accepts.filter((e: string) => e != studentId);
         // Guardamos los cambios nuevos.
@@ -378,7 +378,7 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
         let project = await Project.findById(projectId);
         // Si no esta en la lista de estudiantes.
         if (!project.students.includes(studentId)) {
-            throw new Error("Student not found in the list 'Students'");
+            throw new Error("Estudiante no encontrado en la lista  'Students'");
         }
         // En caso de que este en la lista de estudiantes, lo eliminamos.
         project.students = project.students.filter(
