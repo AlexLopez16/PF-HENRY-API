@@ -131,7 +131,7 @@ export const createProject: RequestHandler = async (req, res) => {
 
         if (difBetweenDates < 30 && !compa.premium) {
             throw new Error(
-                'You have to be premiun if you want to create more projects in a month'
+                'Tienes que ser premiun,si quieres crear mas de un proyecto al mes'
             );
         } else {
             const project = new Project(data);
@@ -271,6 +271,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
         const { id: projectId } = req.params;
         const companyId = req.user._id;
         const { studentId } = req.body;
+        
         // Buscamos al estudiante.
         const student = await Student.find({
             state: true,
