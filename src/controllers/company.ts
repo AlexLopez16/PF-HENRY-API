@@ -12,7 +12,7 @@ export const createUserCompany: RequestHandler = async (req, res) => {
         let emailSearch = await User.find({ email });
 
         if (emailSearch.length) {
-            throw new Error('Email already in database');
+            throw new Error('Email ya registrado');
         }
 
         let hashPassword = await hash(password);
@@ -31,7 +31,7 @@ export const createUserCompany: RequestHandler = async (req, res) => {
         let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.status(201).json({
-            data: 'Successfull Sing up',
+            data: 'Ingreso exitoso',
             token,
             rol,
             verify,

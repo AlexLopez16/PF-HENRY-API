@@ -135,7 +135,7 @@ export const loginUser: RequestHandler = async (req, res) => {
         const token = jwtGenerator(obj);
         return res
             .status(200)
-            .json({ data: 'Sucessful login', token, rol, verify, id, email });
+            .json({ data: 'Logueo exitoso', token, rol, verify, id, email });
     } catch (error: any) {
         console.log(error);
         return res.status(500).json(formatError(error.message));
