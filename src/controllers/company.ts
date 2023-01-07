@@ -9,14 +9,20 @@ import { sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
 export const createUserCompany: RequestHandler = async (req, res) => {
     try {
         const { name, email, country, password } = req.body;
-        let emailSearch = await User.find({ email })
+        let emailSearch = await User.find({ email });
 
         if (emailSearch.length) {
-            throw new Error("Email already in database");
+            throw new Error('Email already in database');
         }
 
         let hashPassword = await hash(password);
-        let user = new User({ name, email, country, password: hashPassword });
+        let user = new User({
+            name,
+            email,
+            country,
+            password: hashPassword,
+            admission: new Date(),
+        });
         let verify = user.verify;
         let id = user._id;
         user = await user.save();
@@ -40,7 +46,7 @@ export const createUserCompany: RequestHandler = async (req, res) => {
 // GET USERS
 export const getUsersCompany: RequestHandler = async (req, res) => {
     try {
-        const { limit = 10, init = 0, name, country } = req.query;
+        const { limit = 6, init = 0, name, country } = req.query;
         const query: any = { state: true };
         const ignore: any = {
             password: false,
@@ -71,7 +77,8 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
 export const getUserCompany: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, _id, email, country,image,website, premium } = await User.findById(id);
+        const { name, _id, email, country, image, website, premium } =
+            await User.findById(id);
         res.status(200).json({
             id: _id,
             name,
@@ -79,7 +86,7 @@ export const getUserCompany: RequestHandler = async (req, res) => {
             email,
             image,
             website,
-            premium
+            premium,
         });
     } catch (error: any) {
         res.status(500).send(formatError(error.message));
@@ -92,10 +99,12 @@ export const updateUserCompany: RequestHandler = async (req, res) => {
         const { id } = req.params;
         const { email, premium, password, ...user } = req.body;
         if (password) {
-            let hashPassword = await hash(password);//modificacion
+            let hashPassword = await hash(password); //modificacion
             user.password = hashPassword;
         }
-        const userUpdated = await User.findByIdAndUpdate(id, user, { new: true });
+        const userUpdated = await User.findByIdAndUpdate(id, user, {
+            new: true,
+        });
         res.status(200).json(userUpdated);
     } catch (error: any) {
         res.status(500).send(formatError(error.message));
