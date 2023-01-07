@@ -8,6 +8,7 @@ const { OAuth2Client } = require('google-auth-library');
 import axios from 'axios';
 import querystring from 'querystring';
 import { jwtGenerator } from '../helpers/jwt';
+import { formatError } from '../utils/formatErros';
 
 const authenticateWithGoogle = async (userType: string, token: string) => {
     let payload: any;
@@ -50,7 +51,7 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
                 verify: true,
             });
         } else {
-            throw new Error('userType is invalid.');
+            throw new Error('Por favor Registrate primero');
         }
     }
     await user.save();
@@ -69,7 +70,7 @@ export const loginUser: RequestHandler = async (req, res) => {
             if (!user) {
                 user = await Company.findOne(query);
                 if (!user) {
-                    user = await Admin.findOne({ email });
+                    user = await Admin.findOne(query);
                 }
                 if (user) {
                     validPassword = await bcrypt.compare(
@@ -79,7 +80,11 @@ export const loginUser: RequestHandler = async (req, res) => {
                 } else {
                     return res
                         .status(400)
-                        .json({ error: 'The user or password is incorrect.' });
+                        .json(
+                            formatError(
+                                'El usuario o la contraseña son incorrectas'
+                            )
+                        );
                 }
             } else {
                 validPassword = await bcrypt.compare(password, user.password);
@@ -87,7 +92,11 @@ export const loginUser: RequestHandler = async (req, res) => {
             if (!validPassword) {
                 return res
                     .status(400)
-                    .json({ error: 'The user or password is incorrect.' });
+                    .json(
+                        formatError(
+                            'El usuario o la contraseña son incorrectas'
+                        )
+                    );
             }
         } else {
             if (from && from === 'gmail') {
@@ -96,7 +105,11 @@ export const loginUser: RequestHandler = async (req, res) => {
             if (!user) {
                 return res
                     .status(400)
-                    .json({ error: 'The user or password is incorrect.' });
+                    .json(
+                        formatError(
+                            'El usuario o la contraseña son incorrectas'
+                        )
+                    );
             }
         }
         let rol = user.rol;
@@ -109,7 +122,7 @@ export const loginUser: RequestHandler = async (req, res) => {
             .json({ data: 'Sucessful login', token, rol, verify, id, email });
     } catch (error: any) {
         console.log(error);
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json(formatError(error.message));
     }
 };
 

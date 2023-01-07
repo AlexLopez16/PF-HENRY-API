@@ -22,18 +22,17 @@ export const searchUserForVerify = async (
 ) => {
     try {
         const functions: object | any = {
-            'Student': async () => {
+            Student: async () => {
                 return await Student.findOne({ _id });
             },
-            'Company': async () => {
+            Company: async () => {
                 return await Company.findOne({ _id });
             },
-            "Admin": async () => {
+            Admin: async () => {
                 return await Admin.findOne({ _id });
             },
         };
-        const user = await functions[who]()
-        console.log(user);
+        const user = await functions[who]();
         if (user) {
             if (user.email === email) sendConfirmationEmail(user);
             else {
@@ -41,7 +40,7 @@ export const searchUserForVerify = async (
                 await user.save();
                 sendConfirmationEmail(user);
             }
-        } else throw new Error('Usuario no encontrado.');
+        }
         return user;
     } catch (error: any) {
         console.log(error.message);

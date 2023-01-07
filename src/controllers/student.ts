@@ -45,6 +45,7 @@ export const createStudent: RequestHandler = async (req, res) => {
             id,
             rol,
             verify,
+            email,
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
@@ -118,7 +119,7 @@ export const getStudent: RequestHandler = async (req, res) => {
 export const getStudents: RequestHandler = async (req, res) => {
     try {
         const {
-            limit = 15,
+            limit = 6,
             init = 0,
             name,
             tecnologies,
