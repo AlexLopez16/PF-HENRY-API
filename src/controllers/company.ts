@@ -20,25 +20,26 @@ export const createUserCompany: RequestHandler = async (req, res) => {
       throw new Error("Email already in database");
     }
 
-    let hashPassword = await hash(password);
-    let user = new User({ name, email, country, password: hashPassword });
-    let verify = user.verify;
-    let id = user._id;
-    user = await user.save();
-    sendConfirmationEmail(user);
-    const rol = user.rol;
-    let obj = { id: user._id, name: user.name };
-    const token = jwtGenerator(obj);
-    res.status(201).json({
-      data: "Successfull Sing up",
-      token,
-      rol,
-      verify,
-      id,
-    });
-  } catch (error: any) {
-    res.status(500).send(formatError(error.message));
-  }
+        let hashPassword = await hash(password);
+        let user = new User({ name, email, country, password: hashPassword });
+        let verify = user.verify;
+        let id = user._id;
+        user = await user.save();
+        sendConfirmationEmail(user);
+        const rol = user.rol;
+        let obj = { id: user._id, name: user.name };
+        const token = jwtGenerator(obj);
+        res.status(201).json({
+            data: 'Successfull Sing up',
+            token,
+            rol,
+            verify,
+            id,
+            email,
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
 };
 
 // GET USERS
@@ -73,22 +74,21 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
 
 // GET USER
 export const getUserCompany: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, _id, email, country, image, website } = await User.findById(
-      id
-    );
-    res.status(200).json({
-      id: _id,
-      name,
-      country,
-      email,
-      image,
-      website,
-    });
-  } catch (error: any) {
-    res.status(500).send(formatError(error.message));
-  }
+    try {
+        const { id } = req.params;
+        const { name, _id, email, country,image,website, premium } = await User.findById(id);
+        res.status(200).json({
+            id: _id,
+            name,
+            country,
+            email,
+            image,
+            website,
+            premium
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
 };
 
 //PUT

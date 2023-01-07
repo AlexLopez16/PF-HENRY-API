@@ -27,7 +27,11 @@ router.put('/:id', verifyToken, addStudentToProject); //agregar validator rol-st
 router.put('/edit/:id', rulesProject, editProject);
 router.put('/accept/:id', rulesProject, acceptStudentToProject);
 router.put('/denied/:id', rulesProject, DeleteAccepts);
-router.put('/unapply/:id', verifyToken, UnapplyStudent);
+router.put(
+    '/unapply/:id',
+    // verifyToken,
+    UnapplyStudent
+);
 
 router.delete('/:id', rulesProject, deleteProject);
 

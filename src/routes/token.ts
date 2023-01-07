@@ -4,6 +4,10 @@ import { verifyToken } from '../middlewares/authValidator';
 
 const router = Router();
 
-router.get('/', verifyToken, infoToken);
+router.get(
+    '/',
+    // no necesita el verifytokeb.
+    infoToken
+);
 
 module.exports = router;

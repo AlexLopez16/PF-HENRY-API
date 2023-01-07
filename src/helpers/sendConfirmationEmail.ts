@@ -20,9 +20,9 @@ export const sendConfirmationEmail = async (user: any) => {
   try {
     let obj = { email: user.email, rol: user.rol };
 
-    // Creamos la url con un jwt.
-    const token = jwtGenerator(obj);
-    const urlConfirm = `${URL}/account/confirm/${token}`;
+        // Creamos la url con un jwt.
+        const token = jwtGenerator(obj);
+        const urlConfirm = `${URL}/api/account/confirm/${token}`;
 
     // send mail with defined transport object
     const sendEmail = await transport.sendMail({
@@ -100,3 +100,19 @@ export const sendMailRating = async (mail: string,image:string,name:string,idPro
   }
 };
 
+
+
+export const contactEmail = async (data: any, name: string) => {
+    try {
+        await transport.sendMail({
+            from: '"NABIJASH" nabijash@gmail.com',
+            to: 'nabijash@gmail.com',
+            subject: `${name} quiere ponerse en contacto`,
+            html: data
+        })
+        return 'Email Send'
+    } catch (error) {
+        console.log(error)
+        return 'Email fail to sent'
+    }
+}
