@@ -237,6 +237,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
         const { id: projectId } = req.params;
         const companyId = req.user._id;
         const { studentId } = req.body;
+        
         // Buscamos al estudiante.
         const student = await Student.find({
             state: true,
