@@ -211,8 +211,19 @@ export const getProject: RequestHandler = async (req, res) => {
             })
             .populate({
                 path:"reviews",
-                select:"description,ratingProject,ratingCompany"
+                populate:{
+                 path:"student",
+                 select:"name lastName image"
+                },})
+            .populate({
+                path:"reviews",
+                populate:{
+                    path:"project",
+                    select:"name"
+                }
             })
+
+            
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
         return res.status(200).json(project);
