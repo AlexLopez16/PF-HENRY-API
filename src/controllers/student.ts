@@ -213,5 +213,3 @@ export const deleteStudent: RequestHandler = async (req, res) => {
         res.status(500).json(formatError(error.message));
     }
 };
-
-
