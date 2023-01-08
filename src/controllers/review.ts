@@ -5,7 +5,8 @@ const Project = require('../models/project');
 
 interface InitialBody {
   description: string;
-  rating: number;
+  ratingProject: number;
+  ratingCompany:number
 }
 
 export const getReview: RequestHandler = async (req, res) => {
@@ -31,25 +32,30 @@ export const getReview: RequestHandler = async (req, res) => {
 
 export const createReview: RequestHandler = async (req, res) => {
   try {
-    const { description, rating }: InitialBody = req.body;
+    const { description, ratingProject,ratingCompany }: InitialBody = req.body;
     const { _id } = req.user;
 
     const verifyStudent = await Project.find({ state: true, students: _id });
 
+    console.log(verifyStudent);
     if (!verifyStudent.length)
       throw new Error('No se encuentra registrado en el proyecto');
 
     const idProject = verifyStudent[0]._id;
-    if (!rating) throw new Error('Debe ingresar un puntaje');
+    if (!ratingProject) throw new Error('Debe ingresar un puntaje');
 
     let review = new Review({
       description,
-      rating,
+      ratingProject,
       student: _id,
       project: idProject,
+      ratingCompany
     });
-
+    
     await review.save();
+    
+    verifyStudent[0].reviews = [...verifyStudent[0].reviews,review._id]
+    await verifyStudent[0].save()
 
     res.status(201).json({
       data: 'registered review',
@@ -62,10 +68,10 @@ export const createReview: RequestHandler = async (req, res) => {
 export const editReview: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { description, rating } = req.body;
+    const { description, ratingProject,ratingCompany } = req.body;
 
     const filter = { _id: id };
-    const update = { description, rating };
+    const update = { description, ratingProject,ratingCompany };
 
     const findReview = await Review.findOneAndUpdate(filter, update, {
       new: true,
