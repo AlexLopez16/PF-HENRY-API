@@ -7,6 +7,7 @@ import {
 import {
     createUserCompany,
     deleteUserCompany,
+    finalProject,
     getCompanyProject,
     getUserCompany,
     getUsersCompany,
@@ -23,7 +24,10 @@ router.get('/:id', rulesUsersCompany, getUserCompany);
 
 router.post('/', rulesCreateUserCompany, createUserCompany);
 
+router.put("/final",finalProject)
+
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
+
 
 router.delete('/:id', rulesUsersCompany, deleteUserCompany);
 
