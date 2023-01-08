@@ -12,8 +12,11 @@ const ReviewSchema = new Schema({
     description: {
         type: String,
     },
-    rating: {
+    ratingProject: {
         type: Number,
+    },
+    ratingCompany:{
+        type:Number,
     },
     student: {
         type: Schema.Types.ObjectId,

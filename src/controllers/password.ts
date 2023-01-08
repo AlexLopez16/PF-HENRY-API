@@ -39,7 +39,7 @@ export const redirectPassword: RequestHandler = async (req, res) => {
         if (!user) {
             user = await Company.findOne({ email: email });
         }
-        if (!user) throw new Error('Email invalid');
+        if (!user) throw new Error('Email invalido');
         let obj = { id: user._id, email: user.email };
         const tok = jwtGenerator(obj);
         res.redirect(
@@ -87,7 +87,7 @@ export const modifyPassword: RequestHandler = async (req, res) => {
         }
 
         res.status(200).json({
-            msg: 'contraseña modificada',
+            msg: 'Contraseña modificada',
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
