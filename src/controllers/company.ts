@@ -28,11 +28,11 @@ export const createUserCompany: RequestHandler = async (req, res) => {
             password: hashPassword,
             admission: new Date(),
         });
-        let verify = user.verify;
-        let id = user._id;
         user = await user.save();
         sendConfirmationEmail(user);
         const rol = user.rol;
+        let verify = user.verify;
+        let id = user._id;
         let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.status(201).json({
@@ -50,20 +50,29 @@ export const createUserCompany: RequestHandler = async (req, res) => {
 
 // GET USERS
 export const getUsersCompany: RequestHandler = async (req, res) => {
-    try {
-        const { limit = 6, init = 0, name, country } = req.query;
-        const query: any = { state: true };
-        const ignore: any = {
-            password: false,
-            state: false,
-            gmail: false,
-            github: false,
-            rol: false,
-        };
+  try {
+    const {
+      limit = 10,
+      init = 0,
+      name,
+      country,
+      onlyActive = "true",
+    } = req.query;
+
+    const query: any = {};
+
+    if (onlyActive === "true") query.state = true;
 
     if (name) query.name = { $regex: name, $options: "i" };
 
     if (country) query.country = { $regex: country, $options: "i" };
+
+    const ignore: any = {
+      password: false,
+      gmail: false,
+      github: false,
+      rol: false,
+    };
 
     const [total, usersCompany] = await Promise.all([
       User.countDocuments(query),
@@ -80,22 +89,23 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
 
 // GET USER
 export const getUserCompany: RequestHandler = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, _id, email, country, image, website, premium } =
+  try {
+    const { id } = req.params;
+    const { name, _id, email, country,  image,  website, premium } =
+     
             await User.findById(id);
-        res.status(200).json({
-            id: _id,
-            name,
-            country,
-            email,
-            image,
-            website,
-            premium,
-        });
-    } catch (error: any) {
-        res.status(500).send(formatError(error.message));
-    }
+    res.status(200).json({
+      id: _id,
+      name,
+      country,
+      email,
+      image,
+      website,
+      premium,
+    });
+  } catch (error: any) {
+    res.status(500).send(formatError(error.message));
+  }
 };
 
 //PUT
