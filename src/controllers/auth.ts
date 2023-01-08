@@ -8,6 +8,7 @@ const { OAuth2Client } = require('google-auth-library');
 import axios from 'axios';
 import querystring from 'querystring';
 import { jwtGenerator } from '../helpers/jwt';
+import { formatError } from '../utils/formatErros';
 
 const authenticateWithGoogle = async (userType: string, token: string) => {
     let payload: any;
@@ -50,7 +51,7 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
                 verify: true,
             });
         } else {
-            throw new Error('userType is invalid.');
+            throw new Error('Por favor Registrate primero');
         }
     }
     await user.save();
@@ -63,13 +64,19 @@ export const loginUser: RequestHandler = async (req, res) => {
         const { email, password, from, tok, userType } = req.body;
         let user;
         let validPassword;
-        let query = { email, state: true };
+        let query = { email };
         if (email && password) {
             user = await Student.findOne(query);
             if (!user) {
                 user = await Company.findOne(query);
                 if (!user) {
-                    user = await Admin.findOne({ email });
+                    user = await Admin.findOne(query);
+                }
+
+                if (user && user.state === false) {
+                    throw new Error(
+                        'Tu cuenta ha sido inactivada, por favor llena el formulario de contactanos para darte respuesta'
+                    );
                 }
                 if (user) {
                     validPassword = await bcrypt.compare(
@@ -79,24 +86,46 @@ export const loginUser: RequestHandler = async (req, res) => {
                 } else {
                     return res
                         .status(400)
-                        .json({ error: 'The user or password is incorrect.' });
+                        .json(
+                            formatError(
+                                'El usuario o la contraseña son incorrectas'
+                            )
+                        );
                 }
             } else {
+                if (user && user.state === false) {
+                    throw new Error(
+                        'Tu cuenta ha sido inactivada, por favor llena el formulario de contactanos para darte respuesta'
+                    );
+                }
                 validPassword = await bcrypt.compare(password, user.password);
             }
             if (!validPassword) {
                 return res
                     .status(400)
-                    .json({ error: 'The user or password is incorrect.' });
+                    .json(
+                        formatError(
+                            'El usuario o la contraseña son incorrectas'
+                        )
+                    );
             }
         } else {
             if (from && from === 'gmail') {
                 user = await authenticateWithGoogle(userType, tok);
             }
+            if (user && user.state === false) {
+                throw new Error(
+                    'Tu cuenta ha sido inactivada, por favor llena el formulario de contactanos para darte respuesta'
+                );
+            }
             if (!user) {
                 return res
                     .status(400)
-                    .json({ error: 'The user or password is incorrect.' });
+                    .json(
+                        formatError(
+                            'El usuario o la contraseña son incorrectas'
+                        )
+                    );
             }
         }
         let rol = user.rol;
@@ -106,10 +135,10 @@ export const loginUser: RequestHandler = async (req, res) => {
         const token = jwtGenerator(obj);
         return res
             .status(200)
-            .json({ data: 'Sucessful login', token, rol, verify, id, email });
+            .json({ data: 'Logueo exitoso', token, rol, verify, id, email });
     } catch (error: any) {
         console.log(error);
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json(formatError(error.message));
     }
 };
 
@@ -122,6 +151,7 @@ export const github: RequestHandler = async (req, res) => {
             username: gitHubUser.login,
             github: true,
         });
+
         if (!user) {
             user = await new Student({
                 name: gitHubUser.name,

@@ -20,7 +20,7 @@ export const createStudent: RequestHandler = async (req, res) => {
     let { name, lastName, email, password } = req.body;
     let emailSearch = await Student.find({ email });
     if (emailSearch.length) {
-      throw new Error("Email already in database");
+      throw new Error("El email ya se encuentra registrado");
     }
     let hashPassword = await hash(password);
     let user = new Student({
@@ -45,6 +45,7 @@ export const createStudent: RequestHandler = async (req, res) => {
       id,
       rol,
       verify,
+      email,
     });
   } catch (error: any) {
     res.status(500).json(formatError(error.message));
@@ -57,7 +58,7 @@ export const getStudent: RequestHandler = async (req, res) => {
     const { id } = req.params;
 
     if ((<any>req).user.rol !== "ADMIN_ROL" && (<any>req).user.id !== id) {
-      return res.status(401).json(formatError("Access denied"));
+      return res.status(401).json(formatError("Acceso denegado"));
     }
     const {
       name,
@@ -116,14 +117,14 @@ export const getStudent: RequestHandler = async (req, res) => {
 
 // Traemos todos los estudiantes de la db.
 export const getStudents: RequestHandler = async (req, res) => {
-  try {
-    const {
-      limit = 15,
-      init = 0,
-      name,
-      tecnologies,
-      onlyActive = "true",
-    } = req.query;
+    try {
+        const {
+            limit = 6,
+            init = 0,
+            name,
+            tecnologies,
+            onlyActive = 'true',
+        } = req.query;
 
     // Estado inicial de nuestro query.
     let query: any = {};
@@ -209,3 +210,5 @@ export const deleteStudent: RequestHandler = async (req, res) => {
     res.status(500).json(formatError(error.message));
   }
 };
+
+

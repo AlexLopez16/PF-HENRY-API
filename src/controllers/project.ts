@@ -105,14 +105,44 @@ export const createProject: RequestHandler = async (req, res) => {
             //agregamos la request de user para hacer la relacion.
             company: req.user._id,
             category: category.toLowerCase(),
+            admission: new Date(),
         };
-        const project = new Project(data);
-        await project.save();
-        const company = await Company.findById(req.user._id);
-        company.project = [...company.project, project._id];
-        await company.save();
-        return res.status(200).send(project);
+
+        // const id = req.user._id;
+        // console.log(id);
+        console.log('id', req.user._id);
+        const result = await Project.aggregate([
+            { $match: { company: req.user._id } },
+            {
+                $group: {
+                    _id: '$company',
+                    maxDate: { $max: '$admission' },
+                },
+            },
+        ]);
+        const date = new Date();
+
+        const difBetweenDates = Math.round(
+            (date.getTime() - result[0].maxDate.getTime()) / (1000 * 3600 * 24)
+        );
+
+        // console.log('pro', pro);
+        const compa = await Company.findById(req.user._id);
+
+        if (difBetweenDates < 30 && !compa.premium) {
+            throw new Error(
+                'Tienes que ser premiun,si quieres crear mas de un proyecto al mes'
+            );
+        } else {
+            const project = new Project(data);
+            await project.save();
+            const company = await Company.findById(req.user._id);
+            company.project = [...company.project, project._id];
+            await company.save();
+            return res.status(200).send(project);
+        }
     } catch (error: any) {
+        console.log(error.message);
         return res.status(500).send(formatError(error.message));
     }
 };
@@ -178,7 +208,22 @@ export const getProject: RequestHandler = async (req, res) => {
             .populate({
                 path: 'accepts',
                 select: '-password',
-            });
+            })
+            .populate({
+                path:"reviews",
+                populate:{
+                 path:"student",
+                 select:"name lastName image"
+                },})
+            .populate({
+                path:"reviews",
+                populate:{
+                    path:"project",
+                    select:"name"
+                }
+            })
+
+            
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
         return res.status(200).json(project);
@@ -216,7 +261,7 @@ export const editProject: RequestHandler = async (req, res) => {
             select: '-password',
         });
 
-        if (!editUpdate) throw new Error('project no found');
+        if (!editUpdate) throw new Error('proyecto no encontrado');
         return res.status(200).send(editUpdate);
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
@@ -237,6 +282,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
         const { id: projectId } = req.params;
         const companyId = req.user._id;
         const { studentId } = req.body;
+        
         // Buscamos al estudiante.
         const student = await Student.find({
             state: true,
@@ -246,7 +292,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
             working: { $exists: true, $not: { $size: 0 } },
         });
         // Error si el estudiante esta trabajando.
-        if (student.length) throw new Error('Currently working');
+        if (student.length) throw new Error('Trabajando actualmente');
         // Buscamos el proyecto que este en state en true donde su compania concuerde con la compania logueada.
         let projectById = await Project.find({
             _id: projectId,
@@ -255,16 +301,16 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
         });
         // Si la consulta no devuelve nada, significa que una compania que no es la que esta logueada, esta intentando aceptar a un estudiante de un proyecto que no es de el,por tal motivo se lanza error
         if (!projectById.length) {
-            throw new Error('You can`t accept a student');
+            throw new Error('No puede aceptar a este estudiante');
         }
         let project = projectById[0];
         // Rechazamos si se quiere asociar un estudiante que no esta en la lista.
         if (!project.students.includes(studentId)) {
-            throw new Error('Student not found');
+            throw new Error('Estudiante no encontrado');
         } else {
             // Verificamos si ya no esta en la lista de asociados.
             if (project.accepts.includes(studentId)) {
-                throw new Error('Is already accepted');
+                throw new Error('Ya esta aceptado');
             }
             // Agregamos el estudiante a la lista de aceptados.
             project.accepts = [...project.accepts, studentId];
@@ -307,15 +353,15 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
         // Si la consulta no devuelve nada, significa que una compania que no es la que esta logueada, esta intentando borrar a un estudiante de un proyecto que no es de el,por tal motivo se lanza error
 
         if (!projectById.length) {
-            throw new Error('You can`t delete a student');
+            throw new Error('No puede borrar a este estudiante');
         }
         let project = projectById[0];
         // Si no esta en la lista de estudiantes.
         if (!project.students.includes(studentId))
-            throw new Error("Student not found in the list 'Students'");
+            throw new Error("Estudiante no encontrado en la lista 'Students'");
         // Si no esta en la lista de aceptados.
         if (!project.accepts.includes(studentId))
-            throw new Error("Student not found in the list 'Accepts'");
+            throw new Error("Estudiante no encontrado en la lista  'Accepts'");
         // En caso de que este en la lista de accepts, lo eliminamos.
         project.accepts = project.accepts.filter((e: string) => e != studentId);
         // Guardamos los cambios nuevos.
@@ -347,7 +393,7 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
         let project = await Project.findById(projectId);
         // Si no esta en la lista de estudiantes.
         if (!project.students.includes(studentId)) {
-            throw new Error("Student not found in the list 'Students'");
+            throw new Error("Estudiante no encontrado en la lista  'Students'");
         }
         // En caso de que este en la lista de estudiantes, lo eliminamos.
         project.students = project.students.filter(
