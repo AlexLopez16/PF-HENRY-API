@@ -180,6 +180,7 @@ export const finalProject: RequestHandler = async (req, res) => {
         projectSearch.name,
         id
       );
+      
     });
     res.sendStatus(200);
   } catch (error: any) {
