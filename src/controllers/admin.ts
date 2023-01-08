@@ -178,15 +178,15 @@ export const deniedProject: RequestHandler = async (req, res) => {
 export const sendEmailCompanyforProjectDenied: RequestHandler = async (req, res) => {
   try {
     const { idPrj, values } = req.body;
-    
 
-    let proyecto= await Project.findById(idPrj)
+
+    let proyecto = await Project.findById(idPrj)
     let compania = await Company.findById(proyecto.company)
-   
 
-     proyecto.remove() // elimino el proyecto de la base
-     await proyecto.save();
-    mailprojectCancel(compania,values,proyecto)
+
+    proyecto.remove() // elimino el proyecto de la base
+    await proyecto.save();
+    mailprojectCancel(compania, values, proyecto)
 
 
     res.status(200).json("Proyecto removido");
@@ -224,7 +224,7 @@ export const getChart: RequestHandler = async (req, res) => {
       .find()
       .select({ state: 1 })
       .exec();
-      
+
     const projectData = await Project
       .find()
       .select({ stateOfProject: 1 })
@@ -236,16 +236,16 @@ export const getChart: RequestHandler = async (req, res) => {
       .exec();
 
     const response: GraphResponse = {
-        students: {
-          state: getGraphData(studentData.map((i:any) => i.state ? "Activo": "Inactivo"))
-        },                
-        projects: {
-          state: getGraphData(projectData.map((i:any) => i.stateOfProject))
-        },
-        companies: {
-          state: getGraphData(companiesData.map((i:any) => i.state ? "Activo": "Inactivo")),
-          premium: getGraphData(companiesData.map((i:any) => i.premium ? "Premium": "No premium")),
-        }
+      students: {
+        state: getGraphData(studentData.map((i: any) => i.state ? "Activo" : "Inactivo"))
+      },
+      projects: {
+        state: getGraphData(projectData.map((i: any) => i.stateOfProject))
+      },
+      companies: {
+        state: getGraphData(companiesData.map((i: any) => i.state ? "Activo" : "Inactivo")),
+        premium: getGraphData(companiesData.map((i: any) => i.premium ? "Premium" : "No premium")),
+      }
     }
 
     res.status(200).json(response);
@@ -255,7 +255,7 @@ export const getChart: RequestHandler = async (req, res) => {
   }
 }
 
-const getGraphData = (items: string[]) : GraphData => {
+const getGraphData = (items: string[]): GraphData => {
   const res: GraphData = {
     datasets: [
       {
@@ -270,10 +270,10 @@ const getGraphData = (items: string[]) : GraphData => {
     labels: []
   }
 
-  for(let item of items) {
+  for (let item of items) {
     let ix = res.labels.indexOf(item);
 
-    if(ix === -1) {
+    if (ix === -1) {
       ix = res.labels.push(item) - 1;
       res.datasets[0].data.push(1);
       continue;
