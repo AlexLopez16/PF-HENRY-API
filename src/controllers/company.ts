@@ -77,7 +77,7 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
 export const getUserCompany: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, _id, email, country, image, website, premium } =
+        const { name, _id, email, country, image, website, premium ,project} =
             await User.findById(id);
         res.status(200).json({
             id: _id,
@@ -87,6 +87,7 @@ export const getUserCompany: RequestHandler = async (req, res) => {
             image,
             website,
             premium,
+            project
         });
     } catch (error: any) {
         res.status(500).send(formatError(error.message));
