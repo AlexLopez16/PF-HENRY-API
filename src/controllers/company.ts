@@ -89,23 +89,23 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
 
 // GET USER
 export const getUserCompany: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, _id, email, country,  image,  website, premium } =
-     
+    try {
+        const { id } = req.params;
+        const { name, _id, email, country, image, website, premium ,project} =
             await User.findById(id);
-    res.status(200).json({
-      id: _id,
-      name,
-      country,
-      email,
-      image,
-      website,
-      premium,
-    });
-  } catch (error: any) {
-    res.status(500).send(formatError(error.message));
-  }
+        res.status(200).json({
+            id: _id,
+            name,
+            country,
+            email,
+            image,
+            website,
+            premium,
+            project
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
 };
 
 //PUT

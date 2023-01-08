@@ -184,7 +184,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             });
             return res.status(200).json(infoProject);
         } else {
-            throw new Error('student is in the project');
+            throw new Error('El estudiante esta trabajando en un proyecto');
         }
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
