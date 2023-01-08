@@ -9,7 +9,7 @@ export const createInvoice = async (data: data = {}) => {
   try {
     const company = await Company.findOne({ email: data.company });
 
-    if (!company) throw new Error(`User not found with email: ${data.company}`);
+    if (!company) throw new Error(`Usuario no encontrado con el email: ${data.company}`);
     data.company = company._id;
 
     const invoice = new Invoice(data);

@@ -18,14 +18,14 @@ declare global {
 
 export const verifyToken: RequestHandler = async (req, res, next) => {
   const token = req.header("user-token");
-  if (!token) return res.status(401).json(formatError("Access denied"));
+  if (!token) return res.status(401).json(formatError("Acceso denegado"));
   try {
     const { id } = verifyJwt(token)
     
     const user = await searchUser(id);
 
     req.user = user;
-    if (!user.verify) throw new Error("Confirm your email");
+    if (!user.verify) throw new Error("Confirma tu email");
     next();
   } catch (error: any) {
     return res.status(401).json(formatError(error.message));
