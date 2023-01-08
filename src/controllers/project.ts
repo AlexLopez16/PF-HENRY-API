@@ -122,7 +122,7 @@ export const createProject: RequestHandler = async (req, res) => {
         ]);
         const date = new Date();
         let difBetweenDates: number | undefined;
-        if (result[0].maxDate) {
+        if (result[0] && result[0].maxDate) {
             difBetweenDates = Math.round(
                 (date.getTime() - result[0].maxDate.getTime()) /
                     (1000 * 3600 * 24)
