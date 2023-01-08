@@ -121,15 +121,17 @@ export const createProject: RequestHandler = async (req, res) => {
             },
         ]);
         const date = new Date();
-
-        const difBetweenDates = Math.round(
-            (date.getTime() - result[0].maxDate.getTime()) / (1000 * 3600 * 24)
-        );
-
+        let difBetweenDates: number | undefined;
+        if (result[0].maxDate) {
+            difBetweenDates = Math.round(
+                (date.getTime() - result[0].maxDate.getTime()) /
+                    (1000 * 3600 * 24)
+            );
+        }
         // console.log('pro', pro);
         const compa = await Company.findById(req.user._id);
 
-        if (difBetweenDates < 30 && !compa.premium) {
+        if (difBetweenDates && difBetweenDates < 30 && !compa.premium) {
             throw new Error(
                 'Tienes que ser premiun,si quieres crear mas de un proyecto al mes'
             );
@@ -184,7 +186,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             });
             return res.status(200).json(infoProject);
         } else {
-            throw new Error('El estudiante esta trabajando en un proyecto');
+            throw new Error('student is in the project');
         }
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
@@ -208,22 +210,7 @@ export const getProject: RequestHandler = async (req, res) => {
             .populate({
                 path: 'accepts',
                 select: '-password',
-            })
-            .populate({
-                path:"reviews",
-                populate:{
-                 path:"student",
-                 select:"name lastName image"
-                },})
-            .populate({
-                path:"reviews",
-                populate:{
-                    path:"project",
-                    select:"name"
-                }
-            })
-
-            
+            });
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
         return res.status(200).json(project);
@@ -282,7 +269,7 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
         const { id: projectId } = req.params;
         const companyId = req.user._id;
         const { studentId } = req.body;
-        
+
         // Buscamos al estudiante.
         const student = await Student.find({
             state: true,
