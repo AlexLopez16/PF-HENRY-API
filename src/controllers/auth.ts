@@ -24,16 +24,13 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
         email = payload.email;
     }
     await verify();
-    user = await Student.findOne({ email: email, gmail: true });
-    if (!user) {
-        user = await Company.findOne({ email: email, gmail: true });
-        if (!user) {
-            user = await Admin.findOne({ email: email, gmail: true });
-        }
-    }
-
-    if (!user) {
+    if (userType) {
         if (userType === 'student') {
+            let emailSearchCompany = await Company.find({ email });
+            let emailSearchStudent = await Student.find({ email });
+            if (emailSearchCompany.length || emailSearchStudent.length) {
+                throw new Error('Email ya registrado');
+            }
             user = await new Student({
                 name: payload.given_name,
                 lastName: payload.family_name,
@@ -43,6 +40,11 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
                 verify: true,
             });
         } else if (userType === 'company') {
+            let emailSearchCompany = await Company.find({ email });
+            let emailSearchStudent = await Student.find({ email });
+            if (emailSearchCompany.length || emailSearchStudent.length) {
+                throw new Error('Email ya registrado');
+            }
             user = await new Company({
                 name: payload.name,
                 email: payload.email,
@@ -51,12 +53,25 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
                 verify: true,
             });
         } else {
+            throw new Error('UserType no es válido.');
+        }
+        await user.save();
+        return user;
+    } else {
+        user = await Student.findOne({ email: email, gmail: true });
+        if (!user) {
+            user = await Company.findOne({ email: email, gmail: true });
+            if (!user) {
+                user = await Admin.findOne({ email: email, gmail: true });
+            }
+        }
+
+        if (!user) {
             throw new Error('Por favor Registrate primero');
         }
-    }
-    await user.save();
 
-    return user;
+        return user;
+    }
 };
 
 export const loginUser: RequestHandler = async (req, res) => {
