@@ -13,6 +13,12 @@ import { formatError } from '../utils/formatErros';
 export const createAdmin: RequestHandler = async (req, res) => {
   try {
     let { name, lastName, email, password } = req.body;
+    let emailSearch = await Admin.find({ email });
+    
+    if (emailSearch.length) {
+      throw new Error('Email ya registrado');
+    }
+
     let hashPassword = await hash(password);
     let user = new Admin({
       name,
@@ -33,6 +39,7 @@ export const createAdmin: RequestHandler = async (req, res) => {
       id,
       rol,
       verify,
+      email,
     });
   } catch (error: any) {
     res.status(500).json(formatError(error.message));
