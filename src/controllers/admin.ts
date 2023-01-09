@@ -5,7 +5,11 @@ const Company = require('../models/company');
 const Project = require('../models/project');
 import { hash } from '../helpers/hash';
 import { jwtGenerator } from '../helpers/jwt';
-import { mailprojectCancel } from '../helpers/sendConfirmationEmail';
+import {
+    mailprojectCancel,
+    sendCompanyReject,
+    sendConfirmationEmail,
+} from '../helpers/sendConfirmationEmail';
 
 import { formatError } from '../utils/formatErros';
 
@@ -166,7 +170,7 @@ export const deniedProject: RequestHandler = async (req, res) => {
         let searchId = await Project.findById(id);
         console.log(searchId);
 
-        // await searchId.remove();
+        // searchId.remove()
 
         await searchId.save();
         console.log(searchId);
@@ -297,4 +301,42 @@ const getGraphData = (items: string[]): GraphData => {
     }
 
     return res;
+};
+
+export const getCompanies: RequestHandler = async (req, res) => {
+    try {
+        const companies = await Company.find({ verify: false, state: true });
+        if (!companies.length)
+            return res.status(404).json(formatError('No companies for verify'));
+
+        res.status(200).json(companies);
+    } catch (error: any) {
+        console.log(error);
+        res.status(500).json(formatError(error));
+    }
+};
+
+export const verifyCompany: RequestHandler = async (req, res) => {
+    try {
+        const { id, acept } = req.body;
+
+        if (typeof acept !== 'boolean')
+            return res.status(400).json(formatError('A boolean was expected'));
+
+        const company = await Company.findById(id);
+        if (!company)
+            return res
+                .status(404)
+                .json(formatError(`No company found with id ${id}`));
+
+        if (acept && company) {
+            await sendConfirmationEmail(company);
+        } else if (!acept && company) {
+            await sendCompanyReject(company);
+        }
+
+        res.status(200).json('Email Send');
+    } catch (error: any) {
+        res.status(500).json(formatError(error));
+    }
 };
