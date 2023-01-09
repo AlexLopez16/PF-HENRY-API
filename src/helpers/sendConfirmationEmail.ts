@@ -29,14 +29,16 @@ interface Props {
 }
 
 export const sendConfirmationEmail = async (user: Props) => {
-    const { name, lastName: last, email } = user
+    const { name, lastName: last, email } = user;
+
+    if (!last) name.trim()
+
     // try {
     let obj = { email: user.email, rol: user.rol };
 
     // Creamos la url con un jwt.
     const token = jwtGenerator(obj);
     const url = `${URL}/api/account/confirm/${token}`;
-
 
     ejs.renderFile(_path + '/Confirmation.ejs', { name, last, email, url }, async (error: any, data: any) => {
         if (error) {
@@ -50,7 +52,6 @@ export const sendConfirmationEmail = async (user: Props) => {
                     subject: "Por favor confirma tu email",
                     html: data
                 })
-                console.log('Email Send')
                 return 'Email Send'
             } catch (error) {
                 console.log(error)
@@ -128,7 +129,7 @@ export const sendMailRating = async (mail: string, image: string, name: string, 
     const token = jwtGenerator(obj);
     const urlRating = `${URL_FRONT}/rating?project=${idProject}&student=${name}&image=${image}&projectName=${projectName}&id=${id}&token=${token}`;
 
-    ejs.renderFile(_path + '/Rating.ejs', { name, project: projectName, url: urlRating }, async (error: any, data: any) => {
+    ejs.renderFile(_path + '/CompanyEmail.ejs', { name, project: projectName, url: urlRating }, async (error: any, data: any) => {
         if (error) {
             console.log(error)
         }
@@ -163,4 +164,56 @@ export const contactEmail = async (data: any, name: string) => {
         console.log(error)
         return 'Email fail to sent'
     }
+}
+
+export const emailForCompany = async (user: { email: string, name: string }) => {
+
+    const { name, email } = user;
+
+    ejs.renderFile(_path + '/CompanyEmail.ejs', { name }, async (error: any, data: any) => {
+        if (error) {
+            console.log(error)
+        }
+        else {
+            try {
+                await transport.sendMail({
+                    from: '"NABIJASH" nabijash@gmail.com',
+                    to: `${email}`,
+                    subject: "Solicitud Recibida",
+                    html: data
+                })
+                console.log('Email Send')
+                return 'Email Send'
+            } catch (error) {
+                console.log(error)
+                return 'Email fail to sent'
+            }
+        }
+    })
+
+}
+
+export const sendCompanyReject = async (user: { email: string, name: string }) => {
+    const { name, email } = user
+
+    ejs.renderFile(_path + '/CompanyReject.ejs', { name }, async (error: any, data: any) => {
+        if (error) {
+            console.log(error)
+        }
+        else {
+            try {
+                await transport.sendMail({
+                    from: '"NABIJASH" nabijash@gmail.com',
+                    to: `${email}`,
+                    subject: "Solicitud Rechazada",
+                    html: data
+                })
+                console.log('Email Send')
+                return 'Email Send'
+            } catch (error) {
+                console.log(error)
+                return 'Email fail to sent'
+            }
+        }
+    })
 }

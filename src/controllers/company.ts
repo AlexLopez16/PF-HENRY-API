@@ -4,6 +4,7 @@ import { hash } from "../helpers/hash";
 import { jwtGenerator } from "../helpers/jwt";
 import { formatError } from "../utils/formatErros";
 import {
+  emailForCompany,
   sendConfirmationEmail,
   sendMailRating,
 } from "../helpers/sendConfirmationEmail";
@@ -29,14 +30,16 @@ export const createUserCompany: RequestHandler = async (req, res) => {
             admission: new Date(),
         });
         user = await user.save();
-        sendConfirmationEmail(user);
+
+        await emailForCompany(user);
+
         const rol = user.rol;
         let verify = user.verify;
         let id = user._id;
         let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.status(201).json({
-            data: 'Ingreso exitoso',
+            data: 'Empresa creada con exito',
             token,
             rol,
             verify,
