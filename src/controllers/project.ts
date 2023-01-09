@@ -213,6 +213,10 @@ export const getProject: RequestHandler = async (req, res) => {
             })
             .populate({
                 path: 'reviews',
+                populate: {
+                    path: 'student',
+                    select: 'name lastName image',
+                },
             });
 
         if (!projects.length) throw new Error('project no found');
