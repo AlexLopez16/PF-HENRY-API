@@ -164,3 +164,39 @@ export const contactEmail = async (data: any, name: string) => {
         return 'Email fail to sent'
     }
 }
+
+
+export const sendMailCancelRating = async (review: object | any, values: object | any) => {
+    
+console.log(review);
+
+    const dataValues = {
+        nameProject:review.project.name,
+        description: review.description,
+        ratingProject: review.ratingProject,
+        ratingCompany: review.ratingCompany,
+        message: values.respuesta,
+        url: `${URL_FRONT}/login`
+    }
+
+    ejs.renderFile(_path + '/ReviewCancel.ejs', dataValues, async (error: any, data: any) => {
+        if (error) {
+            console.log(error)
+        }
+        else {
+            try {
+                await transport.sendMail({
+                    from: '"NABIJASH" nabijash@gmail.com',
+                    to: `${review.student.email}`,
+                    subject: "Review no aceptada",
+                    html: data
+                })
+                console.log('Email Send')
+                return 'Email Send'
+            } catch (error) {
+                console.log(error)
+                return 'Email fail to sent'
+            }
+        }
+    })
+};

@@ -210,7 +210,11 @@ export const getProject: RequestHandler = async (req, res) => {
             .populate({
                 path: 'accepts',
                 select: '-password',
+            })
+            .populate({
+                path: 'reviews',
             });
+
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
         return res.status(200).json(project);

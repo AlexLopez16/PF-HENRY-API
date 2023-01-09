@@ -5,6 +5,7 @@ import { formatError } from '../utils/formatErros';
 import { jwtGenerator } from '../helpers/jwt';
 import { sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
 require('dotenv').config();
+const User = require('../models/company');
 
 interface InitialIgnore {
     password: boolean;
@@ -18,9 +19,10 @@ interface InitialIgnore {
 export const createStudent: RequestHandler = async (req, res) => {
     try {
         let { name, lastName, email, password } = req.body;
-        let emailSearch = await Student.find({ email });
-        if (emailSearch.length) {
-            throw new Error('El email ya se encuentra registrado');
+        let emailSearchCompany = await User.find({ email });
+        let emailSearchStudent = await Student.find({ email });
+        if (emailSearchStudent.length || emailSearchCompany.length) {
+            throw new Error('Email ya registrado');
         }
         let hashPassword = await hash(password);
         let user = new Student({
@@ -157,9 +159,10 @@ export const getStudents: RequestHandler = async (req, res) => {
             Student.countDocuments(query),
             Student.find(query, ignore).skip(init).limit(limit).populate({
                 path: 'project',
-                select: 'name',
+                select: 'name ',
             }),
         ]);
+
         res.status(200).json({ total: total, students });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
