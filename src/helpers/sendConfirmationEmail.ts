@@ -38,29 +38,25 @@ export const sendConfirmationEmail = async (user: Props) => {
     const token = jwtGenerator(obj);
     const url = `${URL}/api/account/confirm/${token}`;
 
-    ejs.renderFile(
-        _path + '/Confirmation.ejs',
-        { name, last, email, url },
-        async (error: any, data: any) => {
-            if (error) {
-                console.log(error);
-            } else {
-                try {
-                    await transport.sendMail({
-                        from: '"NABIJASH" nabijash@gmail.com',
-                        to: `${email}`,
-                        subject: 'Por favor confirma tu email',
-                        html: data,
-                    });
-                    console.log('Email Send');
-                    return 'Email Send';
-                } catch (error) {
-                    console.log(error);
-                    return 'Email fail to sent';
-                }
+    ejs.renderFile(_path + '/Confirmation.ejs', { name, last, email, url }, async (error: any, data: any) => {
+        if (error) {
+            console.log(error)
+        }
+        else {
+            try {
+                await transport.sendMail({
+                    from: '"NABIJASH" nabijash@gmail.com',
+                    to: `${email}`,
+                    subject: "Por favor confirma tu email",
+                    html: data
+                })
+                return 'Email Send'
+            } catch (error) {
+                console.log(error)
+                return 'Email fail to sent'
             }
         }
-    );
+    })
 };
 
 export const recuperatePassword = async (user: { email: string }) => {
@@ -147,30 +143,26 @@ export const sendMailRating = async (
     const token = jwtGenerator(obj);
     const urlRating = `${URL_FRONT}/rating?project=${idProject}&student=${name}&image=${image}&projectName=${projectName}&id=${id}&token=${token}`;
 
-    ejs.renderFile(
-        _path + '/Rating.ejs',
-        { name, project: projectName, url: urlRating },
-        async (error: any, data: any) => {
-            if (error) {
-                console.log(error);
-            } else {
-                try {
-                    let sendEmail = await transport.sendMail({
-                        from: '"NABIJASH" nabijash@gmail.com',
-                        to: `${mail}`,
-                        subject: 'Projecto Terminado',
-                        html: data,
-                    });
-                    console.log(sendEmail);
-                    console.log('Email Send');
-                    return 'Email Send';
-                } catch (error) {
-                    console.log(error);
-                    return 'Email fail to sent';
-                }
+    ejs.renderFile(_path + '/CompanyEmail.ejs', { name, project: projectName, url: urlRating }, async (error: any, data: any) => {
+        if (error) {
+            console.log(error)
+        }
+        else {
+            try {
+                await transport.sendMail({
+                    from: '"NABIJASH" nabijash@gmail.com',
+                    to: `${mail}`,
+                    subject: "Projecto Terminado",
+                    html: data
+                })
+                console.log('Email Send')
+                return 'Email Send'
+            } catch (error) {
+                console.log(error)
+                return 'Email fail to sent'
             }
         }
-    );
+    })
 };
 
 export const contactEmail = async (data: any, name: string) => {
@@ -188,11 +180,19 @@ export const contactEmail = async (data: any, name: string) => {
     }
 };
 
-export const sendMailCancelRating = async (
-    review: object | any,
-    values: object | any
-) => {
-    console.log(review);
+type EmailProps = {
+    project: {
+        name: string
+    }
+    student: {
+        email: string
+    }
+    description: string
+    ratingProject: string
+    ratingCompany: string
+}
+
+export const sendMailCancelRating = async (review: EmailProps, values: { respuesta: string }) => {
 
     const dataValues = {
         nameProject: review.project.name,
@@ -203,27 +203,77 @@ export const sendMailCancelRating = async (
         url: `${URL_FRONT}/login`,
     };
 
-    ejs.renderFile(
-        _path + '/ReviewCancel.ejs',
-        dataValues,
-        async (error: any, data: any) => {
-            if (error) {
+    ejs.renderFile(_path + '/ReviewCancel.ejs', dataValues, async (error: any, data: any) => {
+        if (error) {
+            console.log(error);
+        } else {
+            try {
+                await transport.sendMail({
+                    from: '"NABIJASH" nabijash@gmail.com',
+                    to: `${review.student.email}`,
+                    subject: 'Reseña no aceptada',
+                    html: data,
+                });
+                console.log('Email Send');
+                return 'Email Send';
+            } catch (error) {
                 console.log(error);
-            } else {
-                try {
-                    await transport.sendMail({
-                        from: '"NABIJASH" nabijash@gmail.com',
-                        to: `${review.student.email}`,
-                        subject: 'Review no aceptada',
-                        html: data,
-                    });
-                    console.log('Email Send');
-                    return 'Email Send';
-                } catch (error) {
-                    console.log(error);
-                    return 'Email fail to sent';
-                }
+                return 'Email fail to sent';
             }
         }
+    }
     );
 };
+
+
+export const emailForCompany = async (user: { email: string, name: string }) => {
+
+    const { name, email } = user;
+
+    ejs.renderFile(_path + '/CompanyEmail.ejs', { name }, async (error: any, data: any) => {
+        if (error) {
+            console.log(error)
+        }
+        else {
+            try {
+                await transport.sendMail({
+                    from: '"NABIJASH" nabijash@gmail.com',
+                    to: `${email}`,
+                    subject: "Solicitud Recibida",
+                    html: data
+                })
+                console.log('Email Send')
+                return 'Email Send'
+            } catch (error) {
+                console.log(error)
+                return 'Email fail to sent'
+            }
+        }
+    })
+
+}
+
+export const sendCompanyReject = async (user: { email: string, name: string }) => {
+    const { name, email } = user
+
+    ejs.renderFile(_path + '/CompanyReject.ejs', { name }, async (error: any, data: any) => {
+        if (error) {
+            console.log(error)
+        }
+        else {
+            try {
+                await transport.sendMail({
+                    from: '"NABIJASH" nabijash@gmail.com',
+                    to: `${email}`,
+                    subject: "Solicitud Rechazada",
+                    html: data
+                })
+                console.log('Email Send')
+                return 'Email Send'
+            } catch (error) {
+                console.log(error)
+                return 'Email fail to sent'
+            }
+        }
+    })
+}
