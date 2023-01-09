@@ -4,6 +4,7 @@ import {
     rulesUpdateUserCompany,
     rulesUsersCompany,
 } from '../helpers/rulesCompany';
+import { verifyToken } from '../middlewares/authValidator';
 import {
     createUserCompany,
     deleteUserCompany,
@@ -23,7 +24,7 @@ router.get('/login', rulesUsersCompany, getCompanyProject);
 
 router.get('/:id', rulesUsersCompany, getUserCompany);
 
-router.get('/detail/:id', getDetailCompany);
+router.get('/detail/:id', verifyToken, getDetailCompany);
 
 router.post('/', rulesCreateUserCompany, createUserCompany);
 
