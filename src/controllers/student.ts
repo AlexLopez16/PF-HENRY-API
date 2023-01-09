@@ -16,40 +16,40 @@ interface InitialIgnore {
 
 // Creamos el estudiante de la db y hasheamos el password.
 export const createStudent: RequestHandler = async (req, res) => {
-  try {
-    let { name, lastName, email, password } = req.body;
-    let emailSearch = await Student.find({ email });
-    if (emailSearch.length) {
-      throw new Error("El email ya se encuentra registrado");
+    try {
+        let { name, lastName, email, password } = req.body;
+        let emailSearch = await Student.find({ email });
+        if (emailSearch.length) {
+            throw new Error('El email ya se encuentra registrado');
+        }
+        let hashPassword = await hash(password);
+        let user = new Student({
+            name,
+            lastName,
+            email,
+            password: hashPassword,
+            admission: Date.now(),
+        });
+        user = await user.save();
+        // Aca llamamos a la funcion de confirmationEmail.
+        await sendConfirmationEmail(user);
+        // Solucionado los problemas.
+        let rol = user.rol;
+        let verify = user.verify;
+        let id = user._id;
+        let obj = { id: user._id, name: user.name };
+        const token = jwtGenerator(obj);
+        res.status(201).json({
+            data: 'Sucessful singup',
+            token,
+            id,
+            rol,
+            verify,
+            email,
+        });
+    } catch (error: any) {
+        res.status(500).json(formatError(error.message));
     }
-    let hashPassword = await hash(password);
-    let user = new Student({
-      name,
-      lastName,
-      email,
-      password: hashPassword,
-      admission: Date.now(),
-    });
-    user = await user.save();
-    // Aca llamamos a la funcion de confirmationEmail.
-    sendConfirmationEmail(user);
-    // Solucionado los problemas.
-    let rol = user.rol;
-    let verify = user.verify;
-    let id = user._id;
-    let obj = { id: user._id, name: user.name };
-    const token = jwtGenerator(obj);
-    res.status(201).json({
-      data: "Sucessful singup",
-      token,
-      id,
-      rol,
-      verify,
-      email,
-    });
-  } catch (error: any) {
-    res.status(500).json(formatError(error.message));
-  }
 };
 
 // Traemos un estudiante por el id.
