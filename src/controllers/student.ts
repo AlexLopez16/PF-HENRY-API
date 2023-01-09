@@ -5,6 +5,7 @@ import { formatError } from '../utils/formatErros';
 import { jwtGenerator } from '../helpers/jwt';
 import { sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
 require('dotenv').config();
+const User = require('../models/company');
 
 interface InitialIgnore {
     password: boolean;
@@ -18,9 +19,10 @@ interface InitialIgnore {
 export const createStudent: RequestHandler = async (req, res) => {
     try {
         let { name, lastName, email, password } = req.body;
-        let emailSearch = await Student.find({ email });
-        if (emailSearch.length) {
-            throw new Error('Email already in database');
+        let emailSearchCompany = await User.find({ email });
+        let emailSearchStudent = await Student.find({ email });
+        if (emailSearchStudent.length || emailSearchCompany.length) {
+            throw new Error('Email ya registrado');
         }
         let hashPassword = await hash(password);
         let user = new Student({
@@ -32,7 +34,7 @@ export const createStudent: RequestHandler = async (req, res) => {
         });
         user = await user.save();
         // Aca llamamos a la funcion de confirmationEmail.
-        sendConfirmationEmail(user);
+        await sendConfirmationEmail(user);
         // Solucionado los problemas.
         let rol = user.rol;
         let verify = user.verify;
@@ -45,6 +47,7 @@ export const createStudent: RequestHandler = async (req, res) => {
             id,
             rol,
             verify,
+            email,
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
@@ -57,7 +60,7 @@ export const getStudent: RequestHandler = async (req, res) => {
         const { id } = req.params;
 
         if ((<any>req).user.rol !== 'ADMIN_ROL' && (<any>req).user.id !== id) {
-            return res.status(401).json(formatError('Access denied'));
+            return res.status(401).json(formatError('Acceso denegado'));
         }
         const {
             name,
@@ -118,7 +121,7 @@ export const getStudent: RequestHandler = async (req, res) => {
 export const getStudents: RequestHandler = async (req, res) => {
     try {
         const {
-            limit = 15,
+            limit = 6,
             init = 0,
             name,
             tecnologies,
@@ -156,9 +159,10 @@ export const getStudents: RequestHandler = async (req, res) => {
             Student.countDocuments(query),
             Student.find(query, ignore).skip(init).limit(limit).populate({
                 path: 'project',
-                select: 'name',
+                select: 'name ',
             }),
         ]);
+
         res.status(200).json({ total: total, students });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));

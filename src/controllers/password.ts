@@ -17,12 +17,12 @@ export const password: RequestHandler = async (req, res) => {
         if (!user) {
             user = await Company.findOne({ email: email });
         }
-        if (!user) throw new Error('Email invalid');
+        if (!user) throw new Error('Correo Invalido');
 
         recuperatePassword(user);
 
         res.status(200).json({
-            msg: 'Email send',
+            msg: 'Correo Enviado',
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
@@ -30,25 +30,25 @@ export const password: RequestHandler = async (req, res) => {
 };
 
 export const redirectPassword: RequestHandler = async (req, res) => {
+    const URL = process.env.URL_FRONT || 'http://localhost:5173';
 
-  const URL = process.env.URL_FRONT || 'http://localhost:5173'
-
-  try {
-    const { token } = req.params
-    const { email } = verifyJwt(token);
-    let user = await Student.findOne({ email: email });
-    if (!user) {
-      user = await Company.findOne({ email: email });
+    try {
+        const { token } = req.params;
+        const { email } = verifyJwt(token);
+        let user = await Student.findOne({ email: email });
+        if (!user) {
+            user = await Company.findOne({ email: email });
+        }
+        if (!user) throw new Error('Email invalido');
+        let obj = { id: user._id, email: user.email };
+        const tok = jwtGenerator(obj);
+        res.redirect(
+            `${URL}/recoverPassword?token=${tok}&rol=${user.rol}&verify=${user.verify}&id=${user.id}`
+        );
+    } catch (error: any) {
+        console.log(error.message);
     }
-    if (!user) throw new Error("Email invalid");
-    let obj = { id: user._id, email: user.email }
-    const tok = jwtGenerator(obj);
-    res.redirect(`${URL}/recoverPassword?token=${tok}&rol=${user.rol}&verify=${user.verify}&id=${user.id}`)
-  } catch (error: any) {
-    console.log(error.message)
-  }
-
-}
+};
 
 export const modifyPassword: RequestHandler = async (req, res) => {
     try {
@@ -64,7 +64,7 @@ export const modifyPassword: RequestHandler = async (req, res) => {
         if (!user) {
             user = await Company.findOne({ email: email });
         }
-        if (!user) throw new Error('Email invalid');
+        if (!user) throw new Error('Correo invalido');
 
         const { rol, _id: id } = user;
         let modify;
@@ -87,7 +87,7 @@ export const modifyPassword: RequestHandler = async (req, res) => {
         }
 
         res.status(200).json({
-            msg: 'password modify',
+            msg: 'Contraseña modificada',
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
