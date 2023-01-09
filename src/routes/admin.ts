@@ -18,6 +18,7 @@ import { addStudentToProject, deleteProject, getProject, getProjects } from '../
 import { AprovedProject, createAdmin, deleteAdmin, deniedProject, getAdmin, getAdminById, getChart, sendEmailCompanyforProjectDenied, updateAdmin } from '../controllers/admin';
 
 import { rulesAdmin } from '../helpers/rulesAdmin';
+import { getReviews } from '../controllers/review';
 
 const router = Router();
 //url/api/admin
@@ -45,7 +46,7 @@ router.put('/putcompany/:id', rulesAdmin, updateUserCompany);
 router.put('/putproject/:id', rulesAdmin, addStudentToProject);
 router.put('/deniedProjectadmin',rulesAdmin,deniedProject)
 router.post('/eliminatedproject',sendEmailCompanyforProjectDenied)
-
+router.get('/getreviews',rulesAdmin,getReviews)
 
 // router.delete('/stateproject/:id', rulesAdmin, deleteProject);
 

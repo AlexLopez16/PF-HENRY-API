@@ -6,7 +6,7 @@ const Project = require('../models/project');
 interface InitialBody {
   description: string;
   ratingProject: number;
-  ratingCompany:number
+  ratingCompany: number
 }
 
 export const getReview: RequestHandler = async (req, res) => {
@@ -32,7 +32,7 @@ export const getReview: RequestHandler = async (req, res) => {
 
 export const createReview: RequestHandler = async (req, res) => {
   try {
-    const { description, ratingProject,ratingCompany }: InitialBody = req.body;
+    const { description, ratingProject, ratingCompany }: InitialBody = req.body;
     const { _id } = req.user;
 
     const verifyStudent = await Project.find({ state: true, students: _id });
@@ -51,10 +51,10 @@ export const createReview: RequestHandler = async (req, res) => {
       project: idProject,
       ratingCompany
     });
-    
+
     await review.save();
-    
-    verifyStudent[0].reviews = [...verifyStudent[0].reviews,review._id]
+
+    verifyStudent[0].reviews = [...verifyStudent[0].reviews, review._id]
     await verifyStudent[0].save()
 
     res.status(201).json({
@@ -68,10 +68,10 @@ export const createReview: RequestHandler = async (req, res) => {
 export const editReview: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { description, ratingProject,ratingCompany } = req.body;
+    const { description, ratingProject, ratingCompany } = req.body;
 
     const filter = { _id: id };
-    const update = { description, ratingProject,ratingCompany };
+    const update = { description, ratingProject, ratingCompany };
 
     const findReview = await Review.findOneAndUpdate(filter, update, {
       new: true,
@@ -92,5 +92,25 @@ export const deleteReview: RequestHandler = async (req, res) => {
     res.status(200).send('Review borrado con exito');
   } catch (error: any) {
     res.status(500).json(formatError(error.message));
+  }
+};
+
+
+export const getReviews: RequestHandler = async (req, res) => {
+  try {
+
+
+    let getreviews = await Review.find({})
+      .populate("student", "name")
+      .populate({
+        path: "project",
+        populate: {
+          path: "company",
+          select: "name"
+        }
+      })
+    res.status(200).send(getreviews);
+  } catch (error) {
+    console.log(error);
   }
 };
