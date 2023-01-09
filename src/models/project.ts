@@ -23,6 +23,7 @@ const ProjectSchema = new Schema({
 
     questions: {
         type: Array,
+        default: []
     },
 
     requirements: {
