@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 const User = require('../models/company');
+const Review = require('../models/review');
 import { hash } from '../helpers/hash';
 import { jwtGenerator } from '../helpers/jwt';
 import { formatError } from '../utils/formatErros';
@@ -145,19 +146,26 @@ export const getDetailCompany: RequestHandler = async (req, res) => {
         // Average = Promedio
         let projectAverage = 0;
         let companyAverage = 0;
+        // Revies
+        let reviews: any = [];
+
         if (company) {
             company.project.forEach((e: any) => {
                 totalVotes = e.reviews?.length;
+                reviews = [...e.reviews];
                 e.reviews.forEach((i: any) => {
                     companyRating += i.ratingCompany;
                     projectRating += i.ratingProject;
                 });
             });
         }
+
+        console.log(reviews);
         companyAverage = Math.round(companyRating / totalVotes);
         projectAverage = Math.round(projectRating / totalVotes);
         // console.log(company);
         res.status(200).json({
+            reviews: reviews,
             company,
             ratingCompany: companyAverage,
             ratingProjects: projectAverage,
