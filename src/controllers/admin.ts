@@ -145,7 +145,6 @@ export const deleteAdmin: RequestHandler = async (req, res) => {
     }
 };
 
-
 export const AprovedProject: RequestHandler = async (req, res) => {
     try {
         const { id } = req.body;
@@ -343,33 +342,51 @@ export const verifyCompany: RequestHandler = async (req, res) => {
     }
 };
 
-
 export const deleteMultiple: RequestHandler = async (req, res) => {
     try {
         const { ids } = req.body;
-        ids.map(async(e: string) => {
+    
+        ids.map(async (e: string) => {
+           let  searchId = await Student.findById(e);
+            if (!searchId) {
+                searchId = await Company.findById(e);
+            }
+            if (!searchId) {
+                searchId = await Admin.findById(e);
+            }
+            if (!searchId) {
+                searchId = await Project.findById(e);
+            }
 
-         
+            searchId.state = !searchId.state;
+           searchId =  await searchId.save();
+
+        })
+        
+        
+        res.status(200).json("Cambio de estado exitoso");
+
+    } catch (error: any) {
+        res.status(404).json(formatError(error.message));
+    }
+};
 
 
-                let searchId = await Student.findById(e);
-                if (!searchId) {
-                    searchId = await Company.findById(e);
-                }
-                if (!searchId) {
-                    searchId = await Admin.findById(e);
-                }
-                if (!searchId) {
-                    searchId = await Project.findById(e);
-                }
 
-                searchId.state = !searchId.state;
-                await searchId.save();
-                res.status(200).json(searchId);
-                
-            })
-            
-        } catch (error: any) {
-            res.status(404).json(formatError(error.message));
-        }
-    };
+export const setReclutamiento: RequestHandler = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        ids.map(async (e: string) => {
+
+            let searchId = await Project.findById(e);
+            searchId.stateOfProject === 'En revision'
+                ? (searchId.stateOfProject = 'Reclutamiento')
+                : '';
+            await searchId.save();
+            console.log(searchId);
+        })
+        res.status(200).json("Proyecto pasado a reclutamiento");
+    } catch (error: any) {
+        res.status(404).json(formatError(error.message));
+    }
+};
