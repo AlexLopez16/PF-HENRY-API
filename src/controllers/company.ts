@@ -110,6 +110,63 @@ export const getUserCompany: RequestHandler = async (req, res) => {
     }
 };
 
+/**
+ * By Sciangula Hugo:
+ * NOTA: getDetailCompany(), va a traer la info de la empresa.
+ */
+
+export const getDetailCompany: RequestHandler = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const ignore = {
+            password: false,
+            premium: false,
+            verify: false,
+            gmail: false,
+            invoice: false,
+            admission: false,
+        };
+        const company = await User.findById(id, ignore).populate({
+            path: 'project',
+            select: 'name description participants stateOfProject category',
+            populate: {
+                path: 'reviews',
+                populate: {
+                    path: 'student',
+                    select: 'name lastName image',
+                },
+            },
+        });
+
+        // Sacamos el promedio de sus proyectos.
+        let companyRating = 0;
+        let projectRating = 0;
+        let totalVotes = 0;
+        // Average = Promedio
+        let projectAverage = 0;
+        let companyAverage = 0;
+        if (company) {
+            company.project.forEach((e: any) => {
+                totalVotes = e.reviews?.length;
+                e.reviews.forEach((i: any) => {
+                    companyRating += i.ratingCompany;
+                    projectRating += i.ratingProject;
+                });
+            });
+        }
+        companyAverage = Math.round(companyRating / totalVotes);
+        projectAverage = Math.round(projectRating / totalVotes);
+        // console.log(company);
+        res.status(200).json({
+            company,
+            ratingCompany: companyAverage,
+            ratingProjects: projectAverage,
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
+};
+
 //PUT
 export const updateUserCompany: RequestHandler = async (req, res) => {
     try {
@@ -193,7 +250,7 @@ export const finalProject: RequestHandler = async (req, res) => {
                 id
             );
         });
-        res.sendStatus(200);
+        res.sendStatus(200).json('Send email');
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }
