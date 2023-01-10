@@ -127,18 +127,28 @@ export const getDetailCompany: RequestHandler = async (req, res) => {
             invoice: false,
             admission: false,
         };
-        const company = await User.findById(id, ignore).populate({
-            path: 'project',
-            select: 'name description participants stateOfProject category',
-            populate: {
-                path: 'reviews',
+        const company = await User.findById(id, ignore)
+            .populate({
+                path: 'project',
+                select: 'name description participants stateOfProject category',
                 populate: {
-                    path: 'student',
-                    select: 'name lastName image',
+                    path: 'reviews',
+                    populate: {
+                        path: 'student',
+                        select: 'name lastName image',
+                    },
                 },
-            },
-        });
-
+            })
+            .populate({
+                path: 'project',
+                populate: {
+                    path: 'reviews',
+                    populate: {
+                        path: 'project',
+                        select: 'name',
+                    },
+                },
+            });
         // Sacamos el promedio de sus proyectos.
         let companyRating = 0;
         let projectRating = 0;
@@ -151,16 +161,15 @@ export const getDetailCompany: RequestHandler = async (req, res) => {
 
         if (company) {
             company.project.forEach((e: any) => {
-                totalVotes = e.reviews?.length;
-                reviews = [...e.reviews];
                 e.reviews.forEach((i: any) => {
+                    reviews = [...reviews, i];
                     companyRating += i.ratingCompany;
                     projectRating += i.ratingProject;
                 });
             });
         }
 
-        console.log(reviews);
+        totalVotes = reviews.length;
         companyAverage = Math.round(companyRating / totalVotes);
         projectAverage = Math.round(projectRating / totalVotes);
         // console.log(company);
@@ -243,22 +252,19 @@ export const finalProject: RequestHandler = async (req, res) => {
 
         projectSearch.stateOfProject = 'Terminado';
         projectSearch.save();
-
-        const id = projectSearch.accepts;
-
-        projectSearch.accepts.map(async (accept: []) => {
-            let user = await Student.findById(accept);
-
+        projectSearch?.accepts?.map(async (idStudent: string) => {
+            let user = await Student.findById(idStudent);
+            console.log(idStudent);
             sendMailRating(
                 user.email,
                 user.image,
                 user.name,
                 idProject,
                 projectSearch.name,
-                id
+                idStudent
             );
         });
-        res.sendStatus(200).json('Send email');
+        res.status(200).json({ msg: 'Proyecto finalizado.' });
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }
