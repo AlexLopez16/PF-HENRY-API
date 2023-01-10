@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import mongoose from 'mongoose';
 const Admin = require('../models/admin');
 const Student = require('../models/student');
 const Company = require('../models/company');
@@ -15,58 +16,67 @@ import {
 
 import { formatError } from '../utils/formatErros';
 
+
+
+
 // CREATE
 export const createAdmin: RequestHandler = async (req, res) => {
-    try {
-        let { name, lastName, email, password } = req.body;
-        let hashPassword = await hash(password);
-        let user = new Admin({
-            name,
-            lastName,
-            email,
-            password: hashPassword,
-        });
-        await user.save();
-
-        let rol = user.rol;
-        let verify = user.verify;
-        let id = user._id;
-        let obj = { id: user._id, name: user.name };
-        const token = jwtGenerator(obj);
-        res.status(201).json({
-            data: 'Sucessful singup',
-            token,
-            id,
-            rol,
-            verify,
-        });
-    } catch (error: any) {
-        res.status(500).json(formatError(error.message));
+  try {
+    let { name, lastName, email, password } = req.body;
+    let emailSearch = await Admin.find({ email });
+    
+    if (emailSearch.length) {
+      throw new Error('Email ya registrado');
     }
+
+    let hashPassword = await hash(password);
+    let user = new Admin({
+      name,
+      lastName,
+      email,
+      password: hashPassword,
+    });
+    await user.save();
+
+    let rol = user.rol;
+    let verify = user.verify;
+    let id = user._id;
+    let obj = { id: user._id, name: user.name };
+    const token = jwtGenerator(obj);
+    res.status(201).json({
+      data: 'Sucessful singup',
+      token,
+      id,
+      rol,
+      verify,
+      email,
+    });
+  } catch (error: any) {
+    res.status(500).json(formatError(error.message));
+  }
 };
 
 export const getAdmin: RequestHandler = async (req, res) => {
-    try {
-        const { limit = 10, init = 0 } = req.query;
-        const query = { state: true };
-        const ignore: any = {
-            password: false,
-            state: false,
-            gmail: false,
-            github: false,
-            rol: false,
-        };
-        const [total, admins] = await Promise.all([
-            Admin.countDocuments(query),
-            Admin.find(query, ignore).skip(init).limit(limit),
-        ]);
-        res.status(200).json({
-            total,
-            admins,
-        });
-    } catch (error: any) {
-        res.status(500).send(formatError(error.message));
-    }
+  try {
+    const { limit = 10, init = 0 } = req.query;
+    const query = {};
+    const ignore: any = {
+      password: false,
+      gmail: false,
+      github: false,
+      rol: false,
+    };
+    const [total, admins] = await Promise.all([
+      Admin.countDocuments(query),
+      Admin.find(query, ignore).skip(init).limit(limit),
+    ]);
+    res.status(200).json({
+      total,
+      admins,
+    });
+  } catch (error: any) {
+    res.status(500).send(formatError(error.message));
+  }
 };
 
 export const getAdminById: RequestHandler = async (req, res) => {
@@ -190,20 +200,22 @@ export const sendEmailCompanyforProjectDenied: RequestHandler = async (
         const { idPrj, values } = req.body;
         let id = idPrj;
 
-        let proyecto = await Project.findById(id);
-        console.log(proyecto);
-        let compania = await Company.findById(proyecto.company);
+    let proyecto = await Project.findById(idPrj)
+    let compania = await Company.findById(proyecto.company)
 
-        proyecto.remove(); // elimino el proyecto de la base
-        await mailprojectCancel(compania, values, proyecto);
-        await proyecto.save();
-        // console.log(proyecto);
+    // Quitamos de la relacion el projecto a a eliminar
+    await compania.project.pull({ _id: idPrj })
+    await compania.save()
 
-        let obj = { id };
-        res.status(200).json(obj);
-    } catch (error: any) {
-        res.status(404).json(formatError(error.message));
-    }
+    proyecto.remove() // elimino el proyecto de la base
+    await proyecto.save();
+    mailprojectCancel(compania, values, proyecto)
+
+    // res.status(200).json(compania);
+    res.status(200).json("Proyecto removido");
+  } catch (error: any) {
+    res.status(404).json(formatError(error.message));
+  }
 };
 
 type GraphResponse = {
@@ -330,11 +342,13 @@ export const verifyCompany: RequestHandler = async (req, res) => {
                 .status(404)
                 .json(formatError(`No company found with id ${id}`));
 
-        if (acept && company) {
-            await sendConfirmationEmail(company);
-        } else if (!acept && company) {
-            await sendCompanyReject(company);
-        }
+    if (acept && company) {
+      await sendConfirmationEmail(company)
+    }
+    else if (!acept && company) {
+      await sendCompanyReject(company)
+      await Company.findByIdAndDelete(id)
+    }
 
         res.status(200).json('Email Send');
     } catch (error: any) {

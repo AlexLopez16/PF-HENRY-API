@@ -52,14 +52,14 @@ export const createUserCompany: RequestHandler = async (req, res) => {
 
 // GET USERS
 export const getUsersCompany: RequestHandler = async (req, res) => {
-    try {
-        const {
-            limit = 10,
-            init = 0,
-            name,
-            country,
-            onlyActive = 'true',
-        } = req.query;
+  try {
+    const {
+      limit = 6,
+      init = 0,
+      name,
+      country,
+      onlyActive = "true",
+    } = req.query;
 
         const query: any = {};
 
@@ -250,7 +250,8 @@ export const finalProject: RequestHandler = async (req, res) => {
                 id
             );
         });
-        res.sendStatus(200);
+
+        res.status(200).json('Send email');
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }
