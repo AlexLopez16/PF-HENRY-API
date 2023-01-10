@@ -250,7 +250,7 @@ export const finalProject: RequestHandler = async (req, res) => {
                 id
             );
         });
-        res.sendStatus(200);
+        res.sendStatus(200).json('Send email');
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }

@@ -143,7 +143,7 @@ export const sendMailRating = async (
     const token = jwtGenerator(obj);
     const urlRating = `${URL_FRONT}/rating?project=${idProject}&student=${name}&image=${image}&projectName=${projectName}&id=${id}&token=${token}`;
 
-    ejs.renderFile(_path + '/CompanyEmail.ejs', { name, project: projectName, url: urlRating }, async (error: any, data: any) => {
+    ejs.renderFile(_path + '/Rating.ejs', { name, project: projectName, url: urlRating }, async (error: any, data: any) => {
         if (error) {
             console.log(error)
         }
@@ -151,7 +151,8 @@ export const sendMailRating = async (
             try {
                 await transport.sendMail({
                     from: '"NABIJASH" nabijash@gmail.com',
-                    to: `${mail}`,
+                    // to: `${mail}`,
+                    to: "aalejandro.lopezr@hotmail.com",
                     subject: "Projecto Terminado",
                     html: data
                 })
