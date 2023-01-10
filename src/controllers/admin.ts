@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import mongoose from 'mongoose';
 const Admin = require('../models/admin');
 const Student = require('../models/student');
 const Company = require('../models/company');
@@ -8,6 +9,9 @@ import { jwtGenerator } from '../helpers/jwt';
 import { mailprojectCancel, sendCompanyReject, sendConfirmationEmail } from '../helpers/sendConfirmationEmail';
 
 import { formatError } from '../utils/formatErros';
+
+
+
 
 // CREATE
 export const createAdmin: RequestHandler = async (req, res) => {
@@ -178,17 +182,19 @@ export const sendEmailCompanyforProjectDenied: RequestHandler = async (req, res)
   try {
     const { idPrj, values } = req.body;
 
-
     let proyecto = await Project.findById(idPrj)
     let compania = await Company.findById(proyecto.company)
 
+    // Quitamos de la relacion el projecto a a eliminar
+    await compania.project.pull({ _id: idPrj })
+    await compania.save()
 
     proyecto.remove() // elimino el proyecto de la base
     await proyecto.save();
     mailprojectCancel(compania, values, proyecto)
 
-
-    res.status(200).json("Proyecto removido");
+    res.status(200).json(compania);
+    // res.status(200).json("Proyecto removido");
   } catch (error: any) {
     res.status(404).json(formatError(error.message));
   }
@@ -307,9 +313,10 @@ export const verifyCompany: RequestHandler = async (req, res) => {
 
     if (acept && company) {
       await sendConfirmationEmail(company)
-    } 
+    }
     else if (!acept && company) {
       await sendCompanyReject(company)
+      await Company.findByIdAndDelete(id)
     }
 
     res.status(200).json('Email Send')
