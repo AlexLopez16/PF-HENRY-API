@@ -52,14 +52,14 @@ export const createUserCompany: RequestHandler = async (req, res) => {
 
 // GET USERS
 export const getUsersCompany: RequestHandler = async (req, res) => {
-    try {
-        const {
-            limit = 10,
-            init = 0,
-            name,
-            country,
-            onlyActive = 'true',
-        } = req.query;
+  try {
+    const {
+      limit = 6,
+      init = 0,
+      name,
+      country,
+      onlyActive = "true",
+    } = req.query;
 
         const query: any = {};
 
