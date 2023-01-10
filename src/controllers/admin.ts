@@ -49,10 +49,9 @@ export const createAdmin: RequestHandler = async (req, res) => {
 export const getAdmin: RequestHandler = async (req, res) => {
   try {
     const { limit = 10, init = 0 } = req.query;
-    const query = { state: true };
+    const query = {};
     const ignore: any = {
       password: false,
-      state: false,
       gmail: false,
       github: false,
       rol: false,
