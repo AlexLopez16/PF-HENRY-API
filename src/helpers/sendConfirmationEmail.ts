@@ -151,8 +151,7 @@ export const sendMailRating = async (
             try {
                 await transport.sendMail({
                     from: '"NABIJASH" nabijash@gmail.com',
-                    // to: `${mail}`,
-                    to: "aalejandro.lopezr@hotmail.com",
+                    to: `${mail}`,
                     subject: "Projecto Terminado",
                     html: data
                 })
