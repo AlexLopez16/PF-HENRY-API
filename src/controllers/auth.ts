@@ -87,6 +87,9 @@ export const loginUser: RequestHandler = async (req, res) => {
                 if (!user) {
                     user = await Admin.findOne(query);
                 }
+                if (user && user.verify === false) {
+                    throw new Error('Tu cuenta no ha sido verificada');
+                }
 
                 if (user && user.state === false) {
                     throw new Error(
@@ -133,6 +136,10 @@ export const loginUser: RequestHandler = async (req, res) => {
                     'Tu cuenta ha sido inactivada, por favor llena el formulario de contactanos para darte respuesta'
                 );
             }
+            if (user && user.verify === false) {
+                throw new Error('Tu cuenta no ha sido verificada');
+            }
+
             if (!user) {
                 return res
                     .status(400)

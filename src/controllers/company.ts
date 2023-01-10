@@ -4,7 +4,7 @@ import { hash } from '../helpers/hash';
 import { jwtGenerator } from '../helpers/jwt';
 import { formatError } from '../utils/formatErros';
 import {
-    sendConfirmationEmail,
+    emailForCompany,
     sendMailRating,
 } from '../helpers/sendConfirmationEmail';
 
@@ -29,14 +29,16 @@ export const createUserCompany: RequestHandler = async (req, res) => {
             admission: new Date(),
         });
         user = await user.save();
-        sendConfirmationEmail(user);
+
+        await emailForCompany(user);
+
         const rol = user.rol;
         let verify = user.verify;
         let id = user._id;
         let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.status(201).json({
-            data: 'Ingreso exitoso',
+            data: 'Empresa creada con exito',
             token,
             rol,
             verify,
@@ -102,6 +104,63 @@ export const getUserCompany: RequestHandler = async (req, res) => {
             website,
             premium,
             project,
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
+};
+
+/**
+ * By Sciangula Hugo:
+ * NOTA: getDetailCompany(), va a traer la info de la empresa.
+ */
+
+export const getDetailCompany: RequestHandler = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const ignore = {
+            password: false,
+            premium: false,
+            verify: false,
+            gmail: false,
+            invoice: false,
+            admission: false,
+        };
+        const company = await User.findById(id, ignore).populate({
+            path: 'project',
+            select: 'name description participants stateOfProject category',
+            populate: {
+                path: 'reviews',
+                populate: {
+                    path: 'student',
+                    select: 'name lastName image',
+                },
+            },
+        });
+
+        // Sacamos el promedio de sus proyectos.
+        let companyRating = 0;
+        let projectRating = 0;
+        let totalVotes = 0;
+        // Average = Promedio
+        let projectAverage = 0;
+        let companyAverage = 0;
+        if (company) {
+            company.project.forEach((e: any) => {
+                totalVotes = e.reviews?.length;
+                e.reviews.forEach((i: any) => {
+                    companyRating += i.ratingCompany;
+                    projectRating += i.ratingProject;
+                });
+            });
+        }
+        companyAverage = Math.round(companyRating / totalVotes);
+        projectAverage = Math.round(projectRating / totalVotes);
+        // console.log(company);
+        res.status(200).json({
+            company,
+            ratingCompany: companyAverage,
+            ratingProjects: projectAverage,
         });
     } catch (error: any) {
         res.status(500).send(formatError(error.message));
