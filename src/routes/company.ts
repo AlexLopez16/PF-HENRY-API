@@ -10,6 +10,7 @@ import {
     deleteUserCompany,
     finalProject,
     getCompanyProject,
+    getCountry,
     getDetailCompany,
     getUserCompany,
     getUsersCompany,
@@ -22,6 +23,8 @@ router.get('/', rulesUsersCompany, getUsersCompany);
 
 router.get('/login', rulesUsersCompany, getCompanyProject);
 
+router.get('/countries', verifyToken, getCountry)
+
 router.get('/:id', rulesUsersCompany, getUserCompany);
 
 router.get('/detail/:id', verifyToken, getDetailCompany);
@@ -33,5 +36,6 @@ router.put('/final', finalProject);
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
 
 router.delete('/:id', rulesUsersCompany, deleteUserCompany);
+
 
 module.exports = router;
