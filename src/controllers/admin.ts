@@ -16,9 +16,6 @@ import {
 
 import { formatError } from '../utils/formatErros';
 
-
-
-
 // CREATE
 export const createAdmin: RequestHandler = async (req, res) => {
   try {
@@ -200,22 +197,22 @@ export const sendEmailCompanyforProjectDenied: RequestHandler = async (
         const { idPrj, values } = req.body;
         let id = idPrj;
 
-    let proyecto = await Project.findById(idPrj)
-    let compania = await Company.findById(proyecto.company)
+        let proyecto = await Project.findById(idPrj);
+        let compania = await Company.findById(proyecto.company);
 
-    // Quitamos de la relacion el projecto a a eliminar
-    await compania.project.pull({ _id: idPrj })
-    await compania.save()
+        // Quitamos de la relacion el projecto a a eliminar
+        await compania.project.pull({ _id: idPrj });
+        await compania.save();
 
-    proyecto.remove() // elimino el proyecto de la base
-    await proyecto.save();
-    mailprojectCancel(compania, values, proyecto)
+        proyecto.remove(); // elimino el proyecto de la base
+        await proyecto.save();
+        mailprojectCancel(compania, values, proyecto);
 
-    // res.status(200).json(compania);
-    res.status(200).json("Proyecto removido");
-  } catch (error: any) {
-    res.status(404).json(formatError(error.message));
-  }
+        // res.status(200).json(compania);
+        res.status(200).json('Proyecto removido');
+    } catch (error: any) {
+        res.status(404).json(formatError(error.message));
+    }
 };
 
 type GraphResponse = {
@@ -342,15 +339,14 @@ export const verifyCompany: RequestHandler = async (req, res) => {
                 .status(404)
                 .json(formatError(`No company found with id ${id}`));
 
-    if (acept && company) {
-      await sendConfirmationEmail(company)
-    }
-    else if (!acept && company) {
-      await sendCompanyReject(company)
-      await Company.findByIdAndDelete(id)
-    }
+        if (acept && company) {
+            await sendConfirmationEmail(company);
+        } else if (!acept && company) {
+            await sendCompanyReject(company);
+            await Company.findByIdAndDelete(id);
+        }
 
-        res.status(200).json('Email Send');
+        res.status(200).json(id);
     } catch (error: any) {
         res.status(500).json(formatError(error));
     }
