@@ -138,35 +138,24 @@ export const getDetailCompany: RequestHandler = async (req, res) => {
             },
         });
 
-        // Sacamos el promedio como empresa.
+        // Sacamos el promedio de sus proyectos.
         let companyRating = 0;
-        let companyVotes = 0;
-        // Average = Rating
+        let projectRating = 0;
+        let totalVotes = 0;
+        // Average = Promedio
+        let projectAverage = 0;
         let companyAverage = 0;
         if (company) {
             company.project.forEach((e: any) => {
-                companyVotes = e.reviews?.length;
+                totalVotes = e.reviews?.length;
                 e.reviews.forEach((i: any) => {
                     companyRating += i.ratingCompany;
-                });
-            });
-        }
-        companyAverage = Math.round(companyRating / companyVotes);
-
-        // Sacamos el promedio de sus proyectos.
-        let projectRating = 0;
-        let projectVotes = 0;
-        // Average = Promedio
-        let projectAverage = 0;
-        if (company) {
-            company.project.forEach((e: any) => {
-                projectVotes = e.reviews?.length;
-                e.reviews.forEach((i: any) => {
                     projectRating += i.ratingProject;
                 });
             });
         }
-        projectAverage = Math.round(projectRating / projectVotes);
+        companyAverage = Math.round(companyRating / totalVotes);
+        projectAverage = Math.round(projectRating / totalVotes);
         // console.log(company);
         res.status(200).json({
             company,
