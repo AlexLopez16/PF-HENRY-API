@@ -34,7 +34,7 @@ export const createStudent: RequestHandler = async (req, res) => {
         });
         user = await user.save();
         // Aca llamamos a la funcion de confirmationEmail.
-        await sendConfirmationEmail(user);
+        sendConfirmationEmail(user);
         // Solucionado los problemas.
         let rol = user.rol;
         let verify = user.verify;

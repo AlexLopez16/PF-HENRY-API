@@ -15,7 +15,7 @@ import {
 
 import { deleteUserCompany, getUserCompany, getUsersCompany, updateUserCompany } from '../controllers/company';
 import { addStudentToProject, deleteProject, getProject, getProjects } from '../controllers/project';
-import { AprovedProject, createAdmin, deleteAdmin, deniedProject, getAdmin, getAdminById, getChart, sendEmailCompanyforProjectDenied, updateAdmin } from '../controllers/admin';
+import { AprovedProject, createAdmin, deleteAdmin,  deleteMultiple,  deniedProject, getAdmin, getAdminById, getChart, getCompanies, sendEmailCompanyforProjectDenied, setReclutamiento, updateAdmin, verifyCompany } from '../controllers/admin';
 
 import { rulesAdmin } from '../helpers/rulesAdmin';
 import { deleteReview, getReviews } from '../controllers/review';
@@ -28,7 +28,7 @@ router.get('/getAdmin', rulesAdmin, getAdmin);
 router.get('/admin/:id', rulesAdmin, getAdminById);//funciona
 router.put('/edit/:id', rulesAdmin, updateAdmin); //funciona
 
-router.get('/charts',  getChart)
+router.get('/charts', getChart)
 
 router.get('/getstudent', rulesAdmin, getStudents);
 router.get('/getcompany', rulesAdmin, getUsersCompany);
@@ -41,13 +41,21 @@ router.get('/getreviews',rulesAdmin,getReviews)
 
 
 router.put('/deletereviews', rulesAdmin, deleteReview);
-router.put('/stateuser', rulesAdmin, deleteAdmin);
+router.put('/stateuser', deleteAdmin);//no poner regla POR QUE la comparte con otro user
 router.put('/aprovedproject', rulesAdmin, AprovedProject);
 router.put('/putstudent/:id', rulesAdmin, updateStudent);
 router.put('/putcompany/:id', rulesAdmin, updateUserCompany);
 router.put('/putproject/:id', rulesAdmin, addStudentToProject);
-router.put('/deniedProjectadmin',rulesAdmin,deniedProject)
-router.post('/eliminatedproject',sendEmailCompanyforProjectDenied)
+router.put('/deniedProjectadmin', rulesAdmin, deniedProject);
+router.put('/setEnReclutamiento',setReclutamiento)
+router.post('/eliminatedproject',rulesAdmin, sendEmailCompanyforProjectDenied);
+
+router.put('/deletemultiple',deleteMultiple)//no poner regla POR QUE la comparte con otro user
+
+// Rutas para verificar empresa
+router.get('/getCompanies', rulesAdmin, getCompanies)
+router.post('/verifyCompany', rulesAdmin, verifyCompany)
+
 
 
 module.exports = router;

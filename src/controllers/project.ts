@@ -107,7 +107,10 @@ export const createProject: RequestHandler = async (req, res) => {
             category: category.toLowerCase(),
             admission: new Date(),
         };
-
+        let nameSearchProject = await Project.find({ name });
+        if (nameSearchProject.length) {
+            throw new Error('Nombre ya utilizado');
+        }
         // const id = req.user._id;
         // console.log(id);
         console.log('id', req.user._id);
@@ -125,7 +128,7 @@ export const createProject: RequestHandler = async (req, res) => {
         if (result[0] && result[0].maxDate) {
             difBetweenDates = Math.round(
                 (date.getTime() - result[0].maxDate.getTime()) /
-                    (1000 * 3600 * 24)
+                (1000 * 3600 * 24)
             );
         }
         // console.log('pro', pro);
@@ -210,7 +213,15 @@ export const getProject: RequestHandler = async (req, res) => {
             .populate({
                 path: 'accepts',
                 select: '-password',
+            })
+            .populate({
+                path: 'reviews',
+                populate: {
+                    path: 'student',
+                    select: 'name lastName image',
+                },
             });
+
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
         return res.status(200).json(project);
@@ -569,5 +580,27 @@ export const getAllProjects: RequestHandler = async (req, res) => {
         //use any because type of error can be undefined
         console.log(error);
         return res.status(500).json(formatError(error.message));
+    }
+};
+
+
+export const deleteMultiProject: RequestHandler = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        ids.map(async (e: string) => {
+            const query = { _id: e };
+            const projects = await Project.find(query);
+            if (!projects.length) throw new Error('project no found');
+            let project = projects[0];
+            project.state === true
+                ? project.state = false
+                : project.state = true;
+                project.state = !project.state;
+            await project.save();
+
+        })
+        return res.status(200).json({ msg: 'Proyectos borrados con exito' });
+    } catch (error: any) {
+        return res.status(500).send(formatError(error.message));
     }
 };

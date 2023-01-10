@@ -1,10 +1,11 @@
 import { RequestHandler } from 'express';
 const User = require('../models/company');
+const Review = require('../models/review');
 import { hash } from '../helpers/hash';
 import { jwtGenerator } from '../helpers/jwt';
 import { formatError } from '../utils/formatErros';
 import {
-    sendConfirmationEmail,
+    emailForCompany,
     sendMailRating,
 } from '../helpers/sendConfirmationEmail';
 
@@ -29,14 +30,16 @@ export const createUserCompany: RequestHandler = async (req, res) => {
             admission: new Date(),
         });
         user = await user.save();
-        sendConfirmationEmail(user);
+
+        await emailForCompany(user);
+
         const rol = user.rol;
         let verify = user.verify;
         let id = user._id;
         let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.status(201).json({
-            data: 'Ingreso exitoso',
+            data: 'Empresa creada con exito',
             token,
             rol,
             verify,
@@ -52,7 +55,7 @@ export const createUserCompany: RequestHandler = async (req, res) => {
 export const getUsersCompany: RequestHandler = async (req, res) => {
     try {
         const {
-            limit = 10,
+            limit = 6,
             init = 0,
             name,
             country,
@@ -102,6 +105,79 @@ export const getUserCompany: RequestHandler = async (req, res) => {
             website,
             premium,
             project,
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
+};
+
+/**
+ * By Sciangula Hugo:
+ * NOTA: getDetailCompany(), va a traer la info de la empresa.
+ */
+
+export const getDetailCompany: RequestHandler = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const ignore = {
+            password: false,
+            premium: false,
+            verify: false,
+            gmail: false,
+            invoice: false,
+            admission: false,
+        };
+        const company = await User.findById(id, ignore)
+            .populate({
+                path: 'project',
+                select: 'name description participants stateOfProject category',
+                populate: {
+                    path: 'reviews',
+                    populate: {
+                        path: 'student',
+                        select: 'name lastName image',
+                    },
+                },
+            })
+            .populate({
+                path: 'project',
+                populate: {
+                    path: 'reviews',
+                    populate: {
+                        path: 'project',
+                        select: 'name',
+                    },
+                },
+            });
+        // Sacamos el promedio de sus proyectos.
+        let companyRating = 0;
+        let projectRating = 0;
+        let totalVotes = 0;
+        // Average = Promedio
+        let projectAverage = 0;
+        let companyAverage = 0;
+        // Revies
+        let reviews: any = [];
+
+        if (company) {
+            company.project.forEach((e: any) => {
+                e.reviews.forEach((i: any) => {
+                    reviews = [...reviews, i];
+                    companyRating += i.ratingCompany;
+                    projectRating += i.ratingProject;
+                });
+            });
+        }
+
+        totalVotes = reviews.length;
+        companyAverage = Math.round(companyRating / totalVotes);
+        projectAverage = Math.round(projectRating / totalVotes);
+        // console.log(company);
+        res.status(200).json({
+            reviews: reviews,
+            company,
+            ratingCompany: companyAverage,
+            ratingProjects: projectAverage,
         });
     } catch (error: any) {
         res.status(500).send(formatError(error.message));
@@ -176,22 +252,19 @@ export const finalProject: RequestHandler = async (req, res) => {
 
         projectSearch.stateOfProject = 'Terminado';
         projectSearch.save();
-
-        const id = projectSearch.accepts;
-
-        projectSearch.accepts.map(async (accept: []) => {
-            let user = await Student.findById(accept);
-
+        projectSearch?.accepts?.map(async (idStudent: string) => {
+            let user = await Student.findById(idStudent);
+            console.log(idStudent);
             sendMailRating(
                 user.email,
                 user.image,
                 user.name,
                 idProject,
                 projectSearch.name,
-                id
+                idStudent
             );
         });
-        res.sendStatus(200);
+        res.status(200).json({ msg: 'Proyecto finalizado.' });
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }
