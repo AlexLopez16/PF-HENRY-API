@@ -110,6 +110,74 @@ export const getUserCompany: RequestHandler = async (req, res) => {
     }
 };
 
+/**
+ * By Sciangula Hugo:
+ * NOTA: getDetailCompany(), va a traer la info de la empresa.
+ */
+
+export const getDetailCompany: RequestHandler = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const ignore = {
+            password: false,
+            premium: false,
+            verify: false,
+            gmail: false,
+            invoice: false,
+            admission: false,
+        };
+        const company = await User.findById(id, ignore).populate({
+            path: 'project',
+            select: 'name description participants stateOfProject category',
+            populate: {
+                path: 'reviews',
+                populate: {
+                    path: 'student',
+                    select: 'name lastName image',
+                },
+            },
+        });
+
+        // Sacamos el promedio como empresa.
+        let companyRating = 0;
+        let companyVotes = 0;
+        // Average = Rating
+        let companyAverage = 0;
+        if (company) {
+            company.project.forEach((e: any) => {
+                companyVotes = e.reviews?.length;
+                e.reviews.forEach((i: any) => {
+                    companyRating += i.ratingCompany;
+                });
+            });
+        }
+        companyAverage = Math.round(companyRating / companyVotes);
+
+        // Sacamos el promedio de sus proyectos.
+        let projectRating = 0;
+        let projectVotes = 0;
+        // Average = Promedio
+        let projectAverage = 0;
+        if (company) {
+            company.project.forEach((e: any) => {
+                projectVotes = e.reviews?.length;
+                e.reviews.forEach((i: any) => {
+                    projectRating += i.ratingProject;
+                });
+            });
+        }
+        projectAverage = Math.round(projectRating / projectVotes);
+        // console.log(company);
+        res.status(200).json({
+            company,
+            ratingCompany: companyAverage,
+            ratingProjects: projectAverage,
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
+};
+
 //PUT
 export const updateUserCompany: RequestHandler = async (req, res) => {
     try {
