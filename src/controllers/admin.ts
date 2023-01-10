@@ -126,13 +126,13 @@ export const deleteAdmin: RequestHandler = async (req, res) => {
     if (!searchId) { searchId = await Project.findById(id) }
 
     searchId.state = !searchId.state;
+
     await searchId.save();
     res.status(200).json(searchId);
   } catch (error: any) {
     res.status(404).json(formatError(error.message));
   }
 };
-
 
 export const AprovedProject: RequestHandler = async (req, res) => {
   try {
@@ -180,13 +180,16 @@ export const sendEmailCompanyforProjectDenied: RequestHandler = async (req, res)
     const { idPrj, values } = req.body;
 
 
+
     let proyecto = await Project.findById(idPrj)
     let compania = await Company.findById(proyecto.company)
-
 
     proyecto.remove() // elimino el proyecto de la base
     await proyecto.save();
     mailprojectCancel(compania, values, proyecto)
+
+
+
 
 
     res.status(200).json("Proyecto removido");
@@ -284,3 +287,25 @@ const getGraphData = (items: string[]): GraphData => {
 
   return res;
 }
+
+
+
+export const deleteMultiple: RequestHandler = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    ids.map(async (e: string) => {
+      let searchId = await Student.findById(e)
+      if (!searchId) { searchId = await Company.findById(e) }
+      if (!searchId) { searchId = await Admin.findById(e) }
+      if (!searchId) { searchId = await Project.findById(e) }
+
+      searchId.state = !searchId.state;
+      await searchId.save();
+
+    })
+    res.status(200).json("Cambio de estado exitoso");
+
+  } catch (error: any) {
+    return res.status(500).send(formatError(error.message));
+  }
+};
