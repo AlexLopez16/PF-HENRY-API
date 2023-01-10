@@ -30,6 +30,7 @@ const ReviewSchema = new Schema({
 
 ReviewSchema.methods.toJSON = function () {
     const { __v, _id, ...review } = this.toObject();
+    review.uid = _id
     return review;
 };
 

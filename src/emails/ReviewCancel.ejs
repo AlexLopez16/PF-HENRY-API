@@ -24,8 +24,8 @@
                             <tr>
                                 <td align="center" valign="top">
                                     <div style="height: 40px; line-height: 40px; font-size: 38px;">&nbsp;</div>
-                                    <img src="https://www.doritsasson.com/wp-content/uploads/2019/11/5-star-reviews-png-review-clipart-1b329e0d4e3a8d21.png"
-                                        alt="Email" style="display: block; margin: 30px auto; width: 400px;">
+                                    <img src="https://www.nicepng.com/png/full/775-7752284_rejected-png.png" alt="Email"
+                                        style="width: 200px; height: 200px; display: block; margin: 30px auto;">
                                     <span
                                         style="font-family: 'Source Sans Pro', Arial, Tahoma, Geneva, sans-serif; color: #1a1a1a; font-size: 52px; line-height: 54px; font-weight: 800; letter-spacing: 7px;">
                                         NABIJASH
@@ -44,7 +44,7 @@
                                         style="font-size: 52px; line-height: 54px; font-weight: 300; letter-spacing: -1.5px;">
                                         <span
                                             style="font-family: 'Source Sans Pro', Arial, Tahoma, Geneva, sans-serif; color: #1a1a1a; font-size: 52px; line-height: 54px; font-weight: 300; letter-spacing: -1.5px;">
-                                            Proyecto terminado
+                                            Reseña no aceptada
                                         </span>
                                     </font>
 
@@ -53,47 +53,58 @@
                                         style="font-size: 20px; line-height: 28px;">
                                         <span
                                             style="font-family: 'Source Sans Pro', Arial, Tahoma, Geneva, sans-serif; color: #000000; font-size: 20px; line-height: 28px;">
-                                            Felicitaciones <%= name %>
+                                            Hemos revisado la publicacion de su reseña y lamentamos haberla rechazado. A continuacion le dejaremos el motivo.
                                         </span>
+
+                                        <table border="1"
+                                            style="margin: 20px auto; border: 2px solid black; border-collapse: collapse;">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="padding: 10px;"><b>Proyecto:</b></td>
+                                                    <td style="text-align: center; padding: 10px;">
+                                                        <%= nameProject %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 10px;"><b>Descripción:</b></td>
+                                                    <td style="text-align: justify; padding: 10px;">
+                                                        <%= description %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 10px;"><b>Puntaje proyecto:</b></td>
+                                                    <td style="text-align: center; padding: 10px;">
+                                                        <%= ratingProject %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 10px;"><b>Puntaje empresa:</b></td>
+                                                    <td style="text-align: center; padding: 10px;">
+                                                        <%= ratingCompany %>
+                                                    </td>
+                                                </tr>
+                                                 
+                                            </tbody>
+                                        </table>
                                     </font>
                                     </div>
 
-                                    <div style="height: 21px; line-height: 21px; font-size: 19px;">&nbsp;</div>
-                                    <div style="text-align: justify;">
-                                        <font face="'Source Sans Pro', sans-serif" color="#000000"
-                                            style="font-size: 20px; line-height: 35px;">
-                                            <span
-                                                style="font-family: 'Source Sans Pro', Arial, Tahoma, Geneva, sans-serif; color: #000000; font-size: 20px; line-height: 28px;">
-                                                Por haber finalizado el proyecto
-                                                <b style="text-transform: uppercase;">
-                                                    <%= project %>
-                                                </b>
-                                                te invitamos a dar tu calificación y reseña de como te sentiste en tu
-                                                estadía con la empresa y el desarrollo del proyecto en el que
-                                                participaste.
-                                            </span>
-                                        </font>
-                                    </div>
-                                    </div>
+                                    <div style="height: 6px; line-height: 6px; font-size: 4px;">&nbsp;</div>
+                                    <font face="'Source Sans Pro', sans-serif" color="#000000"
+                                        style="font-size: 20px; line-height: 28px;">
+                                        <span
+                                            style="font-family: 'Source Sans Pro', Arial, Tahoma, Geneva, sans-serif; color: #000000; font-size: 30px; line-height: 28px;">
+                                            Motivo:
+                                        </span>
+                                        <br />
+                                        <br />
+                                        <span
+                                            style="font-family: 'Source Sans Pro', Arial, Tahoma, Geneva, sans-serif; color: #000000; font-size: 20px; line-height: 28px;">
+                                            <%= message %>
+                                        </span>
+                                    </font>
 
-                                    <div style="height: 30px; line-height: 30px; font-size: 28px;">&nbsp;</div>
-                                    <table class="mob_btn" cellpadding="0" cellspacing="0" border="0"
-                                        style="background: #6070E9; border-radius: 4px; margin: 0 auto;">
-                                        <tr>
-                                            <td align="center" valign="top">
-                                                <a href="<%= url %>" target="_blank"
-                                                    style="display: block; border: 1px solid #6070E9; border-radius: 4px; padding: 19px 27px; font-family: 'Source Sans Pro', Arial, Verdana, Tahoma, Geneva, sans-serif; color: #ffffff; font-size: 26px; line-height: 30px; text-decoration: none; white-space: nowrap; font-weight: 600;">
-                                                    <font face="'Source Sans Pro', sans-serif" color="#ffffff"
-                                                        style="font-size: 26px; line-height: 30px; text-decoration: none; white-space: nowrap; font-weight: 600;">
-                                                        <span
-                                                            style="font-family: 'Source Sans Pro', Arial, Verdana, Tahoma, Geneva, sans-serif; color: #ffffff; font-size: 26px; line-height: 30px; text-decoration: none; white-space: nowrap; font-weight: 600;">
-                                                            Calificar
-                                                        </span>
-                                                    </font>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </table>
+               
                                     <div style="height: 50px; line-height: 90px; font-size: 88px;">&nbsp;</div>
                                 </td>
                             </tr>
