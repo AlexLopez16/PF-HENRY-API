@@ -7,39 +7,47 @@ const stripe = require('stripe')(process.env.STRIPE_KEY);
 const YOUR_DOMAIN = process.env.URL_FRONT || 'http://localhost:5173';
 
 export const checkoutSession: RequestHandler = async (req, res) => {
-    const prices = await stripe.prices.list({
-        lookup_keys: [req.body.lookup_key],
-        expand: ['data.product'],
-    });
+    try {
+        const prices = await stripe.prices.list({
+            lookup_keys: [req.body.lookup_key],
+            expand: ['data.product'],
+        });
 
-    const session = await stripe.checkout.sessions.create({
-        billing_address_collection: 'auto',
-        line_items: [
-            {
-                price: prices.data[0].id,
-                quantity: 1,
-            },
-        ],
-        mode: 'subscription',
-        success_url: `${YOUR_DOMAIN}/checkout/?success=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${YOUR_DOMAIN}/dashboard/?canceled=true`,
-    });
+        const session = await stripe.checkout.sessions.create({
+            billing_address_collection: 'auto',
+            line_items: [
+                {
+                    price: prices.data[0].id,
+                    quantity: 1,
+                },
+            ],
+            mode: 'subscription',
+            success_url: `${YOUR_DOMAIN}/checkout/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${YOUR_DOMAIN}/dashboard/?canceled=true`,
+        });
 
-    res.redirect(303, session.url);
+        res.redirect(303, session.url);
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 export const portalSession: RequestHandler = async (req, res) => {
     const { session_id } = req.body;
-    const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
+    try {
+        const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
 
-    const returnUrl = `${YOUR_DOMAIN}/projects`;
+        const returnUrl = `${YOUR_DOMAIN}/projects`;
 
-    const portalSession = await stripe.billingPortal.sessions.create({
-        customer: checkoutSession.customer,
-        return_url: returnUrl,
-    });
+        const portalSession = await stripe.billingPortal.sessions.create({
+            customer: checkoutSession.customer,
+            return_url: returnUrl,
+        });
 
-    res.redirect(303, portalSession.url);
+        res.redirect(303, portalSession.url);
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 export const webhook: RequestHandler = async (req, res) => {

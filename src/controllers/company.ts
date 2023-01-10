@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 const User = require('../models/company');
+const Review = require('../models/review');
 import { hash } from '../helpers/hash';
 import { jwtGenerator } from '../helpers/jwt';
 import { formatError } from '../utils/formatErros';
@@ -54,14 +55,14 @@ export const createUserCompany: RequestHandler = async (req, res) => {
 
 // GET USERS
 export const getUsersCompany: RequestHandler = async (req, res) => {
-  try {
-    const {
-      limit = 6,
-      init = 0,
-      name,
-      country,
-      onlyActive = "true",
-    } = req.query;
+    try {
+        const {
+            limit = 6,
+            init = 0,
+            name,
+            country,
+            onlyActive = 'true',
+        } = req.query;
 
         const query: any = {};
 
@@ -135,18 +136,28 @@ export const getDetailCompany: RequestHandler = async (req, res) => {
             invoice: false,
             admission: false,
         };
-        const company = await User.findById(id, ignore).populate({
-            path: 'project',
-            select: 'name description participants stateOfProject category',
-            populate: {
-                path: 'reviews',
+        const company = await User.findById(id, ignore)
+            .populate({
+                path: 'project',
+                select: 'name description participants stateOfProject category',
                 populate: {
-                    path: 'student',
-                    select: 'name lastName image',
+                    path: 'reviews',
+                    populate: {
+                        path: 'student',
+                        select: 'name lastName image',
+                    },
                 },
-            },
-        });
-
+            })
+            .populate({
+                path: 'project',
+                populate: {
+                    path: 'reviews',
+                    populate: {
+                        path: 'project',
+                        select: 'name',
+                    },
+                },
+            });
         // Sacamos el promedio de sus proyectos.
         let companyRating = 0;
         let projectRating = 0;
@@ -154,19 +165,25 @@ export const getDetailCompany: RequestHandler = async (req, res) => {
         // Average = Promedio
         let projectAverage = 0;
         let companyAverage = 0;
+        // Revies
+        let reviews: any = [];
+
         if (company) {
             company.project.forEach((e: any) => {
-                totalVotes = e.reviews?.length;
                 e.reviews.forEach((i: any) => {
+                    reviews = [...reviews, i];
                     companyRating += i.ratingCompany;
                     projectRating += i.ratingProject;
                 });
             });
         }
+
+        totalVotes = reviews.length;
         companyAverage = Math.round(companyRating / totalVotes);
         projectAverage = Math.round(projectRating / totalVotes);
         // console.log(company);
         res.status(200).json({
+            reviews: reviews,
             company,
             ratingCompany: companyAverage,
             ratingProjects: projectAverage,
@@ -244,23 +261,19 @@ export const finalProject: RequestHandler = async (req, res) => {
 
         projectSearch.stateOfProject = 'Terminado';
         projectSearch.save();
-
-        const id = projectSearch.accepts;
-
-        projectSearch.accepts.map(async (accept: []) => {
-            let user = await Student.findById(accept);
-
+        projectSearch?.accepts?.map(async (idStudent: string) => {
+            let user = await Student.findById(idStudent);
+            console.log(idStudent);
             sendMailRating(
                 user.email,
                 user.image,
                 user.name,
                 idProject,
                 projectSearch.name,
-                id
+                idStudent
             );
         });
-
-        res.status(200).json('Send email');
+        res.status(200).json({ msg: 'Proyecto finalizado.' });
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }
