@@ -107,13 +107,21 @@ export const createProject: RequestHandler = async (req, res) => {
             category: category.toLowerCase(),
             admission: new Date(),
         };
+        let _id = req.user._id
+        let project = await Company.find({ _id })
+        if (project?.length < 3) { throw new Error("No puedes publicar mas de 3 proyectos") }
+
+
+
         let nameSearchProject = await Project.find({ name });
         if (nameSearchProject.length) {
             throw new Error('Nombre ya utilizado');
         }
-        // const id = req.user._id;
-        // console.log(id);
-        console.log('id', req.user._id);
+
+
+
+
+
         const result = await Project.aggregate([
             { $match: { company: req.user._id } },
             {
@@ -136,7 +144,7 @@ export const createProject: RequestHandler = async (req, res) => {
 
         if (difBetweenDates && difBetweenDates < 30 && !compa.premium) {
             throw new Error(
-                'Tienes que ser premiun,si quieres crear mas de un proyecto al mes'
+                'Tienes que ser premium,si quieres crear mas de un proyecto al mes'
             );
         } else {
             const project = new Project(data);
@@ -595,7 +603,7 @@ export const deleteMultiProject: RequestHandler = async (req, res) => {
             project.state === true
                 ? project.state = false
                 : project.state = true;
-                project.state = !project.state;
+            project.state = !project.state;
             await project.save();
 
         })
