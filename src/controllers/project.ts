@@ -338,6 +338,9 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
                 .populate({
                     path: 'students',
                     select: '-password',
+                })
+                .populate({
+                    path: 'responses',
                 });
 
             return res.status(200).json(infoProject);
