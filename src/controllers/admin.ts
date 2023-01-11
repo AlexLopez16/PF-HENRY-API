@@ -35,6 +35,8 @@ export const createAdmin: RequestHandler = async (req, res) => {
     });
     await user.save();
 
+    sendConfirmationEmail(user);
+
     let rol = user.rol;
     let verify = user.verify;
     let id = user._id;
@@ -55,7 +57,7 @@ export const createAdmin: RequestHandler = async (req, res) => {
 
 export const getAdmin: RequestHandler = async (req, res) => {
   try {
-    const { limit = 10, init = 0 } = req.query;
+    const { limit = 6, init = 0 } = req.query;
     const query = {};
     const ignore: any = {
       password: false,

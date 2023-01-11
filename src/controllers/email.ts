@@ -32,6 +32,19 @@ export const confirmEmail: RequestHandler = async (req, res) => {
             //return res.sendStatus(200);
         }
 
+        if(rol === 'ADMIN_ROL') {
+            const admin = await Admin.findOne({ email: email });
+            if(!admin)
+                throw new Error('Administrador no encontrado');
+            
+            if(admin.verify)
+                throw new Error('Administrador ya verificado');
+
+            admin.verify = true;
+
+            await admin.save();
+        }
+
         return res.redirect(
             `${process.env.URL_FRONT || 'http://localhost:5173'}/login`
         );
