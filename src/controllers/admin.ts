@@ -18,64 +18,64 @@ import { formatError } from '../utils/formatErros';
 
 // CREATE
 export const createAdmin: RequestHandler = async (req, res) => {
-  try {
-    let { name, lastName, email, password } = req.body;
-    let emailSearch = await Admin.find({ email });
-    
-    if (emailSearch.length) {
-      throw new Error('Email ya registrado');
+    try {
+        let { name, lastName, email, password } = req.body;
+        let emailSearch = await Admin.find({ email });
+
+        if (emailSearch.length) {
+            throw new Error('Email ya registrado');
+        }
+
+        let hashPassword = await hash(password);
+        let user = new Admin({
+            name,
+            lastName,
+            email,
+            password: hashPassword,
+        });
+        await user.save();
+
+        sendConfirmationEmail(user);
+
+        let rol = user.rol;
+        let verify = user.verify;
+        let id = user._id;
+        let obj = { id: user._id, name: user.name };
+        const token = jwtGenerator(obj);
+        res.status(201).json({
+            data: 'Sucessful singup',
+            token,
+            id,
+            rol,
+            verify,
+            email,
+        });
+    } catch (error: any) {
+        res.status(500).json(formatError(error.message));
     }
-
-    let hashPassword = await hash(password);
-    let user = new Admin({
-      name,
-      lastName,
-      email,
-      password: hashPassword,
-    });
-    await user.save();
-
-    sendConfirmationEmail(user);
-
-    let rol = user.rol;
-    let verify = user.verify;
-    let id = user._id;
-    let obj = { id: user._id, name: user.name };
-    const token = jwtGenerator(obj);
-    res.status(201).json({
-      data: 'Sucessful singup',
-      token,
-      id,
-      rol,
-      verify,
-      email,
-    });
-  } catch (error: any) {
-    res.status(500).json(formatError(error.message));
-  }
 };
 
 export const getAdmin: RequestHandler = async (req, res) => {
-  try {
-    const { limit = 6, init = 0 } = req.query;
-    const query = {};
-    const ignore: any = {
-      password: false,
-      gmail: false,
-      github: false,
-      rol: false,
-    };
-    const [total, admins] = await Promise.all([
-      Admin.countDocuments(query),
-      Admin.find(query, ignore).skip(init).limit(limit),
-    ]);
-    res.status(200).json({
-      total,
-      admins,
-    });
-  } catch (error: any) {
-    res.status(500).send(formatError(error.message));
-  }
+    try {
+        const { limit = 6, init = 0 } = req.query;
+        const query = {};
+        const ignore: any = {
+            password: false,
+            gmail: false,
+            github: false,
+            rol: false,
+        };
+        const [total, admins] = await Promise.all([
+            Admin.countDocuments(query),
+            Admin.find(query, ignore).skip(init).limit(limit),
+        ]);
+        res.status(200).json({
+            total,
+            admins,
+        });
+    } catch (error: any) {
+        res.status(500).send(formatError(error.message));
+    }
 };
 
 export const getAdminById: RequestHandler = async (req, res) => {
@@ -142,7 +142,10 @@ export const deleteAdmin: RequestHandler = async (req, res) => {
             searchId = await Admin.findById(id);
         }
         if (!searchId) {
-            searchId = await Project.findById(id);
+            searchId = await Project.findById(id).populate({
+                path: 'company',
+                select: 'name',
+            });
         }
 
         searchId.state = !searchId.state;
@@ -177,7 +180,7 @@ export const deniedProject: RequestHandler = async (req, res) => {
 
         let searchId = await Project.findById(id);
 
-        // searchId.remove()
+        searchId.remove()
 
         await searchId.save();
 
@@ -353,9 +356,9 @@ export const verifyCompany: RequestHandler = async (req, res) => {
 export const deleteMultiple: RequestHandler = async (req, res) => {
     try {
         const { ids } = req.body;
-    
+
         ids.map(async (e: string) => {
-           let  searchId = await Student.findById(e);
+            let searchId = await Student.findById(e);
             if (!searchId) {
                 searchId = await Company.findById(e);
             }
@@ -367,11 +370,11 @@ export const deleteMultiple: RequestHandler = async (req, res) => {
             }
 
             searchId.state = !searchId.state;
-           searchId =  await searchId.save();
+            searchId = await searchId.save();
 
         })
-        
-        
+
+
         res.status(200).json("Cambio de estado exitoso");
 
     } catch (error: any) {
