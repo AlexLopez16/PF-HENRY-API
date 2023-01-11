@@ -111,11 +111,10 @@ export const createProject: RequestHandler = async (req, res) => {
             category: category.toLowerCase(),
             admission: new Date(),
         };
+
         let _id = req.user._id
         let project = await Company.find({ _id })
         if (project?.length > 3) { throw new Error("No puedes publicar mas de 3 proyectos") }
-
-
 
         let nameSearchProject = await Project.find({ name });
         if (nameSearchProject.length) {
