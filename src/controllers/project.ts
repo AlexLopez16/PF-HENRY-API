@@ -12,6 +12,7 @@ const Project = require('../models/project');
 const Student = require('../models/student');
 const Company = require('../models/company');
 const Response = require('../models/response');
+const Invoice = require('../models/invoice');
 
 export const getProjects: RequestHandler = async (req, res) => {
     try {
@@ -110,20 +111,15 @@ export const createProject: RequestHandler = async (req, res) => {
             category: category.toLowerCase(),
             admission: new Date(),
         };
+
         let _id = req.user._id
         let project = await Company.find({ _id })
-        if (project?.length < 3) { throw new Error("No puedes publicar mas de 3 proyectos") }
-
-
+        if (project?.length > 3) { throw new Error("No puedes publicar mas de 3 proyectos") }
 
         let nameSearchProject = await Project.find({ name });
         if (nameSearchProject.length) {
             throw new Error('Nombre ya utilizado');
         }
-
-
-
-
 
         const result = await Project.aggregate([
             { $match: { company: req.user._id } },
@@ -134,18 +130,51 @@ export const createProject: RequestHandler = async (req, res) => {
                 },
             },
         ]);
+
         const date = new Date();
+
         let difBetweenDates: number | undefined;
         if (result[0] && result[0].maxDate) {
             difBetweenDates = Math.round(
                 (date.getTime() - result[0].maxDate.getTime()) /
                     (1000 * 3600 * 24)
             );
+            console.log(difBetweenDates);
         }
         // console.log('pro', pro);
         const compa = await Company.findById(req.user._id);
+        const invoice = await Invoice.find({ company: req.user._id })
+            .sort({
+                date: 'desc',
+            })
+            .skip(0)
+            .limit(1);
 
-        if (difBetweenDates && difBetweenDates < 30 && !compa.premium) {
+        console.log(invoice);
+
+        if (invoice.length) {
+            const operation = {
+                company: req.user._id,
+                admission: {
+                    $gte: invoice[0].date,
+                    $lte: invoice[0].date + 30,
+                },
+            };
+
+            let total = await Project.find(operation).count();
+            console.log('total', total);
+            if (compa.premium && total >= 3) {
+                throw new Error(
+                    'No puedes publicar mas de 3 proyectos al mes '
+                );
+            }
+        }
+
+        if (
+            difBetweenDates != undefined &&
+            difBetweenDates < 30 &&
+            !compa.premium
+        ) {
             throw new Error(
                 'Tienes que ser premium,si quieres crear mas de un proyecto al mes'
             );
@@ -177,7 +206,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             working: { $exists: true, $not: { $size: 0 } },
         });
         // Error si el estudiante esta trabajando.
-        if (studentIsWorking.length) throw new Error('Currently working');
+        if (studentIsWorking.length) throw new Error('Actualmente en desarrollo');
 
         // Verificamos que el proyecto exista.
         const projects = await Project.find(query);
@@ -218,7 +247,7 @@ export const getProject: RequestHandler = async (req, res) => {
                 select: '-password',
                 populate: {
                     path: 'responses',
-                }
+                },
             })
             .populate({
                 path: 'company',
@@ -237,9 +266,7 @@ export const getProject: RequestHandler = async (req, res) => {
             })
             .populate({
                 path: 'responses',
-            })
-            ;
-
+            });
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
         return res.status(200).json(project);
@@ -409,8 +436,6 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
         const { id: projectId } = req.params;
         const { studentId } = req.body;
 
-
-
         // Buscamos el proyecto.
         let project = await Project.findById(projectId);
         // Si no esta en la lista de estudiantes.
@@ -419,9 +444,9 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
         }
 
         // Borramos las responses a ese proyecto.
-        let response = await Response.findOne({studentId, projectId})
-        await Response.deleteOne({studentId, projectId})
-        if(response._id == response._id) console.log('iguales')
+        let response = await Response.findOne({ studentId, projectId });
+        await Response.deleteOne({ studentId, projectId });
+        if (response._id == response._id) console.log('iguales');
 
         // En caso de que este en la lista de estudiantes, lo eliminamos.
         project.students = project.students.filter(
@@ -429,26 +454,24 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
         );
         // En caso de que este en la lista de accepts, lo eliminamos.
         project.accepts = project.accepts.filter((e: String) => e != studentId);
-        
-        project.responses.pull({_id: response._id});
+
+        project.responses.pull({ _id: response._id });
 
         // Guardamos los cambios nuevos.
         await project.save();
         const student = await Student.findById(studentId);
         // Eliminamos la asociacion del estudiante al proyecto.
-        console.log(projectId)
+        console.log(projectId);
         student.project = student.project.filter((e: String) => e != projectId);
 
         // Eliminamos las respuestas que tiene en ese proyecto.
         // student.responses =  student.responses.filter((e: String) => e != response._id)
-        await student.responses.pull({_id: response._id});
- 
+        await student.responses.pull({ _id: response._id });
+
         console.log(student.responses);
         // Si no queremos que aplique, entonces no queremos aceptarlo.
         student.working = [];
-        await student.save();   
-
-
+        await student.save();
 
         return res.status(200).json(project);
     } catch (error: any) {
@@ -641,8 +664,8 @@ export const deleteMultiProject: RequestHandler = async (req, res) => {
             if (!projects.length) throw new Error('project no found');
             let project = projects[0];
             project.state === true
-                ? project.state = false
-                : project.state = true;
+                ? (project.state = false)
+                : (project.state = true);
             project.state = !project.state;
             await project.save();
         });

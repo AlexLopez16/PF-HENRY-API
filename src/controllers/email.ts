@@ -56,14 +56,13 @@ export const confirmEmail: RequestHandler = async (req, res) => {
  */
 
 export const isVerify: RequestHandler = async (req, res) => {
-  try {
-    const { email } = req.params;
-    // Buscamos en los student
-    let user = await Student.findOne({ email, verify: true });
-    console.log(user);
-    if (!user) user = await Company.findOne({ email, verify: true });
-    if (!user) user = await Admin.findOne({ email, verify: true });
-    if (!user) throw new Error("Email no verificado.");
+    try {
+        const { email } = req.params;
+        // Buscamos en los student
+        let user = await Student.findOne({ email, verify: true });
+        if (!user) user = await Company.findOne({ email, verify: true });
+        if (!user) user = await Admin.findOne({ email, verify: true });
+        if (!user) throw new Error('Email no verificado.');
 
     res.status(200).json({ msg: "Email verificado." });
   } catch (error: object | any) {

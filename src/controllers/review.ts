@@ -1,9 +1,12 @@
 import { RequestHandler } from 'express';
 import { sendMailCancelRating } from '../helpers/sendConfirmationEmail';
+import { companyRole } from '../middlewares/rolCompanyValidator';
 import { formatError } from '../utils/formatErros';
 const Review = require('../models/review');
 const Project = require('../models/project');
 const Student = require('../models/student');
+const Company = require('../models/company');
+
 
 interface InitialBody {
     description: string;
@@ -93,7 +96,6 @@ export const editReview: RequestHandler = async (req, res) => {
 export const getReviews: RequestHandler = async (req, res) => {
     try {
         const { limit = 6, init = 6, name }: any = req.query;
-        console.log('llego', name);
         let Limit = parseInt(limit);
         let Init = parseInt(init);
 
@@ -426,7 +428,6 @@ export const getReviews: RequestHandler = async (req, res) => {
 
                 Review.aggregate(result1).limit(Limit).skip(Init),
             ]);
-            console.log(total);
             let tol;
             if (total[0]) {
                 tol = total[0].count;
@@ -470,7 +471,6 @@ export const getReviews: RequestHandler = async (req, res) => {
                     },
                 }),
         ]);
-        console.log(getreviews);
         res.status(200).send({ total, getreviews });
     } catch (error) {
         res.status(500).send({ error: 'sss' });
@@ -481,14 +481,21 @@ export const getReviews: RequestHandler = async (req, res) => {
 export const deleteReview: RequestHandler = async (req, res) => {
     try {
         const { idrev, values } = req.body;
-        console.log(idrev,values);
-        
-        let review = await Review.findById(idrev)
-            .populate('project', 'name')
+        let review = await Review.findById({ _id: idrev })
+            .populate({ path: 'project', select: "reviews" })
             .populate('student', 'email');
-            sendMailCancelRating(review, values);
-            await Review.deleteOne({ _id: idrev });
-        res.status(200).send('Review borrado con exito');
+
+        sendMailCancelRating(review, values);
+
+        let student = await Student.findByIdAndUpdate(review.student._id, { review: null }, { new: true })
+        student.save()
+
+        let project = await Project.findById(review.project._id)
+        await project.reviews.pull({ _id: idrev })
+        await project.save();
+        await Review.deleteOne({ _id: idrev });
+
+        res.status(200).send(review);
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
     }
