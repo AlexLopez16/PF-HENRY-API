@@ -67,16 +67,7 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
         const query: any = {};
 
         if (onlyActive === 'true') query.state = true;
-
-        // if(name || country) {
-        //     query.$or = [
-        //         { country: {'$regex': country, '$options': 'i'} },
-        //         { name: {'$regex': name, '$options': 'i'} },
-        //     ]
-        // }
-
         if (name) query.name = { $regex: name, $options: 'i' };
-
         if (country) query.country = { $regex: country, $options: 'i' };
 
         const ignore: any = {
@@ -181,7 +172,6 @@ export const getDetailCompany: RequestHandler = async (req, res) => {
         totalVotes = reviews.length;
         companyAverage = Math.round(companyRating / totalVotes);
         projectAverage = Math.round(projectRating / totalVotes);
-        // console.log(company);
         res.status(200).json({
             reviews: reviews,
             company,

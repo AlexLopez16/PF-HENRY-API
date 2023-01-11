@@ -69,6 +69,12 @@ const StudentSchema = new Schema({
     admission: {
         type: Date,
     },
+    responses: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Response'
+        }
+    ]
 });
 
 StudentSchema.methods.toJSON = function () {

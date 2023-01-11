@@ -76,7 +76,13 @@ const ProjectSchema = new Schema({
     
     admission: {
         type: Date
-    }
+    },   
+     responses: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Response'
+        }
+    ]
 });
 
 ProjectSchema.index({ name: 'text' });
