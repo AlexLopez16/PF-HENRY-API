@@ -11,6 +11,7 @@ import { portalSession } from './checkout';
 const Project = require('../models/project');
 const Student = require('../models/student');
 const Company = require('../models/company');
+const Response = require('../models/response');
 
 export const getProjects: RequestHandler = async (req, res) => {
     try {
@@ -93,6 +94,7 @@ export const createProject: RequestHandler = async (req, res) => {
             description,
             participants,
             requirements,
+            questions,
             category,
             images,
         }: any = req.body;
@@ -102,6 +104,7 @@ export const createProject: RequestHandler = async (req, res) => {
             participants,
             requirements,
             images,
+            questions,
             //agregamos la request de user para hacer la relacion.
             company: req.user._id,
             category: category.toLowerCase(),
@@ -205,6 +208,9 @@ export const getProject: RequestHandler = async (req, res) => {
             .populate({
                 path: 'students',
                 select: '-password',
+                populate: {
+                    path: 'responses',
+                }
             })
             .populate({
                 path: 'company',
@@ -220,7 +226,11 @@ export const getProject: RequestHandler = async (req, res) => {
                     path: 'student',
                     select: 'name lastName image',
                 },
-            });
+            })
+            .populate({
+                path: 'responses',
+            })
+            ;
 
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
@@ -387,26 +397,48 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
     try {
         const { id: projectId } = req.params;
         const { studentId } = req.body;
+
+
+
         // Buscamos el proyecto.
         let project = await Project.findById(projectId);
         // Si no esta en la lista de estudiantes.
         if (!project.students.includes(studentId)) {
             throw new Error("Estudiante no encontrado en la lista  'Students'");
         }
+
+        // Borramos las responses a ese proyecto.
+        let response = await Response.findOne({studentId, projectId})
+        await Response.deleteOne({studentId, projectId})
+        if(response._id == response._id) console.log('iguales')
+
         // En caso de que este en la lista de estudiantes, lo eliminamos.
         project.students = project.students.filter(
             (e: string) => e != studentId
         );
         // En caso de que este en la lista de accepts, lo eliminamos.
         project.accepts = project.accepts.filter((e: String) => e != studentId);
+        
+        project.responses.pull({_id: response._id});
+
         // Guardamos los cambios nuevos.
         await project.save();
         const student = await Student.findById(studentId);
         // Eliminamos la asociacion del estudiante al proyecto.
-        student.project = student.project.filter((e: string) => e != projectId);
+        console.log(projectId)
+        student.project = student.project.filter((e: String) => e != projectId);
+
+        // Eliminamos las respuestas que tiene en ese proyecto.
+        // student.responses =  student.responses.filter((e: String) => e != response._id)
+        await student.responses.pull({_id: response._id});
+ 
+        console.log(student.responses);
         // Si no queremos que aplique, entonces no queremos aceptarlo.
         student.working = [];
-        await student.save();
+        await student.save();   
+
+
+
         return res.status(200).json(project);
     } catch (error: any) {
         res.status(500).json(formatError(error.message));

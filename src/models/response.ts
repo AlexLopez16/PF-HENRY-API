@@ -4,7 +4,7 @@ const ResponseSchema = new Schema({
     response: {
         type: Array
     },
-    studenId: {
+    studentId: {
         type: Schema.Types.ObjectId,
     },
     projectId: {
