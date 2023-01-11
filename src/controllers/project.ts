@@ -111,9 +111,7 @@ export const createProject: RequestHandler = async (req, res) => {
         if (nameSearchProject.length) {
             throw new Error('Nombre ya utilizado');
         }
-        // const id = req.user._id;
-        // console.log(id);
-        console.log('id', req.user._id);
+
         const result = await Project.aggregate([
             { $match: { company: req.user._id } },
             {
@@ -131,7 +129,6 @@ export const createProject: RequestHandler = async (req, res) => {
                 (1000 * 3600 * 24)
             );
         }
-        // console.log('pro', pro);
         const compa = await Company.findById(req.user._id);
 
         if (difBetweenDates && difBetweenDates < 30 && !compa.premium) {
@@ -248,6 +245,7 @@ export const deleteProject: RequestHandler = async (req, res) => {
 export const editProject: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
+
         const query = { state: true, _id: id, company: req.user._id };
         const { ...body } = req.body;
         const editUpdate = await Project.findByIdAndUpdate(
@@ -552,7 +550,6 @@ export const getAllProjects: RequestHandler = async (req, res) => {
                         .limit(Limit)
                         .skip(Init),
                 ]);
-            console.log(projects[0]);
             return res.status(200).json({
                 projects,
                 total: total[0].count,
@@ -572,6 +569,7 @@ export const getAllProjects: RequestHandler = async (req, res) => {
                     }),
             ]
         );
+
         return res.status(200).json({
             projects,
             total,
@@ -595,7 +593,7 @@ export const deleteMultiProject: RequestHandler = async (req, res) => {
             project.state === true
                 ? project.state = false
                 : project.state = true;
-                project.state = !project.state;
+            project.state = !project.state;
             await project.save();
 
         })

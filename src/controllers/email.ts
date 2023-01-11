@@ -50,7 +50,6 @@ export const isVerify: RequestHandler = async (req, res) => {
         const { email } = req.params;
         // Buscamos en los student
         let user = await Student.findOne({ email, verify: true });
-        console.log(user);
         if (!user) user = await Company.findOne({ email, verify: true });
         if (!user) user = await Admin.findOne({ email, verify: true });
         if (!user) throw new Error('Email no verificado.');

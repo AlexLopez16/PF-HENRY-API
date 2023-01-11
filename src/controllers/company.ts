@@ -254,7 +254,6 @@ export const finalProject: RequestHandler = async (req, res) => {
         projectSearch.save();
         projectSearch?.accepts?.map(async (idStudent: string) => {
             let user = await Student.findById(idStudent);
-            console.log(idStudent);
             sendMailRating(
                 user.email,
                 user.image,

@@ -163,7 +163,6 @@ export const AprovedProject: RequestHandler = async (req, res) => {
             // ?searchId.stateOfProject = "En revision"
             '';
         await searchId.save();
-        console.log(searchId);
 
         res.status(200).json(searchId);
     } catch (error: any) {
@@ -176,12 +175,10 @@ export const deniedProject: RequestHandler = async (req, res) => {
         const { id } = req.body;
 
         let searchId = await Project.findById(id);
-        console.log(searchId);
 
         // searchId.remove()
 
         await searchId.save();
-        console.log(searchId);
 
         res.status(200).json(searchId);
     } catch (error: any) {
@@ -393,7 +390,6 @@ export const setReclutamiento: RequestHandler = async (req, res) => {
                 ? (searchId.stateOfProject = 'Reclutamiento')
                 : '';
             await searchId.save();
-            console.log(searchId);
         })
         res.status(200).json("Proyecto pasado a reclutamiento");
     } catch (error: any) {
