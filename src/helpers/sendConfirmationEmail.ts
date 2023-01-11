@@ -52,6 +52,7 @@ export const sendConfirmationEmail = async (user: Props) => {
                         subject: 'Por favor confirma tu email',
                         html: data,
                     });
+                    console.log('Email Send')
                     return 'Email Send';
                 } catch (error) {
                     console.log(error);
