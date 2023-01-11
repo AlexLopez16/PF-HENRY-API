@@ -289,13 +289,14 @@ export const getCountry: RequestHandler = async (req, res) => {
 
 export const reclutamientoToDesarrollo: RequestHandler = async (req, res) => {
     try {
-        const {id} = req.body;
-        let _id=id
-        const projectSearch: object | any = await Project.findById(_id);
-        projectSearch.stateOfProject === 'En revision'
-        ? projectSearch.stateOfProject = 'En desarrollo'
-        : projectSearch.stateOfProject === 'En desarrollo'
-        ? projectSearch.stateOfProject = 'En revision': "";
+        const {uid} = req.body;
+        
+       
+        
+        const projectSearch: object | any = await Project.findById(uid);
+        console.log(projectSearch)
+        projectSearch.stateOfProject === 'Reclutamiento'
+        ? projectSearch.stateOfProject = 'En desarrollo':"" 
         projectSearch.save();
   
         res.status(200).json({ msg: 'Cambio de estado exitoso' });

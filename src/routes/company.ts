@@ -34,7 +34,7 @@ router.post('/', rulesCreateUserCompany, createUserCompany);
 
 router.put('/final', finalProject);
 
-router.put('/inProggresProject',rulesUsersCompany,reclutamientoToDesarrollo)
+router.put('/inProggresProject',reclutamientoToDesarrollo) 
 
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
 
