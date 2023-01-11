@@ -8,9 +8,11 @@ import {
     emailForCompany,
     sendMailRating,
 } from '../helpers/sendConfirmationEmail';
+import { count } from 'console';
 
 const Project = require('../models/project');
 const Student = require('../models/student');
+const Company = require('../models/company')
 // CREATE
 export const createUserCompany: RequestHandler = async (req, res) => {
     try {
@@ -65,6 +67,13 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
         const query: any = {};
 
         if (onlyActive === 'true') query.state = true;
+
+        // if(name || country) {
+        //     query.$or = [
+        //         { country: {'$regex': country, '$options': 'i'} },
+        //         { name: {'$regex': name, '$options': 'i'} },
+        //     ]
+        // }
 
         if (name) query.name = { $regex: name, $options: 'i' };
 
@@ -266,6 +275,15 @@ export const finalProject: RequestHandler = async (req, res) => {
         res.status(200).json({ msg: 'Proyecto finalizado.' });
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
+    }
+};
+
+export const getCountry: RequestHandler = async (req, res) => {
+    try {
+        const countries = await Company.distinct('country');
+        return res.status(200).json(countries);
+    } catch (error: any) {
+        return res.status(400).send(formatError(error.message));
     }
 };
 

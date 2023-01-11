@@ -10,6 +10,7 @@ import {
     deleteUserCompany,
     finalProject,
     getCompanyProject,
+    getCountry,
     getDetailCompany,
     getUserCompany,
     getUsersCompany,
@@ -22,6 +23,8 @@ const router = Router();
 router.get('/', rulesUsersCompany, getUsersCompany);
 
 router.get('/login', rulesUsersCompany, getCompanyProject);
+
+router.get('/countries', verifyToken, getCountry)
 
 router.get('/:id', rulesUsersCompany, getUserCompany);
 
