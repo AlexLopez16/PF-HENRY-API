@@ -13,6 +13,7 @@ import {
     getDetailCompany,
     getUserCompany,
     getUsersCompany,
+    reclutamientoToDesarrollo,
     updateUserCompany,
 } from './../controllers/company';
 
@@ -30,8 +31,11 @@ router.post('/', rulesCreateUserCompany, createUserCompany);
 
 router.put('/final', finalProject);
 
+router.put('/inProggresProject',rulesUsersCompany,reclutamientoToDesarrollo)
+
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
 
 router.delete('/:id', rulesUsersCompany, deleteUserCompany);
+
 
 module.exports = router;

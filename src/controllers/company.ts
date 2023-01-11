@@ -201,7 +201,6 @@ export const updateUserCompany: RequestHandler = async (req, res) => {
         res.status(500).send(formatError(error.message));
     }
 };
-
 // DELETE
 export const deleteUserCompany: RequestHandler = async (req, res) => {
     try {
@@ -265,6 +264,23 @@ export const finalProject: RequestHandler = async (req, res) => {
             );
         });
         res.status(200).json({ msg: 'Proyecto finalizado.' });
+    } catch (error: any) {
+        return res.status(500).send(formatError(error.message));
+    }
+};
+
+export const reclutamientoToDesarrollo: RequestHandler = async (req, res) => {
+    try {
+        const {id} = req.body;
+        let _id=id
+        const projectSearch: object | any = await Project.findById(_id);
+        projectSearch.stateOfProject === 'En revision'
+        ? projectSearch.stateOfProject = 'En desarrollo'
+        : projectSearch.stateOfProject === 'En desarrollo'
+        ? projectSearch.stateOfProject = 'En revision': "";
+        projectSearch.save();
+  
+        res.status(200).json({ msg: 'Cambio de estado exitoso' });
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }
