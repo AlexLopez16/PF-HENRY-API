@@ -130,7 +130,6 @@ export const updateAdmin: RequestHandler = async (req, res) => {
     }
 };
 
-// Damos la opcion de borrar (cambiar su estatus a false) al admin.
 export const deleteAdmin: RequestHandler = async (req, res) => {
     try {
         const { id } = req.body;
