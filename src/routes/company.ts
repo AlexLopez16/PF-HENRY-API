@@ -10,9 +10,11 @@ import {
     deleteUserCompany,
     finalProject,
     getCompanyProject,
+    getCountry,
     getDetailCompany,
     getUserCompany,
     getUsersCompany,
+    reclutamientoToDesarrollo,
     updateUserCompany,
 } from './../controllers/company';
 
@@ -22,6 +24,8 @@ router.get('/', rulesUsersCompany, getUsersCompany);
 
 router.get('/login', rulesUsersCompany, getCompanyProject);
 
+router.get('/countries', verifyToken, getCountry)
+
 router.get('/:id', rulesUsersCompany, getUserCompany);
 
 router.get('/detail/:id', verifyToken, getDetailCompany);
@@ -30,8 +34,11 @@ router.post('/', rulesCreateUserCompany, createUserCompany);
 
 router.put('/final', finalProject);
 
+router.put('/inProggresProject',rulesUsersCompany,reclutamientoToDesarrollo)
+
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
 
 router.delete('/:id', rulesUsersCompany, deleteUserCompany);
+
 
 module.exports = router;
