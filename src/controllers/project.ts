@@ -136,7 +136,7 @@ export const createProject: RequestHandler = async (req, res) => {
         if (result[0] && result[0].maxDate) {
             difBetweenDates = Math.round(
                 (date.getTime() - result[0].maxDate.getTime()) /
-                (1000 * 3600 * 24)
+                    (1000 * 3600 * 24)
             );
         }
         // console.log('pro', pro);
@@ -561,9 +561,15 @@ export const getAllProjects: RequestHandler = async (req, res) => {
                         .skip(Init),
                 ]);
             console.log(projects[0]);
+            let tol;
+            if (total[0]) {
+                tol = total[0].count;
+            } else {
+                tol = 0;
+            }
             return res.status(200).json({
                 projects,
-                total: total[0].count,
+                total: tol,
             });
         }
 
@@ -591,7 +597,6 @@ export const getAllProjects: RequestHandler = async (req, res) => {
     }
 };
 
-
 export const deleteMultiProject: RequestHandler = async (req, res) => {
     try {
         const { ids } = req.body;
@@ -605,8 +610,7 @@ export const deleteMultiProject: RequestHandler = async (req, res) => {
                 : project.state = true;
             project.state = !project.state;
             await project.save();
-
-        })
+        });
         return res.status(200).json({ msg: 'Proyectos borrados con exito' });
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
