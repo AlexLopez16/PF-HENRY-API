@@ -14,6 +14,7 @@ import {
     getDetailCompany,
     getUserCompany,
     getUsersCompany,
+    reclutamientoToDesarrollo,
     updateUserCompany,
 } from './../controllers/company';
 
@@ -32,6 +33,8 @@ router.get('/detail/:id', verifyToken, getDetailCompany);
 router.post('/', rulesCreateUserCompany, createUserCompany);
 
 router.put('/final', finalProject);
+
+router.put('/inProggresProject',rulesUsersCompany,reclutamientoToDesarrollo)
 
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
 

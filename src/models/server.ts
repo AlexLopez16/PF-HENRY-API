@@ -27,6 +27,7 @@ const paths = {
     admin: '/api/admin',
     password: '/api/recover/password',
     review: '/api/review',
+    response: '/api/response',
     token: '/api/token',
     contact: '/api/contact'
 };
@@ -41,6 +42,7 @@ server.use(paths.admin, require('../routes/admin'));
 server.use(paths.password, require('../routes/password'));
 server.use(paths.checkout, require('../routes/checkout'));
 server.use(paths.review, require('../routes/review'));
+server.use(paths.response, require('../routes/response'))
 server.use(paths.token, require('../routes/token'));
 server.use(paths.contact, require('../routes/contactEmail'))
 //DB Connection
