@@ -112,7 +112,7 @@ export const createProject: RequestHandler = async (req, res) => {
         };
         let _id = req.user._id
         let project = await Company.find({ _id })
-        if (project?.length < 3) { throw new Error("No puedes publicar mas de 3 proyectos") }
+        if (project?.length > 3) { throw new Error("No puedes publicar mas de 3 proyectos") }
 
 
 
@@ -177,7 +177,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             working: { $exists: true, $not: { $size: 0 } },
         });
         // Error si el estudiante esta trabajando.
-        if (studentIsWorking.length) throw new Error('Currently working');
+        if (studentIsWorking.length) throw new Error('Actualmente en desarrollo');
 
         // Verificamos que el proyecto exista.
         const projects = await Project.find(query);
