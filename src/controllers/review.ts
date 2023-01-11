@@ -110,11 +110,13 @@ export const getReviews: RequestHandler = async (req, res) => {
 export const deleteReview: RequestHandler = async (req, res) => {
     try {
         const { idrev, values } = req.body;
+        console.log(idrev,values);
+        
         let review = await Review.findById(idrev)
             .populate('project', 'name')
             .populate('student', 'email');
-        await Review.deleteOne({ _id: idrev });
-        sendMailCancelRating(review, values);
+            sendMailCancelRating(review, values);
+            await Review.deleteOne({ _id: idrev });
         res.status(200).send('Review borrado con exito');
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
