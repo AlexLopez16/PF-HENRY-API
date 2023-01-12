@@ -111,11 +111,10 @@ export const createProject: RequestHandler = async (req, res) => {
             category: category.toLowerCase(),
             admission: new Date(),
         };
+
         let _id = req.user._id
         let project = await Company.find({ _id })
         if (project?.length > 3) { throw new Error("No puedes publicar mas de 3 proyectos") }
-
-
 
         let nameSearchProject = await Project.find({ name });
         if (nameSearchProject.length) {
@@ -374,10 +373,11 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
                 .populate({
                     path: 'students',
                     select: '-password',
-                })
-                .populate({
-                    path: 'responses',
+                    populate: {
+                        path: 'responses',
+                    }
                 });
+               
 
             return res.status(200).json(infoProject);
         }
@@ -425,6 +425,9 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
             .populate({
                 path: 'students',
                 select: '-password',
+                populate: {
+                    path: 'responses',
+                }
             });
         return res.status(200).json(infoProject);
     } catch (error: any) {
