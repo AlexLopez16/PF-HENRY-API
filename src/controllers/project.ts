@@ -210,7 +210,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
 
         // Verificamos que el proyecto exista.
         const projects = await Project.find(query);
-        if (!projects.length) throw new Error('project no found');
+        if (!projects.length) throw new Error('Proyecto no encontrado');
 
         // Seleccionamos el proyecto.
         let project = projects[0];
@@ -229,7 +229,7 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             });
             return res.status(200).json(infoProject);
         } else {
-            throw new Error('student is in the project');
+            throw new Error('El estudiante ya esta en el proyecto');
         }
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
