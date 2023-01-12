@@ -31,7 +31,7 @@ router.get('/detail/:id', verifyToken, getDetailCompany);
 
 router.post('/', rulesCreateUserCompany, createUserCompany);
 
-router.put('/final', finalProject);
+router.put('/final', verifyToken, finalProject);
 
 
 router.put('/:id', rulesUpdateUserCompany, updateUserCompany);
