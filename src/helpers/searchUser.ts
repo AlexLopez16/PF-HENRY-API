@@ -34,11 +34,11 @@ export const searchUserForVerify = async (
         };
         const user = await functions[who]();
         if (user) {
-            if (user.email === email) sendConfirmationEmail(user);
+            if (user.email === email) await sendConfirmationEmail(user);
             else {
                 user.email = email;
                 await user.save();
-                sendConfirmationEmail(user);
+                await sendConfirmationEmail(user);
             }
         }
         return user;
