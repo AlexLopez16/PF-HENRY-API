@@ -160,7 +160,7 @@ export const AprovedProject: RequestHandler = async (req, res) => {
     try {
         const { id } = req.body;
 
-        let searchId = await Project.findById(id);
+        let searchId = await Project.findById(id).populate("company", "name");
         searchId.stateOfProject === 'En revision'
             ? (searchId.stateOfProject = 'Reclutamiento')
             : // :searchId.stateOfProject === "Reclutamiento"
