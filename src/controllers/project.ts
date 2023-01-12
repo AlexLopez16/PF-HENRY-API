@@ -237,8 +237,7 @@ export const getProject: RequestHandler = async (req, res) => {
             })
             .populate({
                 path: 'responses',
-            })
-            ;
+            });
 
         if (!projects.length) throw new Error('project no found');
         let project = projects[0];
@@ -346,10 +345,11 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
                 .populate({
                     path: 'students',
                     select: '-password',
-                })
-                .populate({
-                    path: 'responses',
+                    populate: {
+                        path: 'responses',
+                    }
                 });
+               
 
             return res.status(200).json(infoProject);
         }
@@ -397,6 +397,9 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
             .populate({
                 path: 'students',
                 select: '-password',
+                populate: {
+                    path: 'responses',
+                }
             });
         return res.status(200).json(infoProject);
     } catch (error: any) {
