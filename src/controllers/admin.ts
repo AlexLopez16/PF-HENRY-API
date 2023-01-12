@@ -360,18 +360,17 @@ export const deleteMultiple: RequestHandler = async (req, res) => {
         ids.map(async (e: string) => {
             let searchId = await Student.findById(e);
             if (!searchId) {
+                searchId = await Project.findById(e);
+            }
+            if (!searchId) {
                 searchId = await Company.findById(e);
             }
             if (!searchId) {
                 searchId = await Admin.findById(e);
             }
-            if (!searchId) {
-                searchId = await Project.findById(e);
-            }
 
             searchId.state = !searchId.state;
             searchId = await searchId.save();
-
         })
 
 
