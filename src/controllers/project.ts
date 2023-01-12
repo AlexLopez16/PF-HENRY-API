@@ -176,8 +176,7 @@ export const createProject: RequestHandler = async (req, res) => {
             !compa.premium
         ) {
             throw new Error(
-                'Tienes que ser premium,si quieres crear mas de un proyecto al mes'
-            );
+                'Tienes que ser premium, si quieres crear mas de un proyecto al mes');
         } else {
             const project = new Project(data);
             await project.save();
