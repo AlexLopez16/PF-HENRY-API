@@ -52,7 +52,7 @@ export const sendConfirmationEmail = async (user: Props) => {
                         subject: 'Por favor confirma tu email',
                         html: data,
                     });
-                    console.log('Email Send')
+                    console.log('Email Send');
                     return 'Email Send';
                 } catch (error) {
                     console.log(error);
@@ -286,6 +286,37 @@ export const sendCompanyReject = async (user: {
                         from: '"NABIJASH" nabijash@gmail.com',
                         to: `${email}`,
                         subject: 'Solicitud Rechazada',
+                        html: data,
+                    });
+                    console.log('Email Send');
+                    return 'Email Send';
+                } catch (error) {
+                    console.log(error);
+                    return 'Email fail to sent';
+                }
+            }
+        }
+    );
+};
+
+export const sendStudentApply = async (user: {
+    email: string;
+    name: string;
+}) => {
+    const { name, email } = user;
+
+    ejs.renderFile(
+        _path + '/StudentApplyEmail.ejs',
+        { name },
+        async (error: any, data: any) => {
+            if (error) {
+                console.log(error);
+            } else {
+                try {
+                    await transport.sendMail({
+                        from: '"NABIJASH" nabijash@gmail.com',
+                        to: `${email}`,
+                        subject: 'Haz Aplicado a un proyecto',
                         html: data,
                     });
                     console.log('Email Send');

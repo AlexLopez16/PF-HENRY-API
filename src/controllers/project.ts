@@ -8,6 +8,7 @@ import {
     Query1,
 } from '../interfaces/interfaces';
 import { portalSession } from './checkout';
+import { sendStudentApply } from '../helpers/sendConfirmationEmail';
 const Project = require('../models/project');
 const Student = require('../models/student');
 const Company = require('../models/company');
@@ -112,9 +113,11 @@ export const createProject: RequestHandler = async (req, res) => {
             admission: new Date(),
         };
 
-        let _id = req.user._id
-        let project = await Company.find({ _id })
-        if (project?.length > 3) { throw new Error("No puedes publicar mas de 3 proyectos") }
+        let _id = req.user._id;
+        let project = await Company.find({ _id });
+        if (project?.length > 3) {
+            throw new Error('No puedes publicar mas de 3 proyectos');
+        }
 
         let nameSearchProject = await Project.find({ name });
         if (nameSearchProject.length) {
@@ -206,7 +209,8 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             working: { $exists: true, $not: { $size: 0 } },
         });
         // Error si el estudiante esta trabajando.
-        if (studentIsWorking.length) throw new Error('Actualmente en desarrollo');
+        if (studentIsWorking.length)
+            throw new Error('Estudiante actualmente trabajando');
 
         // Verificamos que el proyecto exista.
         const projects = await Project.find(query);
@@ -223,6 +227,11 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             const students = await Student.findById(studentId);
             students.project = [...students.project, projectId];
             await students.save();
+
+            await sendStudentApply({
+                email: students.email,
+                name: students.name,
+            });
             const infoProject = await project.populate({
                 path: 'students',
                 select: '-password',
@@ -375,9 +384,8 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
                     select: '-password',
                     populate: {
                         path: 'responses',
-                    }
+                    },
                 });
-               
 
             return res.status(200).json(infoProject);
         }
@@ -427,7 +435,7 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
                 select: '-password',
                 populate: {
                     path: 'responses',
-                }
+                },
             });
         return res.status(200).json(infoProject);
     } catch (error: any) {
