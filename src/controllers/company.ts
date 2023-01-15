@@ -271,7 +271,8 @@ export const finalProject: RequestHandler = async (req, res) => {
                 idStudent
             );
         });
-        res.status(200).json({ msg: 'Proyecto finalizado.' });
+        
+        res.status(200).json(projectSearch);
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }

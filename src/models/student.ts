@@ -74,7 +74,11 @@ const StudentSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Response'
         }
-    ]
+    ],
+    lenguage: {
+        type: Array,
+        default:["Español"]
+    },
 });
 
 StudentSchema.methods.toJSON = function () {
