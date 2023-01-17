@@ -305,16 +305,16 @@ export const editProject: RequestHandler = async (req, res) => {
         const { ...body } = req.body;
 
 
-        // const editUpdate = await Project.findByIdAndUpdate(
-        //     query,
-        //     { ...body },
-        //     { new: true }
-        // ).populate({
-        //     path: 'company',
-        //     select: '-password',
-        // });
+        const editUpdate = await Project.findByIdAndUpdate(
+            query,
+            { ...body },
+            { new: true }
+        ).populate({
+            path: 'company',
+            select: '-password',
+        });
 
-        // if (!editUpdate) throw new Error('Proyecto no encontrado');
+        if (!editUpdate) throw new Error('Proyecto no encontrado');
         if (body.stateOfProject === "En desarrollo") {
             mailprojectDesarrollo(body.project)
         }
