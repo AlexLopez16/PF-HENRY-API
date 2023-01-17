@@ -103,7 +103,7 @@ export const getUsersCompany: RequestHandler = async (req, res) => {
 export const getUserCompany: RequestHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, _id, email, country, image, website, premium, project } =
+        const { name, _id, email, country, image, website, premium, project, state } =
             await User.findById(id);
         res.status(200).json({
             id: _id,
@@ -114,6 +114,7 @@ export const getUserCompany: RequestHandler = async (req, res) => {
             website,
             premium,
             project,
+            state
         });
     } catch (error: any) {
         res.status(500).send(formatError(error.message));
@@ -271,7 +272,7 @@ export const finalProject: RequestHandler = async (req, res) => {
                 idStudent
             );
         });
-        
+
         res.status(200).json(projectSearch);
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));

@@ -9,7 +9,7 @@ export const infoToken: RequestHandler = async (req, res) => {
         const token = req.header('user-token');
         let { id } = verifyJwt(token);
         const user = await searchUser(id);
-        if (!user.state && user.github) {
+        if (!user.state) {
             throw new Error(
                 'Tu cuenta ha sido inactivada, por favor llena el formulario de contactanos para darte respuesta'
             );
