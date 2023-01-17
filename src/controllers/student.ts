@@ -76,7 +76,8 @@ export const getStudent: RequestHandler = async (req, res) => {
             working,
             admission,
             github,
-            state
+            state,
+            lenguage
         } = await Student.findById(id)
             .populate({
                 path: 'working',
@@ -114,8 +115,8 @@ export const getStudent: RequestHandler = async (req, res) => {
             working,
             admission,
             github,
-            state
-
+            state,
+            lenguage
         });
     } catch (error: any) {
         res.status(500).json(formatError(error.message));
