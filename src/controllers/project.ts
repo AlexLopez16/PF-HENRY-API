@@ -8,7 +8,7 @@ import {
     Query1,
 } from '../interfaces/interfaces';
 import { portalSession } from './checkout';
-import { sendStudentApply } from '../helpers/sendConfirmationEmail';
+import { mailprojectDesarrollo, sendStudentApply } from '../helpers/sendConfirmationEmail';
 const Project = require('../models/project');
 const Student = require('../models/student');
 const Company = require('../models/company');
@@ -140,7 +140,7 @@ export const createProject: RequestHandler = async (req, res) => {
         if (result[0] && result[0].maxDate) {
             difBetweenDates = Math.round(
                 (date.getTime() - result[0].maxDate.getTime()) /
-                    (1000 * 3600 * 24)
+                (1000 * 3600 * 24)
             );
             console.log(difBetweenDates);
         }
@@ -179,8 +179,7 @@ export const createProject: RequestHandler = async (req, res) => {
             !compa.premium
         ) {
             throw new Error(
-                'Tienes que ser premium,si quieres crear mas de un proyecto al mes'
-            );
+                'Tienes que ser premium, si quieres crear mas de un proyecto al mes');
         } else {
             const project = new Project(data);
             await project.save();
@@ -276,7 +275,7 @@ export const getProject: RequestHandler = async (req, res) => {
             .populate({
                 path: 'responses',
             });
-        if (!projects.length) throw new Error('project no found');
+        if (!projects.length) throw new Error('proyecto no encontrado');
         let project = projects[0];
         return res.status(200).json(project);
     } catch (error: any) {
@@ -289,11 +288,11 @@ export const deleteProject: RequestHandler = async (req, res) => {
         const { id } = req.params;
         const query = { state: true, _id: id };
         const projects = await Project.find(query);
-        if (!projects.length) throw new Error('project no found');
+        if (!projects.length) throw new Error('Proyecto no encontrado');
         let project = projects[0];
         project.state = false;
         await project.save();
-        return res.status(200).json({ msg: 'project sucessfully deleted' });
+        return res.status(200).json({ msg: 'Proyecto borrado scon exito' });
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }
@@ -304,17 +303,25 @@ export const editProject: RequestHandler = async (req, res) => {
         const { id } = req.params;
         const query = { state: true, _id: id, company: req.user._id };
         const { ...body } = req.body;
-        const editUpdate = await Project.findByIdAndUpdate(
-            query,
-            { ...body },
-            { new: true }
-        ).populate({
-            path: 'company',
-            select: '-password',
-        });
 
-        if (!editUpdate) throw new Error('proyecto no encontrado');
-        return res.status(200).send(editUpdate);
+
+        // const editUpdate = await Project.findByIdAndUpdate(
+        //     query,
+        //     { ...body },
+        //     { new: true }
+        // ).populate({
+        //     path: 'company',
+        //     select: '-password',
+        // });
+
+        // if (!editUpdate) throw new Error('Proyecto no encontrado');
+        if (body.stateOfProject === "En desarrollo") {
+            mailprojectDesarrollo(body.project)
+        }
+
+
+        // return res.status(200).send(editUpdate);
+        return res.status(200).send("enviado");
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
     }
@@ -452,7 +459,7 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
         let project = await Project.findById(projectId);
         // Si no esta en la lista de estudiantes.
         if (!project.students.includes(studentId)) {
-            throw new Error("Estudiante no encontrado en la lista  'Students'");
+            throw new Error("Estudiante no encontrado en la lista 'Students'");
         }
 
         // Borramos las responses a ese proyecto.
