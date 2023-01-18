@@ -67,7 +67,7 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
         }
 
         if (!user) {
-            throw new Error('Por favor Registrate primero');
+            return 'registrar usuario';
         }
 
         return user;
@@ -131,6 +131,9 @@ export const loginUser: RequestHandler = async (req, res) => {
             if (from && from === 'gmail') {
                 user = await authenticateWithGoogle(userType, tok);
             }
+            if (user === 'registrar usuario') {
+                return res.status(201).json({ msg: 'registrar usuario' });
+            }
             if (user && user.state === false) {
                 throw new Error(
                     'Tu cuenta ha sido inactivada, por favor llena el formulario de contactanos para darte respuesta'
@@ -188,8 +191,10 @@ export const github: RequestHandler = async (req, res) => {
         let obj = { id: user._id, name: user.name };
         const token = jwtGenerator(obj);
         res.redirect(
-            `${process.env.URL_FRONT || 'http://localhost:5173'
-            }/projects?token=${token}&rol=${user.rol}&verify=${user.verify
+            `${
+                process.env.URL_FRONT || 'http://localhost:5173'
+            }/projects?token=${token}&rol=${user.rol}&verify=${
+                user.verify
             }&id=${user.id}`
         );
         // return res.status(200).json({
