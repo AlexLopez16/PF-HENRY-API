@@ -38,6 +38,7 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
                 image: payload.picture,
                 gmail: true,
                 verify: true,
+                admission: Date.now(),
             });
         } else if (userType === 'company') {
             let emailSearchCompany = await Company.find({ email });
@@ -51,6 +52,7 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
                 image: payload.picture,
                 gmail: true,
                 verify: true,
+                admission: Date.now(),
             });
         } else {
             throw new Error('UserType no es válido.');
