@@ -38,6 +38,7 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
                 image: payload.picture,
                 gmail: true,
                 verify: true,
+                admission: Date.now(),
             });
         } else if (userType === 'company') {
             let emailSearchCompany = await Company.find({ email });
@@ -51,6 +52,7 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
                 image: payload.picture,
                 gmail: true,
                 verify: true,
+                admission: Date.now(),
             });
         } else {
             throw new Error('UserType no es válido.');
@@ -67,7 +69,7 @@ const authenticateWithGoogle = async (userType: string, token: string) => {
         }
 
         if (!user) {
-            throw new Error('Por favor Registrate primero');
+            return 'registrar usuario';
         }
 
         return user;
@@ -130,6 +132,9 @@ export const loginUser: RequestHandler = async (req, res) => {
         } else {
             if (from && from === 'gmail') {
                 user = await authenticateWithGoogle(userType, tok);
+            }
+            if (user === 'registrar usuario') {
+                return res.status(201).json({ msg: 'registrar usuario' });
             }
             if (user && user.state === false) {
                 throw new Error(

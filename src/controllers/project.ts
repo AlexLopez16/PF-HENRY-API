@@ -8,6 +8,7 @@ import {
     Query1,
 } from '../interfaces/interfaces';
 import { portalSession } from './checkout';
+import { mailprojectDesarrollo, sendStudentApply } from '../helpers/sendConfirmationEmail';
 const Project = require('../models/project');
 const Student = require('../models/student');
 const Company = require('../models/company');
@@ -112,9 +113,11 @@ export const createProject: RequestHandler = async (req, res) => {
             admission: new Date(),
         };
 
-        let _id = req.user._id
-        let project = await Company.find({ _id })
-        if (project?.length > 3) { throw new Error("No puedes publicar mas de 3 proyectos") }
+        let _id = req.user._id;
+        let project = await Company.find({ _id });
+        if (project?.length > 3) {
+            throw new Error('No puedes publicar mas de 3 proyectos');
+        }
 
         let nameSearchProject = await Project.find({ name });
         if (nameSearchProject.length) {
@@ -137,7 +140,7 @@ export const createProject: RequestHandler = async (req, res) => {
         if (result[0] && result[0].maxDate) {
             difBetweenDates = Math.round(
                 (date.getTime() - result[0].maxDate.getTime()) /
-                    (1000 * 3600 * 24)
+                (1000 * 3600 * 24)
             );
             console.log(difBetweenDates);
         }
@@ -176,8 +179,7 @@ export const createProject: RequestHandler = async (req, res) => {
             !compa.premium
         ) {
             throw new Error(
-                'Tienes que ser premium,si quieres crear mas de un proyecto al mes'
-            );
+                'Tienes que ser premium, si quieres crear mas de un proyecto al mes');
         } else {
             const project = new Project(data);
             await project.save();
@@ -206,11 +208,12 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             working: { $exists: true, $not: { $size: 0 } },
         });
         // Error si el estudiante esta trabajando.
-        if (studentIsWorking.length) throw new Error('Actualmente en desarrollo');
+        if (studentIsWorking.length)
+            throw new Error('Estudiante actualmente trabajando');
 
         // Verificamos que el proyecto exista.
         const projects = await Project.find(query);
-        if (!projects.length) throw new Error('project no found');
+        if (!projects.length) throw new Error('Proyecto no encontrado');
 
         // Seleccionamos el proyecto.
         let project = projects[0];
@@ -223,13 +226,18 @@ export const addStudentToProject: RequestHandler = async (req, res) => {
             const students = await Student.findById(studentId);
             students.project = [...students.project, projectId];
             await students.save();
+
+            await sendStudentApply({
+                email: students.email,
+                name: students.name,
+            });
             const infoProject = await project.populate({
                 path: 'students',
                 select: '-password',
             });
             return res.status(200).json(infoProject);
         } else {
-            throw new Error('student is in the project');
+            throw new Error('El estudiante ya esta en el proyecto');
         }
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
@@ -267,7 +275,7 @@ export const getProject: RequestHandler = async (req, res) => {
             .populate({
                 path: 'responses',
             });
-        if (!projects.length) throw new Error('project no found');
+        if (!projects.length) throw new Error('proyecto no encontrado');
         let project = projects[0];
         return res.status(200).json(project);
     } catch (error: any) {
@@ -280,11 +288,11 @@ export const deleteProject: RequestHandler = async (req, res) => {
         const { id } = req.params;
         const query = { state: true, _id: id };
         const projects = await Project.find(query);
-        if (!projects.length) throw new Error('project no found');
+        if (!projects.length) throw new Error('Proyecto no encontrado');
         let project = projects[0];
         project.state = false;
         await project.save();
-        return res.status(200).json({ msg: 'project sucessfully deleted' });
+        return res.status(200).json({ msg: 'Proyecto borrado scon exito' });
     } catch (error: any) {
         return res.status(500).send(formatError(error.message));
     }
@@ -295,6 +303,8 @@ export const editProject: RequestHandler = async (req, res) => {
         const { id } = req.params;
         const query = { state: true, _id: id, company: req.user._id };
         const { ...body } = req.body;
+
+
         const editUpdate = await Project.findByIdAndUpdate(
             query,
             { ...body },
@@ -304,8 +314,14 @@ export const editProject: RequestHandler = async (req, res) => {
             select: '-password',
         });
 
-        if (!editUpdate) throw new Error('proyecto no encontrado');
-        return res.status(200).send(editUpdate);
+        if (!editUpdate) throw new Error('Proyecto no encontrado');
+        if (body.stateOfProject === "En desarrollo") {
+            mailprojectDesarrollo(body.project)
+        }
+
+
+        // return res.status(200).send(editUpdate);
+        return res.status(200).send("enviado");
     } catch (error: any) {
         return res.status(400).send(formatError(error.message));
     }
@@ -373,9 +389,9 @@ export const acceptStudentToProject: RequestHandler = async (req, res) => {
                 .populate({
                     path: 'students',
                     select: '-password',
-                })
-                .populate({
-                    path: 'responses',
+                    populate: {
+                        path: 'responses',
+                    },
                 });
 
             return res.status(200).json(infoProject);
@@ -424,6 +440,9 @@ export const DeleteAccepts: RequestHandler = async (req, res) => {
             .populate({
                 path: 'students',
                 select: '-password',
+                populate: {
+                    path: 'responses',
+                },
             });
         return res.status(200).json(infoProject);
     } catch (error: any) {
@@ -440,7 +459,7 @@ export const UnapplyStudent: RequestHandler = async (req, res) => {
         let project = await Project.findById(projectId);
         // Si no esta en la lista de estudiantes.
         if (!project.students.includes(studentId)) {
-            throw new Error("Estudiante no encontrado en la lista  'Students'");
+            throw new Error("Estudiante no encontrado en la lista 'Students'");
         }
 
         // Borramos las responses a ese proyecto.

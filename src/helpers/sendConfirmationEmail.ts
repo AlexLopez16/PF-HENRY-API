@@ -52,7 +52,7 @@ export const sendConfirmationEmail = async (user: Props) => {
                         subject: 'Por favor confirma tu email',
                         html: data,
                     });
-                    console.log('Email Send')
+                    console.log('Email Send');
                     return 'Email Send';
                 } catch (error) {
                     console.log(error);
@@ -290,6 +290,78 @@ export const sendCompanyReject = async (user: {
                     });
                     console.log('Email Send');
                     return 'Email Send';
+                } catch (error) {
+                    console.log(error);
+                    return 'Email fail to sent';
+                }
+            }
+        }
+    );
+};
+
+export const sendStudentApply = async (user: {
+    email: string;
+    name: string;
+}) => {
+    const { name, email } = user;
+
+    ejs.renderFile(
+        _path + '/StudentApplyEmail.ejs',
+        { name },
+        async (error: any, data: any) => {
+            if (error) {
+                console.log(error);
+            } else {
+                try {
+                    await transport.sendMail({
+                        from: '"NABIJASH" nabijash@gmail.com',
+                        to: `${email}`,
+                        subject: 'Haz Aplicado a un proyecto',
+                        html: data,
+                    });
+                    console.log('Email Send');
+                    return 'Email Send';
+                } catch (error) {
+                    console.log(error);
+                    return 'Email fail to sent';
+                }
+            }
+        }
+    );
+};
+
+
+export const mailprojectDesarrollo = async (
+    project:any
+) => {
+    
+    const dataValues = {
+        name: project.name,
+        description: project.description,
+        participants: project.participants,
+        requirements: project.requirements,
+        category: project.category,
+        url: `${URL_FRONT}/login`,
+        company: project.company.name,
+    };
+
+    ejs.renderFile(
+        _path + '/ProjectAccept.ejs',
+        dataValues,
+        async (error: any, data: any) => {
+            if (error) {
+                console.log(error);
+            } else {
+                try {
+                    project?.accepts?.map(async(e:any)=>{
+                    await transport.sendMail({
+                        from: '"NABIJASH" nabijash@gmail.com',
+                        to: `${e.email}`,
+                        subject: 'Comienzo de proyecto',
+                         html: data,
+                    });
+                    console.log('Email Send');
+                    return 'Email Send';})
                 } catch (error) {
                     console.log(error);
                     return 'Email fail to sent';

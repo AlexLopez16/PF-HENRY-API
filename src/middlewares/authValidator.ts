@@ -21,8 +21,10 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
   if (!token) return res.status(401).json(formatError("Acceso denegado"));
   try {
     const { id } = verifyJwt(token)
-    
+
     const user = await searchUser(id);
+    console.log(user);
+    if (!user.state) return res.redirect(303, "http://localhost:5173/login");
 
     req.user = user;
     if (!user.verify) throw new Error("Confirma tu email");
