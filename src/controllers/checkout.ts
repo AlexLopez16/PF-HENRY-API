@@ -23,7 +23,7 @@ export const checkoutSession: RequestHandler = async (req, res) => {
             ],
             mode: 'subscription',
             success_url: `${YOUR_DOMAIN}/checkout/?success=true&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${YOUR_DOMAIN}/dashboard/?canceled=true`,
+            cancel_url: `${YOUR_DOMAIN}/projects/?canceled=true`,
         });
 
         res.redirect(303, session.url);
